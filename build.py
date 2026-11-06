@@ -83,7 +83,7 @@ document.querySelectorAll('#g .tile').forEach(function(t){{t.style.display=(b.da
 <h2>من حياتنا</h2><div class="card">{exs}</div>
 <h2>إزاي تكشفها</h2><p>{e_(e['detect'])}</p>
 <h2>إزاي ترد من غير خناق</h2><p>{e_(e['respond'])}</p>
-{f"<h2>متتلخبطش بينها وبين: {e_(nc['name'])}</h2><p>{e_(nc['diff'])}</p>" if nc else ""}
+{f"<h2>متتلخبطش بينها وبين: " + (f'<a href="{r}atlas/{nc["slug"]}/">{e_(nc["name"])}</a>' if nc.get("slug") else e_(nc["name"])) + f"</h2><p>{e_(nc['diff'])}</p>" if nc else ""}
 {ev}<h2>مصادر</h2><ul class="sources">{src}</ul>
 <p><a href="{r}atlas/">→ ارجع للأطلس</a></p>"""
         write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"]))
@@ -94,7 +94,8 @@ document.querySelectorAll('#g .tile').forEach(function(t){{t.style.display=(b.da
 <div class="reveal" id="reveal"><h2 id="verdict" style="margin-top:8px"></h2><p id="why"></p>
 <a class="btn ghost" id="more" href="#">اقرأ عنها في الأطلس</a> <button class="btn" id="share">شارك نتيجتك</button></div></div>
 <div class="stats"><div><b id="s-streak">0</b>أيام ورا بعض</div><div><b id="s-best">0</b>أحسن سلسلة</div><div><b id="s-played">0</b>لعبت</div></div>
-<p class="note">لغز جديد كل يوم. الألغاز دي لسه مسودات بنراجعها.</p>"""
+<p class="note">لغز جديد كل يوم. الألغاز دي لسه مسودات بنراجعها.</p>
+<h2 id="past-h">ألغاز فاتت</h2><p class="lead" style="font-size:15px">العبها تمرين، مش هتأثر على عدد الأيام.</p><div class="grid" id="past"></div>"""
     body += f"<script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};</script><script src=\"../assets/daily.js\"></script>"
     write("daily/index.html", page("مغالطة اليوم — ميزان", body, "../", "daily/"))
 
