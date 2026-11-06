@@ -1,5 +1,5 @@
 """Build the Mizan static site into docs/ from content/*.json."""
-import json, shutil, html
+import json, shutil, html, hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -9,6 +9,7 @@ puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8")
 by_slug = {e["slug"]: e for e in entries}
 KIND = {"fallacy": "مغالطة", "bias": "انحياز"}
 e_ = html.escape
+VER = hashlib.md5((ROOT / "assets/daily.js").read_bytes() + (ROOT / "assets/style.css").read_bytes()).hexdigest()[:8]
 
 LOGO = ('<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
         '<path d="M16 4v24M8 28h16M5 9h22"/><path d="M9 9l-4 9h8zM23 9l-4 9h8z"/></svg>')
@@ -24,7 +25,7 @@ def page(title, body, root, active="", desc=""):
 <meta name="description" content="{e_(desc or 'ميزان: مرجع مصري مفتوح عن التفكير الصح، المغالطات والانحيازات بأمثلة من حياتنا.')}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{root}assets/style.css">
+<link rel="stylesheet" href="{root}assets/style.css?v={VER}">
 <link rel="manifest" href="{root}manifest.webmanifest"><meta name="theme-color" content="#a3762c">
 </head><body data-root="{root}">
 <header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav>{links}</nav></div></header>
@@ -96,7 +97,7 @@ document.querySelectorAll('#g .tile').forEach(function(t){{t.style.display=(b.da
 <div class="stats"><div><b id="s-streak">0</b>أيام ورا بعض</div><div><b id="s-best">0</b>أحسن سلسلة</div><div><b id="s-played">0</b>لعبت</div></div>
 <p class="note">لغز جديد كل يوم. الألغاز دي لسه مسودات بنراجعها.</p>
 <h2 id="past-h">ألغاز فاتت</h2><p class="lead" style="font-size:15px">العبها تمرين، مش هتأثر على عدد الأيام.</p><div class="grid" id="past"></div>"""
-    body += f"<script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};</script><script src=\"../assets/daily.js\"></script>"
+    body += f"<script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};</script><script src=\"../assets/daily.js?v={VER}\"></script>"
     write("daily/index.html", page("مغالطة اليوم — ميزان", body, "../", "daily/"))
 
     # about
