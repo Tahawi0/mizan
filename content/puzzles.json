@@ -11,7 +11,7 @@
   "answer": 1,
   "why": "هي قالت «نقلل»، والرد كان على «نبطّل خالص». ده تشويه للكلام عشان يبقى سهل نرفضه.",
   "entry": "straw-man",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 2,
@@ -25,7 +25,7 @@
   "answer": 0,
   "why": "الرد سايب الكلام عن الأسعار خالص، وبيهاجم سن الشخص وخبرته. الكلام ممكن يكون صح أو غلط، بس السن مش دليل.",
   "entry": "ad-hominem",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 3,
@@ -39,7 +39,7 @@
   "answer": 1,
   "why": "الإعلان عارض اختيارين بس، ومخبّي اختيارات تانية: تحجز بعد شهر، أو تشتري شقة تانية، أو تفضل في الإيجار وتعيش كويس.",
   "entry": "false-dilemma",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 4,
@@ -53,7 +53,7 @@
   "answer": 2,
   "why": "عدد المشاهدات بيقول إن الفيديو منتشر، مش إن الوصفة شغالة. الانتشار مش دليل على الصحة.",
   "entry": "appeal-to-majority",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 5,
@@ -67,7 +67,7 @@
   "answer": 0,
   "why": "رقم ١٢٠٠ هو اللي خلّى ٤٠٠ تبان رخيصة. السؤال الحقيقي: القميص ده يستاهل ٤٠٠ في الأساس؟",
   "entry": "anchoring",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 6,
@@ -81,7 +81,7 @@
   "answer": 1,
   "why": "ده مش مغالطة في حجة، ده انحياز في الذاكرة. العقل بيحتفظ بالحاجات اللي بتأكد الرأي، وبيرمي اللي بتعارضه.",
   "entry": "confirmation-bias",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 7,
@@ -95,7 +95,7 @@
   "answer": 0,
   "why": "الدكتور متخصص في العظام، مش في السرطان ولا الإشعاع. السلطة هنا في غير مجالها، والسؤال ده إجابته عند المتخصصين في المجال وأبحاثهم، مش عند جراح عظام.",
   "entry": "appeal-to-authority",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 8,
@@ -109,7 +109,7 @@
   "answer": 1,
   "why": "السبب الوحيد اللي اتقال إن ده كان بيحصل زمان. محدش قال ليه الدفتر أحسن من الكمبيوتر.",
   "entry": "appeal-to-tradition",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 9,
@@ -123,7 +123,7 @@
   "answer": 0,
   "why": "البوست مقدمش أي سبب يخليك تشارك. كل اللي فيه ضغط على إحساسك بالذنب والخوف.",
   "entry": "appeal-to-emotion",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 10,
@@ -137,7 +137,7 @@
   "answer": 1,
   "why": "كون الحاجة طبيعية مش معناه إنها مفيدة ولا إن الكمية دي آمنة.",
   "entry": "appeal-to-nature",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 11,
@@ -151,7 +151,7 @@
   "answer": 1,
   "why": "الطالب رفض النصيحة عشان المدرس نفسه مكانش بيعمل كده. النصيحة صح بغض النظر عن ماضي المدرس.",
   "entry": "tu-quoque",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 12,
@@ -165,7 +165,7 @@
   "answer": 0,
   "why": "السؤال كان عن عيد الميلاد، والرد راح لموضوع تاني خالص عشان يهرب منه.",
   "entry": "red-herring",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 13,
@@ -179,7 +179,7 @@
   "answer": 2,
   "why": "كل خطوة هنا متوقعة من غير دليل إنها هتجيب اللي بعدها. ممكن تاخد موبايل بقواعد واضحة وحياتها تمشي عادي.",
   "entry": "slippery-slope",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 14,
@@ -193,7 +193,7 @@
   "answer": 1,
   "why": "الاتنين حصلوا في نفس الوقت، بس ده مش معناه إن الجار هو السبب. انقطاع المية ليه أسباب في الشبكة نفسها.",
   "entry": "false-cause",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 15,
@@ -207,7 +207,7 @@
   "answer": 0,
   "why": "موقف واحد بس اتعمم على آلاف السواقين.",
   "entry": "hasty-generalization",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 16,
@@ -221,7 +221,7 @@
   "answer": 1,
   "why": "الدليل هو نفس النتيجة بكلام تاني. الكلام بيلف في دايرة ومفيش دليل من برة.",
   "entry": "begging-the-question",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 17,
@@ -235,7 +235,7 @@
   "answer": 0,
   "why": "السؤال مفترض إن الضيف خدع الجمهور. لو قال آه أو لأ، هيبقى اعترف بالخداع.",
   "entry": "loaded-question",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 18,
@@ -249,7 +249,7 @@
   "answer": 0,
   "why": "كلمة «خفيف» ليها كذا معنى. الإعلان قصد الطعم، والمشتري فهمها إنها في الكافيين.",
   "entry": "equivocation",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 19,
@@ -263,7 +263,7 @@
   "answer": 0,
   "why": "لما المثال كسر الكلام، اتغير معنى «الشاطرة بجد» عشان يطلّع المثال برة، بدل ما يعترف إن الكلام مش دقيق.",
   "entry": "no-true-scotsman",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 20,
@@ -277,7 +277,7 @@
   "answer": 1,
   "why": "اللي قال الاتهام هو اللي مطلوب منه الدليل. بدل ما يجيبه، رمى المسؤولية على اللي بيسأل.",
   "entry": "burden-of-proof",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 21,
@@ -291,7 +291,7 @@
   "answer": 0,
   "why": "إن محدش أثبت العكس معناه إننا منعرفش، مش إن الكلام صح.",
   "entry": "appeal-to-ignorance",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 22,
@@ -305,7 +305,7 @@
   "answer": 1,
   "why": "تجربة شخص واحد اتحطت قصاد أرقام عن ملايين الحوادث.",
   "entry": "anecdotal-evidence",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 23,
@@ -319,7 +319,7 @@
   "answer": 0,
   "why": "الصفحة عرضت الأدلة اللي في صفها بس، وخبت الصورة الكاملة.",
   "entry": "cherry-picking",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 24,
@@ -333,7 +333,7 @@
   "answer": 0,
   "why": "الموظف إنسان ليه احتياجات وحقوق، مش آلة. الشبه هنا سطحي ومش في النقطة اللي بنتكلم عنها.",
   "entry": "false-analogy",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 25,
@@ -347,7 +347,7 @@
   "answer": 1,
   "why": "إن الحاجة صعبة نتخيلها مش دليل إنها محصلتش. فيه أدلة أثرية كتير عن طريقة البنا.",
   "entry": "personal-incredulity",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 26,
@@ -361,7 +361,7 @@
   "answer": 0,
   "why": "أصل الأكلة ملوش علاقة بقيمتها الغذائية. الحكم هنا على المصدر، مش على الأكل نفسه.",
   "entry": "genetic-fallacy",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 27,
@@ -375,7 +375,7 @@
   "answer": 1,
   "why": "إن كل لاعب شاطر لوحده مش ضمان إن الفريق كله هيلعب مع بعض كويس.",
   "entry": "composition-division",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 28,
@@ -389,7 +389,7 @@
   "answer": 0,
   "why": "كل رمية مستقلة عن اللي قبلها، والاحتمال لسه نص ونص.",
   "entry": "gamblers-fallacy",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 29,
@@ -403,7 +403,7 @@
   "answer": 0,
   "why": "الرأيين مش متساويين في الأدلة. النص بينهم مش هو الصح لمجرد إنه في النص.",
   "entry": "false-compromise",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 30,
@@ -417,7 +417,7 @@
   "answer": 0,
   "why": "السنتين خلاص فاتوا، سواء كمل أو حوّل. السؤال الحقيقي: أنهي اختيار أحسن للسنين اللي جاية؟",
   "entry": "sunk-cost",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 31,
@@ -431,7 +431,7 @@
   "answer": 1,
   "why": "الرد هرب لطرف تالت بدل ما يرد على النقد. حتى لو التاني أوحش، ده ميبررش الأول.",
   "entry": "whataboutism",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 32,
@@ -445,7 +445,7 @@
   "answer": 0,
   "why": "الحجة كانت ضعيفة، بس ده مش معناه إن النتيجة غلط. النوم بدري مفيد لأسباب تانية كتير.",
   "entry": "fallacy-fallacy",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 33,
@@ -459,7 +459,7 @@
   "answer": 0,
   "why": "الفيديوهات خلت الفكرة سهلة تيجي في دماغك، فحسيت إنها أشيع وأخطر مما هي.",
   "entry": "availability",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 34,
@@ -473,7 +473,7 @@
   "answer": 0,
   "why": "صفة حلوة في المذيع اتنقلت للشركة، مع إن ملهاش علاقة ببعض.",
   "entry": "halo-effect",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 35,
@@ -487,7 +487,7 @@
   "answer": 0,
   "why": "القرار اتاخد عشان الناس حواليك عملت كده، مش عشان احتياجك إنت.",
   "entry": "bandwagon",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 36,
@@ -501,7 +501,7 @@
   "answer": 0,
   "why": "الاختيار الجديد أحسن، بس التغيير نفسه هو اللي مضايقك.",
   "entry": "status-quo",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 37,
@@ -515,7 +515,7 @@
   "answer": 0,
   "why": "الرقمين بيقولوا نفس الحاجة بالظبط، بس طريقة الكلام غيرت إحساسك.",
   "entry": "framing",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 38,
@@ -529,7 +529,7 @@
   "answer": 0,
   "why": "لو كان متوقع فعلاً كان باع. الإحساس إنه «كان عارف» جه بعد ما الحاجة حصلت.",
   "entry": "hindsight",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 39,
@@ -543,7 +543,7 @@
   "answer": 0,
   "why": "التأخير اتفسر بطبع الشخص، والظروف اللي حواليه اتنست.",
   "entry": "fundamental-attribution",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 40,
@@ -557,7 +557,7 @@
   "answer": 0,
   "why": "نفس التصرف اتحكم عليه بشكلين مختلفين، على حسب الفريق.",
   "entry": "in-group",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 41,
@@ -571,7 +571,7 @@
   "answer": 0,
   "why": "الشخص فاكر إن المرض أقل احتمال يحصله هو، مع إن الشباب كمان بيتعبوا.",
   "entry": "optimism-bias",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 42,
@@ -585,7 +585,7 @@
   "answer": 0,
   "why": "الملاحظة الوحشة غطت على ٩ حاجات حلوة، رغم إنها أقل بكتير.",
   "entry": "negativity-bias",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 43,
@@ -599,7 +599,7 @@
   "answer": 0,
   "why": "إنت شايف اللي نجحوا بس. آلاف سابوا شغلهم وقناتهم منجحتش، ومحدش بيشوفهم.",
   "entry": "survivorship",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 44,
@@ -613,7 +613,7 @@
   "answer": 0,
   "why": "إنت مبالغ في قد إيه الناس مركزة معاك. كل واحد مشغول بنفسه.",
   "entry": "spotlight-effect",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 45,
@@ -627,7 +627,7 @@
   "answer": 0,
   "why": "الوسط موجود عشان يخلي الكبيرة تبان لقطة. من غيره، المقارنة كانت هتبقى بين ٣٠ و٦٠.",
   "entry": "decoy-effect",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 46,
@@ -641,7 +641,7 @@
   "answer": 0,
   "why": "البالطو الأبيض لوحده خلاك تثق من غير ما تسأل. ده ميل داخلي للطاعة، مش حجة حد قالهالك.",
   "entry": "authority-bias",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 47,
@@ -655,7 +655,7 @@
   "answer": 0,
   "why": "الثقة في المعرفة كانت أكبر من المعرفة نفسها.",
   "entry": "overconfidence",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 48,
@@ -669,7 +669,7 @@
   "answer": 0,
   "why": "بعد القرار، العقل بيحاول يحمي الاختيار بإنه يكبّر مميزاته ويقلل عيوبه.",
   "entry": "choice-supportive",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 49,
@@ -683,7 +683,7 @@
   "answer": 0,
   "why": "ده الشكل المشهور لدانينج-كروجر، والباحثين لسه مختلفين عليه. جزء من النتايج ممكن يتفسر بأخطاء إحصائية.",
   "entry": "dunning-kruger",
-  "reviewed": false
+  "reviewed": true
  },
  {
   "id": 50,
@@ -697,6 +697,6 @@
   "answer": 0,
   "why": "الخوف من إحساس الخسارة أكبر من التفكير في التوفير اللي جاي. السؤال الحقيقي: الاحتفاظ بيها هيكلفك كام من النهارده؟",
   "entry": "loss-aversion",
-  "reviewed": false
+  "reviewed": true
  }
 ]

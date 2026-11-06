@@ -61,3 +61,6 @@ h2{font-size:21px;margin:32px 0 10px}
 footer{border-top:1px solid var(--line);color:var(--muted);font-size:14px;padding:20px 0}
 .note{background:var(--brass-soft);border-radius:10px;padding:10px 14px;font-size:14px;margin:16px 0}
 @media (max-width:520px){h1{font-size:26px}.hero h1{font-size:30px}nav a{margin-inline-start:10px}}
+header.top .wrap{flex-wrap:wrap}
+nav{display:flex;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;max-width:100%}
+@media (max-width:520px){header.top .wrap{padding-block:8px}nav{width:100%}nav a:first-child{margin-inline-start:0}}

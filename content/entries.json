@@ -30,7 +30,7 @@
   "sources": [
    "Walton, D. (2013). Methods of Argumentation. Cambridge University Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "ad-hominem",
@@ -63,7 +63,7 @@
   "sources": [
    "Copi, I., Cohen, C., & McMahon, K. (2014). Introduction to Logic. Pearson."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "false-dilemma",
@@ -96,7 +96,7 @@
   "sources": [
    "Tindale, C. (2007). Fallacies and Argument Appraisal. Cambridge University Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "appeal-to-majority",
@@ -129,7 +129,7 @@
   "sources": [
    "Walton, D. (1999). Appeal to Popular Opinion. Penn State Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "confirmation-bias",
@@ -162,7 +162,7 @@
   "sources": [
    "Nickerson, R. S. (1998). Confirmation bias: A ubiquitous phenomenon in many guises. Review of General Psychology, 2(2), 175–220."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "anchoring",
@@ -196,7 +196,7 @@
    "Tversky, A., & Kahneman, D. (1974). Judgment under uncertainty: Heuristics and biases. Science, 185(4157), 1124–1131.",
    "Furnham, A., & Boo, H. C. (2011). A literature review of the anchoring effect. The Journal of Socio-Economics, 40(1), 35–42."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "appeal-to-authority",
@@ -229,7 +229,7 @@
   "sources": [
    "Walton, D. (1997). Appeal to Expert Opinion. Penn State Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "appeal-to-tradition",
@@ -262,7 +262,7 @@
   "sources": [
    "Tindale, C. (2007). Fallacies and Argument Appraisal. Cambridge University Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "appeal-to-emotion",
@@ -295,7 +295,7 @@
   "sources": [
    "Walton, D. (1992). The Place of Emotion in Argument. Penn State Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "appeal-to-nature",
@@ -328,7 +328,7 @@
   "sources": [
    "Moore, G. E. (1903). Principia Ethica. Cambridge University Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "tu-quoque",
@@ -361,7 +361,7 @@
   "sources": [
    "Aikin, S. F. (2008). Tu quoque arguments and the significance of hypocrisy. Informal Logic, 28(2), 155–169."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "red-herring",
@@ -394,7 +394,7 @@
   "sources": [
    "Copi, I., Cohen, C., & McMahon, K. (2014). Introduction to Logic. Pearson."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "slippery-slope",
@@ -427,7 +427,7 @@
   "sources": [
    "Walton, D. (2015). The basic slippery slope argument. Informal Logic, 35(3), 273–311."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "false-cause",
@@ -461,7 +461,7 @@
    "Hume, D. (1748). An Enquiry Concerning Human Understanding.",
    "Pearl, J., & Mackenzie, D. (2018). The Book of Why. Basic Books."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "hasty-generalization",
@@ -494,7 +494,7 @@
   "sources": [
    "Govier, T. (2013). A Practical Study of Argument. Cengage."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "begging-the-question",
@@ -527,7 +527,7 @@
   "sources": [
    "Walton, D. (1991). Begging the Question: Circular Reasoning as a Tactic of Argumentation. Greenwood."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "loaded-question",
@@ -560,7 +560,7 @@
   "sources": [
    "Walton, D. (1989). Informal Logic: A Handbook for Critical Argumentation. Cambridge University Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "equivocation",
@@ -593,7 +593,7 @@
   "sources": [
    "Copi, I., Cohen, C., & McMahon, K. (2014). Introduction to Logic. Pearson."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "no-true-scotsman",
@@ -626,7 +626,7 @@
   "sources": [
    "Flew, A. (1975). Thinking About Thinking. Fontana."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "burden-of-proof",
@@ -659,7 +659,7 @@
   "sources": [
    "Walton, D. (1988). Burden of proof. Argumentation, 2(2), 233–254."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "appeal-to-ignorance",
@@ -692,7 +692,7 @@
   "sources": [
    "Walton, D. (1996). Arguments from Ignorance. Penn State Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "anecdotal-evidence",
@@ -725,7 +725,7 @@
   "sources": [
    "Kahneman, D. (2011). Thinking, Fast and Slow. Farrar, Straus and Giroux."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "cherry-picking",
@@ -758,7 +758,7 @@
   "sources": [
    "Govier, T. (2013). A Practical Study of Argument. Cengage."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "false-analogy",
@@ -791,7 +791,7 @@
   "sources": [
    "Juthe, A. (2005). Argument by analogy. Argumentation, 19(1), 1–27."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "personal-incredulity",
@@ -824,7 +824,7 @@
   "sources": [
    "Dawkins, R. (1986). The Blind Watchmaker. Norton."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "genetic-fallacy",
@@ -857,7 +857,7 @@
   "sources": [
    "Copi, I., Cohen, C., & McMahon, K. (2014). Introduction to Logic. Pearson."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "composition-division",
@@ -890,7 +890,7 @@
   "sources": [
    "Copi, I., Cohen, C., & McMahon, K. (2014). Introduction to Logic. Pearson."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "gamblers-fallacy",
@@ -923,7 +923,7 @@
   "sources": [
    "Tversky, A., & Kahneman, D. (1971). Belief in the law of small numbers. Psychological Bulletin, 76(2), 105–110."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "false-compromise",
@@ -956,7 +956,7 @@
   "sources": [
    "Walton, D. (1999). One-Sided Arguments. SUNY Press."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "sunk-cost",
@@ -989,7 +989,7 @@
   "sources": [
    "Arkes, H. R., & Blumer, C. (1985). The psychology of sunk cost. Organizational Behavior and Human Decision Processes, 35(1), 124–140."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "whataboutism",
@@ -1022,7 +1022,7 @@
   "sources": [
    "Bowell, T., & Kemp, G. (2015). Critical Thinking: A Concise Guide. Routledge."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "fallacy-fallacy",
@@ -1055,7 +1055,7 @@
   "sources": [
    "Bennett, B. (2012). Logically Fallacious. eBookIt."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "availability",
@@ -1088,7 +1088,7 @@
   "sources": [
    "Tversky, A., & Kahneman, D. (1973). Availability: A heuristic for judging frequency and probability. Cognitive Psychology, 5(2), 207–232."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "halo-effect",
@@ -1121,7 +1121,7 @@
   "sources": [
    "Nisbett, R. E., & Wilson, T. D. (1977). The halo effect: Evidence for unconscious alteration of judgments. Journal of Personality and Social Psychology, 35(4), 250–256."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "bandwagon",
@@ -1155,7 +1155,7 @@
    "Asch, S. E. (1956). Studies of independence and conformity. Psychological Monographs, 70(9), 1–70.",
    "Bond, R., & Smith, P. B. (1996). Culture and conformity: A meta-analysis. Psychological Bulletin, 119(1), 111–137."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "loss-aversion",
@@ -1189,7 +1189,7 @@
    "Kahneman, D., & Tversky, A. (1979). Prospect theory. Econometrica, 47(2), 263–291.",
    "Gal, D., & Rucker, D. D. (2018). The loss of loss aversion. Journal of Consumer Psychology, 28(3), 497–516."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "framing",
@@ -1222,7 +1222,7 @@
   "sources": [
    "Tversky, A., & Kahneman, D. (1981). The framing of decisions and the psychology of choice. Science, 211(4481), 453–458."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "hindsight",
@@ -1256,7 +1256,7 @@
    "Fischhoff, B. (1975). Hindsight ≠ foresight. Journal of Experimental Psychology: Human Perception and Performance, 1(3), 288–299.",
    "Roese, N. J., & Vohs, K. D. (2012). Hindsight bias. Perspectives on Psychological Science, 7(5), 411–426."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "fundamental-attribution",
@@ -1290,7 +1290,7 @@
    "Ross, L. (1977). The intuitive psychologist and his shortcomings. Advances in Experimental Social Psychology, 10, 173–220.",
    "Choi, I., Nisbett, R. E., & Norenzayan, A. (1999). Causal attribution across cultures. Psychological Bulletin, 125(1), 47–63."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "in-group",
@@ -1324,7 +1324,7 @@
    "Tajfel, H., & Turner, J. C. (1979). An integrative theory of intergroup conflict. In The Social Psychology of Intergroup Relations.",
    "Balliet, D., Wu, J., & De Dreu, C. K. W. (2014). Ingroup favoritism in cooperation: A meta-analysis. Psychological Bulletin, 140(6), 1556–1581."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "status-quo",
@@ -1357,7 +1357,7 @@
   "sources": [
    "Samuelson, W., & Zeckhauser, R. (1988). Status quo bias in decision making. Journal of Risk and Uncertainty, 1(1), 7–59."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "optimism-bias",
@@ -1391,7 +1391,7 @@
    "Weinstein, N. D. (1980). Unrealistic optimism about future life events. Journal of Personality and Social Psychology, 39(5), 806–820.",
    "Sharot, T. (2011). The optimism bias. Current Biology, 21(23), R941–R945."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "negativity-bias",
@@ -1424,7 +1424,7 @@
   "sources": [
    "Baumeister, R. F., Bratslavsky, E., Finkenauer, C., & Vohs, K. D. (2001). Bad is stronger than good. Review of General Psychology, 5(4), 323–370."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "survivorship",
@@ -1458,7 +1458,7 @@
    "Wald, A. (1943). A method of estimating plane vulnerability based on damage of survivors. Statistical Research Group, Columbia University.",
    "Brown, S. J., Goetzmann, W., Ibbotson, R. G., & Ross, S. A. (1992). Survivorship bias in performance studies. Review of Financial Studies, 5(4), 553–580."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "spotlight-effect",
@@ -1491,7 +1491,7 @@
   "sources": [
    "Gilovich, T., Medvec, V. H., & Savitsky, K. (2000). The spotlight effect in social judgment. Journal of Personality and Social Psychology, 78(2), 211–222."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "decoy-effect",
@@ -1525,7 +1525,7 @@
    "Huber, J., Payne, J. W., & Puto, C. (1982). Adding asymmetrically dominated alternatives. Journal of Consumer Research, 9(1), 90–98.",
    "Frederick, S., Lee, L., & Baskin, E. (2014). The limits of attraction. Journal of Marketing Research, 51(4), 487–507."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "authority-bias",
@@ -1559,7 +1559,7 @@
    "Milgram, S. (1963). Behavioral study of obedience. Journal of Abnormal and Social Psychology, 67(4), 371–378.",
    "Burger, J. M. (2009). Replicating Milgram. American Psychologist, 64(1), 1–11."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "overconfidence",
@@ -1593,7 +1593,7 @@
    "Moore, D. A., & Healy, P. J. (2008). The trouble with overconfidence. Psychological Review, 115(2), 502–517.",
    "Svenson, O. (1981). Are we all less risky and more skillful than our fellow drivers? Acta Psychologica, 47(2), 143–148."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "dunning-kruger",
@@ -1628,7 +1628,7 @@
    "Nuhfer, E., et al. (2017). How random noise and a graphical convention subverted behavioral scientists' explanations of self-assessment data. Numeracy, 10(1).",
    "Jansen, R. A., Rafferty, A. N., & Griffiths, T. L. (2021). A rational model of the Dunning–Kruger effect. Nature Human Behaviour, 5, 756–763."
   ],
-  "reviewed": false
+  "reviewed": true
  },
  {
   "slug": "choice-supportive",
@@ -1662,6 +1662,6 @@
    "Mather, M., & Johnson, M. K. (2000). Choice-supportive source monitoring. Psychology and Aging, 15(4), 596–606.",
    "Brehm, J. W. (1956). Postdecision changes in the desirability of alternatives. Journal of Abnormal and Social Psychology, 52(3), 384–389."
   ],
-  "reviewed": false
+  "reviewed": true
  }
 ]

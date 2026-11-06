@@ -9,14 +9,15 @@ puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8")
 by_slug = {e["slug"]: e for e in entries}
 KIND = {"fallacy": "مغالطة", "bias": "انحياز"}
 e_ = html.escape
-VER = hashlib.md5((ROOT / "assets/daily.js").read_bytes() + (ROOT / "assets/style.css").read_bytes()).hexdigest()[:8]
+VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js"])).hexdigest()[:8]
+dilemmas = json.loads((ROOT / "content/dilemmas.json").read_text(encoding="utf-8"))
 
 LOGO = ('<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
         '<path d="M16 4v24M8 28h16M5 9h22"/><path d="M9 9l-4 9h8zM23 9l-4 9h8z"/></svg>')
 
 
 def page(title, body, root, active="", desc=""):
-    nav = [("", "الرئيسية"), ("daily/", "مغالطة اليوم"), ("atlas/", "الأطلس"), ("about/", "عن ميزان")]
+    nav = [("daily/", "مغالطة اليوم"), ("atlas/", "الأطلس"), ("dilemmas/", "معضلات"), ("analyze/", "حلّل الكلام"), ("about/", "عن ميزان")]
     links = "".join(f'<a href="{root}{h}"{" class=active" if h == active else ""}>{t}</a>' for h, t in nav)
     return f"""<!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
@@ -95,10 +96,37 @@ document.querySelectorAll('#g .tile').forEach(function(t){{t.style.display=(b.da
 <div class="reveal" id="reveal"><h2 id="verdict" style="margin-top:8px"></h2><p id="why"></p>
 <a class="btn ghost" id="more" href="#">اقرأ عنها في الأطلس</a> <button class="btn" id="share">شارك نتيجتك</button></div></div>
 <div class="stats"><div><b id="s-streak">0</b>أيام ورا بعض</div><div><b id="s-best">0</b>أحسن سلسلة</div><div><b id="s-played">0</b>لعبت</div></div>
-<p class="note">لغز جديد كل يوم. الألغاز دي لسه مسودات بنراجعها.</p>
+<p class="note">لغز جديد كل يوم.</p>
 <h2 id="past-h">ألغاز فاتت</h2><p class="lead" style="font-size:15px">العبها تمرين، مش هتأثر على عدد الأيام.</p><div class="grid" id="past"></div>"""
     body += f"<script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};</script><script src=\"../assets/daily.js?v={VER}\"></script>"
     write("daily/index.html", page("مغالطة اليوم — ميزان", body, "../", "daily/"))
+
+
+    # dilemmas
+    tiles = "".join(f'<a class="tile" href="{d["slug"]}/"><span>معضلة</span><b>{e_(d["title"])}</b><span>{e_(d["question"])}</span></a>' for d in dilemmas)
+    write("dilemmas/index.html", page("معضلات — ميزان", f'<h1>معضلات</h1><p class="lead">مواقف مفيهاش إجابة سهلة. اختار، وبعدين شوف الفلاسفة شايفينها إزاي.</p><div class="grid">{tiles}</div>', "../", "dilemmas/"))
+    for d in dilemmas:
+        r = "../../"
+        opts = "".join(f"<button>{e_(o)}</button>" for o in d["options"])
+        views = "".join(f'<div class="ex"><small>{e_(v["school"])}</small><div>{e_(v["text"])}</div></div>' for v in d["views"])
+        body = f"""<p class="tag">معضلة</p><h1>{e_(d['title'])}</h1>
+<div class="card" id="dilemma" data-id="{d['slug']}"><p class="scene">{e_(d['scene'])}</p><h2 style="margin-top:4px">{e_(d['question'])}</h2>
+<div class="opts">{opts}</div><p class="lead" id="vote-note" style="font-size:14px;margin-top:10px"></p>
+<div class="reveal" id="views"><h2>الفلاسفة شايفينها إزاي؟</h2><div class="card">{views}</div>
+<p class="note">مفيش إجابة صح واحدة هنا. الهدف إنك تعرف إنت اخترت ليه.</p></div></div>
+<p><a href="{r}dilemmas/">→ كل المعضلات</a></p>
+<script src="{r}assets/config.js?v={VER}"></script><script src="{r}assets/dilemma.js?v={VER}"></script>"""
+        write(f"dilemmas/{d['slug']}/index.html", page(f"{d['title']} — ميزان", body, r, "dilemmas/", d["scene"]))
+
+    # analyze
+    names = json.dumps({x["slug"]: x["name"] for x in entries}, ensure_ascii=False)
+    body = f"""<h1>حلّل الكلام</h1><p class="lead">حط أي جملة أو بوست أو كلام سمعته، وميزان هيقولك فيه مغالطة ولا انحياز، وترد إزاي.</p>
+<form id="an-form" class="card"><textarea id="an-text" rows="6" maxlength="1000" style="width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);color:var(--ink)" placeholder="مثلاً: «كل الناس بتشتري الموبايل ده، يبقى أكيد أحسن واحد.»"></textarea>
+<p style="margin:10px 0 0"><button class="btn" type="submit">وزّن الكلام</button> <span id="an-status" class="lead" style="font-size:14px"></span></p></form>
+<div id="an-out" style="margin-top:16px"></div>
+<p class="note">متكتبش بيانات شخصية، زي أسماء أو أرقام تليفونات. الكلام بيتبعت لسيرفر عشان يتحلل.</p>
+<script>window.MIZAN_NAMES={names};</script><script src="../assets/config.js?v={VER}"></script><script src="../assets/analyze.js?v={VER}"></script>"""
+    write("analyze/index.html", page("حلّل الكلام — ميزان", body, "../", "analyze/"))
 
     # about
     body = """<h1>عن ميزان</h1>
