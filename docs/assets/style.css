@@ -258,3 +258,13 @@ header.top .wrap{flex-wrap:nowrap}
 }
 .report{margin-top:2rem;font-family:var(--kufi);font-size:.95rem}.report a{color:var(--muted)}
 .note.warn{border-inline-start:3px solid var(--gold)}
+
+/* الحساب */
+.icon-btn.acct.on{color:var(--gold)}
+.icon-btn.acct.on::after{content:"";position:relative;top:-9px;inset-inline-start:-4px;width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row input{flex:1;min-width:0;max-width:none}
+input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink)}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff!important;color:#1f1f1f!important;border-color:#dadce0!important}
+.wrapstats{flex-wrap:wrap;gap:1.2rem 2rem;justify-content:flex-start}
+.btn.danger{color:var(--bad)!important;border-color:var(--bad-soft)}
+.btn.danger-fill{background:var(--bad);border-color:var(--bad);color:#fff!important}

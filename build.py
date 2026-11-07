@@ -9,7 +9,7 @@ puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8")
 by_slug = {e["slug"]: e for e in entries}
 KIND = {"fallacy": "مغالطة", "bias": "انحياز", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
 e_ = html.escape
-VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js", "search.js", "app.js", "send.js", "games.js"])).hexdigest()[:8]
+VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js", "search.js", "app.js", "send.js", "games.js", "account.js", "acct-page.js"])).hexdigest()[:8]
 dilemmas = json.loads((ROOT / "content/dilemmas.json").read_text(encoding="utf-8"))
 weekly = json.loads((ROOT / "content/weekly.json").read_text(encoding="utf-8"))
 paths = json.loads((ROOT / "content/paths.json").read_text(encoding="utf-8"))
@@ -65,11 +65,11 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
 <link rel="icon" type="image/png" href="{root}assets/icons/icon-192.png"><link rel="apple-touch-icon" href="{root}assets/icons/apple-touch.png">
 <link rel="canonical" href="{SITE}{path}">{ldj}
 </head><body data-root="{root}">
-<header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><div class="top-tools"><a class="icon-btn" href="{root}search/" aria-label="بحث"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></a><button class="icon-btn burger" aria-label="القايمة" aria-expanded="false" aria-controls="mainnav"><span></span><span></span><span></span></button></div><nav id="mainnav" aria-label="الأقسام">{links}</nav></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><div class="top-tools"><a class="icon-btn acct" id="acct-btn" href="{root}account/" aria-label="تسجيل الدخول"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></a><a class="icon-btn" href="{root}search/" aria-label="بحث"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></a><button class="icon-btn burger" aria-label="القايمة" aria-expanded="false" aria-controls="mainnav"><span></span><span></span><span></span></button></div><nav id="mainnav" aria-label="الأقسام">{links}</nav></div></header>
 <main><div class="wrap">{body}</div></main>
 <footer><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav class="foot-links" aria-label="روابط تانية">{flinks}</nav><p>زِن كلامك. مرجع مفتوح، اتكتب بإيد إنسان مع الذكاء الاصطناعي، وكل مدخل اتراجع قبل النشر.</p>
 <button class="btn ghost" id="install" hidden>نزّل ميزان على موبايلك</button><p class="note" id="install-hint" hidden>على الآيفون: دوس زرار المشاركة في سفاري، وبعدين «إضافة إلى الشاشة الرئيسية».</p></div></footer>
-<script src="{root}assets/app.js?v={VER}"></script>{beacon}
+<script src="{root}assets/app.js?v={VER}"></script><script src="{root}assets/config.js?v={VER}"></script><script src="{root}assets/account.js?v={VER}"></script>{beacon}
 </body></html>"""
 
 
@@ -367,6 +367,28 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     # offline
     (OUT / "offline.html").write_text(page("مفيش نت — ميزان", '<section class="hero">' + SCALE + '<h1 style="font-size:2.4rem">مفيش نت دلوقتي</h1><p class="lead">الصفحات اللي فتحتها قبل كده لسه شغالة. ارجع لما النت يرجع.</p><p><a class="btn" href="./">الرئيسية</a></p></section>', "./"), encoding="utf-8")
 
+    # account
+    body = f"""<h1>حسابي</h1><p class="lead">الحساب اختياري. بيحفظ تقدمك على أي جهاز، ويديك تحليلات أكتر في «حلّل الكلام». مش محتاج كلمة سر.</p>
+<p class="lead small" id="ac-status" aria-live="polite"></p>
+<section class="sheet" id="ac-login" hidden><h2 style="margin-top:0">ادخل</h2>
+<p><button class="btn gbtn" id="ac-google"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg> ادخل بحساب جوجل</button></p>
+<div class="orn" aria-hidden="true"><span></span></div>
+<form id="ac-mail-form"><label for="ac-mail">أو ادخل بالإيميل: هنبعتلك رابط تدوس عليه وتدخل على طول</label>
+<div class="row"><input type="email" id="ac-mail" required autocomplete="email" placeholder="name@example.com" dir="ltr"><button class="btn ghost" type="submit">ابعت الرابط</button></div></form>
+<p class="note">بتسجيلك بتوافق على <a href="../privacy/">سياسة الخصوصية</a>.</p></section>
+<section class="sheet" id="ac-need-email" hidden><form id="ac-need-form"><label for="ac-need-mail">الإيميل</label><div class="row"><input type="email" id="ac-need-mail" required dir="ltr"><button class="btn" type="submit">ادخل</button></div></form></section>
+<section id="ac-me" hidden>
+<div class="sheet"><p class="kicker" id="ac-email" dir="ltr" style="text-align:start"></p>
+<label for="ac-name">اسمك (بيظهر في الشهادات)</label><div class="row"><input type="text" id="ac-name" maxlength="60"><button class="btn ghost" id="ac-save">احفظ</button></div>
+<div class="stats" style="justify-content:flex-start"><div><b id="ac-plan">مجاني</b>خطتك</div><div><b id="ac-quota">…</b>تحليلات فاضلة النهارده</div></div></div>
+<h2>تقدمك</h2><div class="stats wrapstats" id="ac-stats"></div>
+<div class="today"><h2>ميزان بلس (قريباً)</h2><p>تحليلات أكتر كل يوم، ونصوص أطول، وتحليلاتك محفوظة. لسه بنجهزه.</p></div>
+<p style="margin-top:2rem"><button class="btn ghost" id="ac-out">خروج</button> <button class="btn ghost danger" id="ac-del">امسح حسابي</button></p>
+<div class="note" id="ac-del-confirm" hidden><p>متأكد؟ حسابك وكل تقدمك المحفوظ هيتمسحوا نهائي، ومش هينفع يرجعوا.</p><p><button class="btn danger-fill" id="ac-del-yes">أيوه، امسح</button> <button class="btn ghost" id="ac-del-no">لأ</button></p></div>
+</section>
+<script src="../assets/acct-page.js?v={VER}"></script>"""
+    write("account/index.html", page("حسابي — ميزان", body, "../", "", "احفظ تقدمك في ميزان على أي جهاز.", path="account/"))
+
     # privacy
     body = """<h1>الخصوصية</h1><p class="lead">ميزان مش بيطلب منك اسم ولا إيميل ولا حساب. ودي كل البيانات اللي بتتعامل في الموقع، بالظبط.</p>
 <h2>اللي بيتحفظ على جهازك بس</h2><p>نتايج الألغاز، والسلسلة، وتقدمك في المسارات، وأحسن نتيجة في الاختبارات، واختياراتك في التصويت. دي بتتحفظ في متصفحك (localStorage) ومش بتتبعت لأي حد. لو مسحت بيانات المتصفح، هتتمسح.</p>
@@ -375,6 +397,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <ul><li><b>التصويت ونتايج المعمل:</b> بنسجل اختيارك من غير اسمك. عشان كل واحد يصوّت مرة واحدة، بنحوّل عنوان الـ IP لكود مشفّر (hash) ميتعرفش منه العنوان الأصلي، وبيتمسح بعد سنة.</li>
 <li><b>حلّل الكلام:</b> النص اللي بتكتبه بيتبعت لخدمة Claude من شركة Anthropic عشان يتحلل. بنحتفظ بنتيجة التحليل 30 يوم عشان لو حد كتب نفس النص ميتحللش تاني. متكتبش أسماء ولا أرقام تليفونات ولا أي بيانات شخصية.</li>
 <li><b>ابعت مغالطة وبلاغات الأخطاء:</b> الجملة اللي بتبعتها بتتحفظ لحد 120 يوم عشان نراجعها بإيدينا. مش بنسجل مين بعتها.</li></ul>
+<h2>لو عملت حساب (اختياري)</h2><p>الحساب مش إجباري، والموقع كله شغال من غيره. لو سجّلت دخول بجوجل أو بالإيميل، بنحفظ: إيميلك، والاسم اللي تختاره، وتقدمك (نتايج الألغاز والمسارات والاختبارات)، عشان يفضل معاك على أي جهاز. تسجيل الدخول بيتم عن طريق Firebase من جوجل، والبيانات محفوظة على Cloudflare. مش بنحفظ كلمات سر خالص. تقدر تمسح حسابك وكل بياناته من صفحة <a href="../account/">حسابي</a> في أي وقت، وبيتمسح على طول.</p>
 <h2>عدّاد الزيارات</h2><p>بنستخدم Cloudflare Web Analytics عشان نعرف عدد الزيارات والصفحات اللي الناس بتحبها. مش بيستخدم كوكيز، ومش بيتتبعك من موقع لموقع.</p>
 <h2>اللي مش بنعمله</h2><p>مش بنبيع بيانات، ومش بنعرض إعلانات، ومش بنستخدم كوكيز تتبع.</p>
 <h2>عايز تمسح حاجة؟</h2><p>بياناتك على جهازك تقدر تمسحها من إعدادات المتصفح. ولو بعتلنا جملة وعايزها تتمسح، <a href="../send/">ابعتلنا</a> نصها، وإحنا نمسحها.</p>

@@ -7,8 +7,18 @@ ALLOWED_ORIGIN = "https://tahawi0.github.io"
 MODEL = "claude-haiku-4-5"
 DAILY_GLOBAL_LIMIT = "300"
 DAILY_PER_IP_LIMIT = "5"
+FIREBASE_PROJECT = "mizan-ef957"
+# حدود التحليل لأصحاب الحسابات حسب الخطة
+LIMIT_FREE = "10"
+LIMIT_PRO = "50"
 
 # بيتملى بعد أمر: npx wrangler kv namespace create MIZAN_KV
 [[kv_namespaces]]
 binding = "KV"
 id = "4895674baaaa432d85a898d7cf3cf8f1"
+
+# حسابات المستخدمين
+[[d1_databases]]
+binding = "DB"
+database_name = "mizan-db"
+database_id = "6c1f2792-af2b-415b-aaab-05e001a42074"

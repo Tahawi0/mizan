@@ -18,11 +18,19 @@
     if (text.length < 15) { st.textContent = "اكتب جملة أطول شوية."; return; }
     st.textContent = "بوزن الكلام…";
     form.querySelector("button").disabled = true;
-    fetch(api + "/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) })
+    var tok = window.MizanAuth && window.MizanAuth.user() ? window.MizanAuth.token() : Promise.resolve(null);
+    tok.catch(function () { return null; }).then(function (t) {
+      var h = { "Content-Type": "application/json" }; if (t) h.Authorization = "Bearer " + t;
+      return fetch(api + "/analyze", { method: "POST", headers: h, body: JSON.stringify({ text: text }) });
+    })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         form.querySelector("button").disabled = false;
-        if (!res.ok) { st.textContent = res.d.error || "حصلت مشكلة، جرب تاني."; return; }
+        if (!res.ok) {
+          st.textContent = res.d.error || "حصلت مشكلة، جرب تاني.";
+          if (res.d.limit && !(window.MizanAuth && window.MizanAuth.user())) { var l = document.createElement("a"); l.href = root + "account/"; l.className = "btn ghost"; l.textContent = "سجّل دخول"; l.style.marginInlineStart = "8px"; st.appendChild(document.createTextNode(" ")); st.appendChild(l); }
+          return;
+        }
         st.textContent = "";
         var d = res.d;
         var h = document.createElement("h2"); h.textContent = d.summary || ""; out.appendChild(h);
