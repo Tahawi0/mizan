@@ -107,6 +107,30 @@ async function submit(req, env) {
   return json(env, { ok: true });
 }
 
+// معمل الانحيازات: نتايج مجمعة ومجهولة لكل تجربة.
+const LAB = { anchor: { g: 2, num: true }, framing: { g: 2, o: 2 }, linda: { g: 1, o: 2 }, decoy: { g: 2, o: 3 } };
+async function labGet(env, exp) {
+  const raw = await env.KV.get("lab:" + exp);
+  if (raw) return JSON.parse(raw);
+  const d = {}; for (let k = 0; k < LAB[exp].g; k++) d[k] = { n: 0, sum: 0, c: [0, 0, 0] };
+  return d;
+}
+async function labPost(req, env) {
+  let body; try { body = await req.json(); } catch { return json(env, { error: "طلب غلط." }, 400); }
+  const exp = String(body.exp || ""), g = body.group, v = body.value, cfg = LAB[exp];
+  if (!cfg || !Number.isInteger(g) || g < 0 || g >= cfg.g || !Number.isInteger(v)) return json(env, { error: "طلب غلط." }, 400);
+  if (cfg.num ? (v < 0 || v > 300) : (v < 0 || v > 2)) return json(env, { error: "طلب غلط." }, 400);
+  const ip = req.headers.get("CF-Connecting-IP") || "x";
+  const k = "labv:" + exp + ":" + (await sha(ip)).slice(0, 16);
+  const d = await labGet(env, exp);
+  if (!(await env.KV.get(k))) {
+    d[g].n++; if (cfg.num) d[g].sum += v; else d[g].c[v]++;
+    await env.KV.put("lab:" + exp, JSON.stringify(d));
+    await env.KV.put(k, "1", { expirationTtl: 60 * 60 * 24 * 365 });
+  }
+  return json(env, d);
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
@@ -114,6 +138,12 @@ export default {
     if (req.method === "POST" && url.pathname === "/analyze") return analyze(req, env);
     if (req.method === "POST" && url.pathname === "/vote") return vote(req, env);
     if (req.method === "POST" && url.pathname === "/submit") return submit(req, env);
+    if (req.method === "POST" && url.pathname === "/lab") return labPost(req, env);
+    if (req.method === "GET" && url.pathname === "/lab") {
+      const exp = url.searchParams.get("exp") || "";
+      if (!LAB[exp]) return json(env, { error: "مش موجودة." }, 404);
+      return json(env, await labGet(env, exp));
+    }
     if (req.method === "GET" && url.pathname === "/votes") {
       const id = url.searchParams.get("id") || "";
       if (!VOTABLE.has(id)) return json(env, { error: "مش موجودة." }, 404);

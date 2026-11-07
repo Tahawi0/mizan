@@ -9,10 +9,11 @@ puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8")
 by_slug = {e["slug"]: e for e in entries}
 KIND = {"fallacy": "مغالطة", "bias": "انحياز", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
 e_ = html.escape
-VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js", "search.js", "app.js", "send.js"])).hexdigest()[:8]
+VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js", "search.js", "app.js", "send.js", "games.js"])).hexdigest()[:8]
 dilemmas = json.loads((ROOT / "content/dilemmas.json").read_text(encoding="utf-8"))
 weekly = json.loads((ROOT / "content/weekly.json").read_text(encoding="utf-8"))
 paths = json.loads((ROOT / "content/paths.json").read_text(encoding="utf-8"))
+games = json.loads((ROOT / "content/games.json").read_text(encoding="utf-8"))
 SITE = "https://tahawi0.github.io/mizan/"
 philo = json.loads((ROOT / "content/philosophy.json").read_text(encoding="utf-8"))
 trends = json.loads((ROOT / "content/trends.json").read_text(encoding="utf-8"))
@@ -34,8 +35,8 @@ ORN = '<div class="orn" aria-hidden="true"><span></span></div>'
 
 
 def page(title, body, root, active="", desc="", img="cards/og/site.png", path="", ld=None):
-    nav = [("daily/", "مغالطة اليوم"), ("atlas/", "الأطلس"), ("philosophy/", "الفلسفة"), ("paths/", "مسارات"), ("quiz/", "اختبر نفسك"), ("trends/", "وزن التريند"), ("dilemmas/", "معضلات"), ("search/", "بحث")]
-    foot = [("weekly/", "سؤال الأسبوع"), ("analyze/", "حلّل الكلام"), ("send/", "ابعت مغالطة"), ("about/", "عن ميزان")]
+    nav = [("daily/", "مغالطة اليوم"), ("atlas/", "الأطلس"), ("philosophy/", "الفلسفة"), ("paths/", "مسارات"), ("games/", "ألعاب"), ("trends/", "وزن التريند"), ("dilemmas/", "معضلات"), ("search/", "بحث")]
+    foot = [("quiz/", "اختبر نفسك"), ("weekly/", "سؤال الأسبوع"), ("analyze/", "حلّل الكلام"), ("send/", "ابعت مغالطة"), ("about/", "عن ميزان")]
     flinks = "".join(f'<a href="{root}{h}">{t}</a>' for h, t in foot)
     ldj = f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>' if ld else ""
     beacon = f'<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token": "{ANALYTICS}"}}\'></script>' if ANALYTICS else ""
@@ -96,7 +97,7 @@ def build():
     sample = [by_slug[x] for x in ["straw-man", "confirmation-bias", "sunk-cost", "survivorship", "ad-hominem", "anchoring"] if x in by_slug]
     doors = [("daily/", "مغالطة اليوم", "لغز صغير كل يوم من مواقف حياتنا. اكتشف الغلط في الكلام وشارك نتيجتك."),
              ("atlas/", "الأطلس", f"{len(entries)} مغالطة وانحياز، كل واحدة بأمثلة من البيت والشارع، وإزاي ترد عليها."),
-             ("quiz/", "اختبر نفسك", "10 أسئلة سريعة. شوف بتكشف كام مغالطة، وشارك نتيجتك مع صحابك."),
+             ("games/", "ألعاب", "7 ألعاب: اختبر نفسك وتحدّى صحابك، وجرب تجارب علم النفس على نفسك، واكشف حيل الإعلانات."),
              ("philosophy/", "الفلسفة", f"{len(philo)} فيلسوف ومدرسة، من سقراط لكامو، كل واحد بفكرته وإزاي تستخدمها النهارده."),
              ("trends/", "وزن التريند", "كلام منتشر على السوشيال، بنوزنه بهدوء: فيه إيه صح، وفيه إيه غلط."),
              ("paths/", "مسارات", f"{len(paths)} مسارات قصيرة، كل واحد 7 أيام، درس صغير ومهمة كل يوم."),
@@ -193,18 +194,46 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 
     # quiz
     body = f"""<p class="kicker">10 أسئلة</p><h1>اختبر نفسك</h1>
-<div class="sheet"><div id="q-intro"><p class="scene">هنوريك 10 مواقف من حياتنا، وفي كل واحد مغالطة أو انحياز مستخبي. اختار الإجابة، وفي الآخر هتعرف بتكشف كام.</p>
+<p class="note" id="q-banner" hidden></p><div class="sheet"><div id="q-intro"><p class="scene">هنوريك 10 مواقف من حياتنا، وفي كل واحد مغالطة أو انحياز مستخبي. اختار الإجابة، وفي الآخر هتعرف بتكشف كام.</p>
 <p><button class="btn" id="q-start">ابدأ</button></p></div>
 <div id="q-play" style="display:none"><p class="kicker" id="q-no"></p><div class="bar"><i id="q-bar"></i></div>
 <p class="scene" id="q-scene"></p><div class="opts" id="q-opts"></div><p id="q-why" style="margin-top:1rem"></p>
 <p><button class="btn" id="q-next" style="display:none"></button></p></div>
 <div id="q-end" style="display:none" class="center"><p class="kicker">نتيجتك</p><p class="big"><span id="q-score">0</span><small> من 10</small></p>
-<h2 id="q-level" style="justify-content:center"></h2><p class="lead" style="margin:0 auto">أحسن نتيجة ليك: <b id="q-best">0</b></p>
-<p style="margin-top:1rem"><button class="btn" id="q-share">شارك نتيجتك</button> <button class="btn ghost" id="q-again">العب تاني</button></p>
+<h2 id="q-level" style="justify-content:center"></h2><p class="verdict" id="q-vs" hidden></p><p class="lead" style="margin:0 auto">أحسن نتيجة ليك: <b id="q-best">0</b></p>
+<p style="margin-top:1rem"><button class="btn" id="q-challenge">تحدّى صاحبك</button> <button class="btn ghost" id="q-share">شارك نتيجتك</button> <button class="btn ghost" id="q-again">العب تاني</button></p>
 <div id="q-review-h"><h2 style="justify-content:center">راجع دول</h2><ul class="index" id="q-review" style="text-align:start"></ul></div></div></div>
 <p class="note">كل مرة هتطلعلك أسئلة مختلفة من {len(puzzles)} لغز.</p>
 <script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};window.MIZAN_NAMES={json.dumps({x["slug"]: x["name"] for x in entries}, ensure_ascii=False)};</script><script src="../assets/quiz.js?v={VER}"></script>"""
     write("quiz/index.html", page("اختبر نفسك — ميزان", body, "../", "quiz/", "10 أسئلة سريعة: بتكشف كام مغالطة من 10؟", path="quiz/"))
+
+    # games
+    gx = "../../"
+    GAMES = [
+        ("quiz", "اختبر نفسك", "10 أسئلة، وتحدّى صاحبك في نفس الأسئلة."),
+        ("lab", "معمل الانحيازات", "4 تجارب علم نفس حقيقية تتعمل عليك، وتشوف نتايج كل اللي جربوا."),
+        ("spot", "اكشف الحيلة", "3 إعلانات لماركات وهمية، وجوه كل واحد حيل مستخبية. لاقيها."),
+        ("philosopher", "أنهي فيلسوف إنت؟", "8 أسئلة خفيفة… وفي الآخر مفاجأة."),
+        ("calibration", "ميزان الثقة", "معلوماتك قد ثقتك؟ 10 أسئلة وهتعرف."),
+        ("fix", "صلّح الحجة", "مش بس تكشف الغلط. اختار إزاي الجملة تتقال صح."),
+        ("../daily", "مغالطة اليوم", "لغز جديد كل يوم، وسلسلة أيام ورا بعض.")]
+    tiles = "".join(f'<a class="tile" href="{"../quiz/" if k == "quiz" else (k + "/") if not k.startswith("..") else "../daily/"}"><span>لعبة</span><b>{t}</b><span>{d}</span></a>' for k, t, d in GAMES)
+    write("games/index.html", page("ألعاب — ميزان", f'<h1>ألعاب</h1><p class="lead">اتعلم التفكير وإنت بتلعب. كل لعبة بتاخد دقايق، وبتعلمك حاجة.</p><div class="grid">{tiles}</div>', "../", "games/", "ألعاب تفاعلية عن المغالطات والانحيازات: تجارب علم نفس، وكشف حيل الإعلانات، وتحدي صحابك.", path="games/"))
+    names_js = json.dumps({x["slug"]: x["name"] for x in entries}, ensure_ascii=False)
+    pn = json.dumps({k: {"name": p_slug[k]["name"]} for k in games["phil"]["results"]}, ensure_ascii=False)
+    spec = {
+        "lab": ("معمل الانحيازات", "التجارب دي اتعملت قبل كده على آلاف الناس في دراسات مشهورة. جاوب بسرعة وبصراحة، وبعدين شوف مخك اتأثر إزاي. الإجابات مجهولة، ومش بنسجل أي حاجة عنك.", {"lab": games["lab"]}, True),
+        "spot": ("اكشف الحيلة", "الإعلانات دي متألفة لماركات مش موجودة. دوس على أي جملة شايف فيها حيلة، وبعدين دوس «خلصت».", {"spot": games["spot"]}, False),
+        "philosopher": ("أنهي فيلسوف إنت؟", "8 أسئلة، اختار الأقرب ليك من غير ما تفكر كتير.", {"phil": games["phil"]}, False),
+        "calibration": ("ميزان الثقة", "10 جمل: قول صح ولا غلط، وبعدين قول إنت متأكد بنسبة قد إيه. المهم مش بس تجاوب صح، المهم ثقتك تبقى قد معلوماتك.", {"calib": games["calib"]}, False),
+        "fix": ("صلّح الحجة", "كل جملة فيها غلط. اختار الصياغة اللي بتقول نفس الفكرة من غير الغلط.", {"fix": games["fix"]}, False)}
+    gid = {"lab": "lab", "spot": "spot", "philosopher": "phil", "calibration": "calib", "fix": "fix"}
+    for slug, (title, lead, data, api) in spec.items():
+        data["philNames"] = json.loads(pn)
+        body = f"""<p class="kicker"><a href="{gx}games/">ألعاب</a></p><h1>{title}</h1><p class="lead">{lead}</p>
+<div id="game" data-game="{gid[slug]}"{' class="sheet"' if slug != "lab" else ''}></div>
+<script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script>{f'<script src="{gx}assets/config.js?v={VER}"></script>' if api else ''}<script src="{gx}assets/games.js?v={VER}"></script>"""
+        write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
 
     # weekly question
     wk = [{"slug": w["slug"], "title": w["title"], "question": w["question"]} for w in weekly]

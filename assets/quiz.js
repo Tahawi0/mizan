@@ -1,13 +1,23 @@
 (function () {
   var all = window.MIZAN_PUZZLES || [];
   var root = document.body.getAttribute("data-root") || "./";
-  var N = 10, qs = [], i = 0, score = 0, wrong = [];
   var $ = function (id) { return document.getElementById(id); };
+  var N = 10, qs = [], i = 0, score = 0, wrong = [];
+  // وضع التحدي: ?c=ids&s=score يدي صاحبك نفس الأسئلة.
+  var sp = new URLSearchParams(location.search), ch = null;
+  (function () {
+    var ids = (sp.get("c") || "").split(".").map(Number), byId = {};
+    all.forEach(function (p) { byId[p.id] = p; });
+    var list = ids.map(function (k) { return byId[k]; }).filter(Boolean);
+    var s = parseInt(sp.get("s"), 10);
+    if (list.length === N && s >= 0 && s <= N) ch = { qs: list, s: s };
+  })();
+  if (ch) { var bn = $("q-banner"); bn.hidden = false; bn.textContent = "صاحبك جاب " + ch.s + " من 10 في نفس الأسئلة دي. تقدر تغلبه؟"; }
 
   function shuffle(a) { for (var k = a.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = a[k]; a[k] = a[j]; a[j] = t; } return a; }
 
   function start() {
-    qs = shuffle(all.slice()).slice(0, N); i = 0; score = 0; wrong = [];
+    qs = ch ? ch.qs.slice() : shuffle(all.slice()).slice(0, N); i = 0; score = 0; wrong = [];
     $("q-intro").style.display = "none"; $("q-end").style.display = "none"; $("q-play").style.display = "";
     ask();
   }
@@ -46,6 +56,9 @@
     $("q-bar").style.width = "100%";
     $("q-score").textContent = score;
     $("q-level").textContent = level(score);
+    var vs = $("q-vs");
+    if (ch) { vs.hidden = false; vs.textContent = score > ch.s ? "كسبت صاحبك! إنت " + score + " وهو " + ch.s + "." : score === ch.s ? "تعادل! إنتوا الاتنين " + score + "." : "صاحبك كسب المرة دي: هو " + ch.s + " وإنت " + score + "."; ch = null; $("q-banner").hidden = true; }
+    else vs.hidden = true;
     var ul = $("q-review"); ul.innerHTML = "";
     var seen = {};
     wrong.forEach(function (p) {
@@ -61,6 +74,12 @@
   $("q-start").onclick = start;
   $("q-again").onclick = start;
   $("q-next").onclick = function () { i++; if (i < N) ask(); else end(); };
+  $("q-challenge").onclick = function () {
+    var url = location.origin + location.pathname + "?c=" + qs.map(function (p) { return p.id; }).join(".") + "&s=" + score;
+    var txt = "ميزان — تحدّي ⚖️\nأنا كشفت " + score + " من 10 مغالطات. تقدر تغلبني في نفس الأسئلة؟\n" + url, btn = this;
+    if (navigator.share) navigator.share({ text: txt }).catch(function () {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { btn.textContent = "اتنسخ اللينك ✓"; });
+  };
   $("q-share").onclick = function () {
     var txt = "ميزان — اختبر نفسك\nكشفت " + score + " من " + N + " مغالطات ⚖️\n" + level(score) + "\nجرّب إنت: " + location.href.split("?")[0];
     var btn = this;

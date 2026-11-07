@@ -181,3 +181,19 @@ label{font-family:var(--kufi);display:block;margin:1rem 0 .3rem;font-size:1rem}
 .foot-links a{color:var(--muted);text-decoration:none}.foot-links a:hover{color:var(--gold)}
 #install{margin-top:.6rem}
 @media (max-width:560px){.pair{grid-template-columns:1fr}}
+
+/* الألعاب */
+.lab{margin-bottom:1.4rem}.lab h2{margin-top:0}
+.num-form{display:flex;gap:8px;margin-top:1rem}.num-form input{font:inherit;font-size:1.3rem;width:8rem;padding:.4rem .8rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink)}
+.res{margin:.7rem 0}.res-top{display:flex;justify-content:space-between;gap:10px;font-size:1rem;color:var(--muted)}.res-top b{color:var(--ink);font-family:var(--kufi);font-weight:600}
+.res.mine .res-top span{color:var(--ink)}.res.mine .bar i{background:var(--lapis)}
+.small{font-size:.95rem}
+.ad{background:var(--paper);border:1px dashed var(--gold);padding:1.2rem 1.3rem;border-radius:4px}.ad h2{margin-top:0}
+.ad-text{font-size:1.25rem;line-height:2.3}
+.line{cursor:pointer;padding:2px 4px;border-radius:3px;border-bottom:1px dotted var(--rule);transition:background .15s}
+.line:hover{background:var(--gold-soft)}.line.picked{background:var(--lapis-soft);border-bottom:2px solid var(--lapis)}
+.done .line{cursor:default}.line.ok{background:var(--ok-soft);border-bottom:2px solid var(--ok)}.line.miss{background:var(--gold-soft);border-bottom:2px solid var(--gold)}.line.bad{background:var(--bad-soft);border-bottom:2px solid var(--bad)}
+.spot-out{margin:1rem 0}
+.tf{display:flex;gap:10px;margin:1rem 0}.tf .btn{min-width:6rem}.tf .btn.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.conf-row{display:flex;flex-wrap:wrap;gap:8px}.conf-row button{font-family:var(--kufi);font-size:1.05rem;padding:.4rem .9rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);cursor:pointer}.conf-row button:hover{border-color:var(--gold)}
+.big{word-break:break-word}
