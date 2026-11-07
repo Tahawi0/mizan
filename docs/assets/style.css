@@ -133,7 +133,7 @@ main{padding:2.4rem 0 4rem}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#121A2C}}
 :root[data-theme="dark"] .btn:not(.ghost){color:#121A2C}
 [hidden]{display:none!important}
-.hp{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.hp{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;border:0!important;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
 textarea{width:100%;font:inherit;font-size:1.1rem;border:1px solid var(--rule);border-radius:4px;padding:.8rem;background:var(--paper);color:var(--ink);line-height:1.9}
 .note{background:var(--gold-soft);border-radius:3px;padding:.6rem 1rem;font-size:1rem;margin:1.2rem 0;line-height:1.8}
@@ -204,3 +204,4 @@ label{font-family:var(--kufi);display:block;margin:1rem 0 .3rem;font-size:1rem}
 html,body{overflow-x:hidden}
 img,svg,canvas{max-width:100%}
 .btn{max-width:100%;white-space:normal}
+.search input{min-width:0;width:100%}
