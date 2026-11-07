@@ -89,6 +89,8 @@ def build():
     shutil.copytree(ROOT / "assets", OUT / "assets")
     (OUT / ".nojekyll").write_text("")
     shutil.copytree(ROOT / "cards", OUT / "cards")
+    for f in (ROOT / "static").glob("*"):
+        shutil.copy(f, OUT / f.name)
 
     # home
     sample = [by_slug[x] for x in ["straw-man", "confirmation-bias", "sunk-cost", "survivorship", "ad-hominem", "anchoring"] if x in by_slug]
