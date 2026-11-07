@@ -368,3 +368,20 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .argue-msg b{font-family:var(--kufi)}
 .argue-msg p{margin:.3rem 0 0;font-size:1.02rem}
 .argue-msg.ok b{color:var(--ok)}.argue-msg.bad b{color:var(--bad)}
+/* مرآة الناس */
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1rem 0}
+.mstat{background:var(--leaf);border:1px solid var(--rule);border-radius:4px;padding:.8rem;text-align:center}
+.mstat b{display:block;font-family:var(--kufi);font-size:2.2rem;line-height:1.3;color:var(--gold)}
+.mstat span{color:var(--muted);font-size:.95rem}
+.mlab h3{font-family:var(--kufi);margin-bottom:.4rem}
+.splits{display:grid;gap:12px}
+.split{display:block;background:var(--leaf);border:1px solid var(--rule);border-radius:4px;padding:.8rem 1rem;color:var(--ink);text-decoration:none}
+.split:hover{border-color:var(--gold)}
+.split b{font-family:var(--kufi);font-weight:600}
+.split-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:.5rem 0;background:var(--rule)}
+.split-bar i{display:block;height:100%}
+.split-bar .sa,.split-legend .sa::before{background:var(--lapis)}
+.split-bar .sb,.split-legend .sb::before{background:var(--gold)}
+.split-legend{display:grid;gap:2px;font-size:.95rem;line-height:1.7}
+.split-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:6px}
+.split small{color:var(--muted)}

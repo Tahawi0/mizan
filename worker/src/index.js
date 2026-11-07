@@ -200,8 +200,22 @@ async function me(req, env) {
   return json(env, { uid: u.uid, email: u.email, name: u.name, plan: u.plan, created: u.created, progress: JSON.parse(u.progress || "{}"), analyze: { used, limit: lim } });
 }
 
+// مرآة الناس: كل النتايج المجمعة في طلب واحد، متخزنة في الكاش 5 دقايق.
+async function mirror(req, env, ctx) {
+  const cache = caches.default, key = new Request("https://mizan-cache/mirror");
+  const hit = await cache.match(key);
+  if (hit) { const h = new Headers(hit.headers); for (const [k, v] of Object.entries(cors(env))) h.set(k, v); return new Response(hit.body, { headers: h }); }
+  const ids = [...VOTABLE], vals = await Promise.all(ids.map(id => counts(env, id)));
+  const votes = {}; ids.forEach((id, i) => { votes[id] = vals[i]; });
+  const exps = Object.keys(LAB), labs = await Promise.all(exps.map(e => labGet(env, e)));
+  const lab = {}; exps.forEach((e, i) => { lab[e] = labs[i]; });
+  const body = JSON.stringify({ votes, lab, at: Date.now() });
+  ctx.waitUntil(cache.put(key, new Response(body, { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=300" } })));
+  return new Response(body, { headers: { "Content-Type": "application/json; charset=utf-8", ...cors(env) } });
+}
+
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const url = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { headers: cors(env) });
     if (req.method === "POST" && url.pathname === "/analyze") return analyze(req, env);
@@ -214,6 +228,7 @@ export default {
       if (!LAB[exp]) return json(env, { error: "مش موجودة." }, 404);
       return json(env, await labGet(env, exp));
     }
+    if (req.method === "GET" && url.pathname === "/mirror") return mirror(req, env, ctx);
     if (req.method === "GET" && url.pathname === "/votes") {
       const id = url.searchParams.get("id") || "";
       if (!VOTABLE.has(id)) return json(env, { error: "مش موجودة." }, 404);

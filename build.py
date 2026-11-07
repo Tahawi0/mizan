@@ -251,6 +251,8 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
             ("games/fix/", "صلّح الحجة", "اختار إزاي الجملة تتقال من غير الغلط.", "4 دقايق", False)]),
         ("قول رأيك", "مواقف مفيهاش إجابة سهلة.", [
             ("dilemmas/", "معضلات", "24 موقف صعب، صوّت وشوف الفلاسفة قالوا إيه.", "دقيقتين", False)]),
+        ("لوحات", "شوف الناس بتفكر إزاي، وإنت فين منهم.", [
+            ("games/mirror/", "مرآة الناس", "لوحة حية بنتايج كل التصويت والتجارب: الناس اختارت إيه، ووقعت في إيه.", "دقيقتين", True)]),
     ]
     def atile(h, t, d, m, new):
         badge = '<em class="new">جديد</em>' if new else ''
@@ -290,6 +292,19 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <p class="report"><a href="{gx}send/?err=games/{slug}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script><script src="{gx}assets/{slug}.js?v={VER}"></script>"""
         write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
+
+    # مرآة الناس
+    ins = {"anchor": "لو متوسط اللي شافوا رقم 75 أعلى من اللي شافوا 15، يبقى رقم ملوش علاقة غيّر تقديرهم. الإجابة الصح 54.",
+           "framing": "الخطتين واحد بالظبط بالأرقام. لو النسبتين مختلفين، يبقى الصياغة لوحدها هي اللي غيّرت القرار.",
+           "linda": "الاختيار التاني مستحيل يكون أكتر احتمالاً من الأول. كل اللي اختاروه وقعوا في «مغالطة الاقتران».",
+           "decoy": "لو النسبة أعلى عند اللي شافوا 3 اختيارات، يبقى الاختيار الطُعم اشتغل عليهم."}
+    mlab = [{"id": x["id"], "title": x["title"], "groupNames": x["groupNames"], "num": bool(x["groups"][0].get("num")), "metric": x.get("metric", 0), "metricLabel": x.get("metricLabel", ""), "insight": ins.get(x["id"], "")} for x in games["lab"]]
+    mitems = [{"id": d["slug"], "title": d["title"], "opts": d["options"], "url": f"dilemmas/{d['slug']}/"} for d in dilemmas] + [{"id": "week-" + w["slug"], "title": w["title"], "opts": w["options"], "url": f"weekly/{w['slug']}/"} for w in weekly]
+    lead = "لوحة حية بتجمع كل تصويت المعضلات وسؤال الأسبوع، ونتايج تجارب المعمل. شوف الناس بتفكر إزاي، ووقعت في أنهي فخ."
+    body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>مرآة الناس</h1><p class="lead">{lead}</p>
+<div id="game"></div>
+<script>window.MIZAN_GAME={json.dumps({"lab": mlab, "items": mitems}, ensure_ascii=False)};</script><script src="{gx}assets/config.js?v={VER}"></script><script src="{gx}assets/mirror.js?v={VER}"></script>"""
+    write("games/mirror/index.html", page("مرآة الناس — ميزان", body, gx, "games/", lead, path="games/mirror/"))
 
     # weekly question
     wk = [{"slug": w["slug"], "title": w["title"], "question": w["question"]} for w in weekly]
