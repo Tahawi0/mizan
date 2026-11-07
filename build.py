@@ -386,7 +386,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <p style="margin-top:2rem"><button class="btn ghost" id="ac-out">خروج</button> <button class="btn ghost danger" id="ac-del">امسح حسابي</button></p>
 <div class="note" id="ac-del-confirm" hidden><p>متأكد؟ حسابك وكل تقدمك المحفوظ هيتمسحوا نهائي، ومش هينفع يرجعوا.</p><p><button class="btn danger-fill" id="ac-del-yes">أيوه، امسح</button> <button class="btn ghost" id="ac-del-no">لأ</button></p></div>
 </section>
-<script src="../assets/acct-page.js?v={VER}"></script>"""
+<script defer src="../assets/acct-page.js?v={VER}"></script>"""
     write("account/index.html", page("حسابي — ميزان", body, "../", "", "احفظ تقدمك في ميزان على أي جهاز.", path="account/"))
 
     # privacy
