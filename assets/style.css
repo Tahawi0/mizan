@@ -316,7 +316,7 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .meter span{font-family:var(--kufi);font-size:.9rem;color:var(--muted)}
 .meter .bar i{transition:width .5s}
 .chat{border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--paper)}
-.chat-top{background:var(--lapis);color:#F3EDDD;padding:.5rem 1rem;line-height:1.5}
+.chat-top{background:#1F3B73;color:#F3EDDD;padding:.5rem 1rem;line-height:1.5}
 .chat-top b{display:block;font-family:var(--kufi)}
 .chat-top span{font-size:.85rem;opacity:.85}
 .chat-feed{display:flex;flex-direction:column;gap:8px;padding:1rem;max-height:60vh;min-height:12rem;overflow-y:auto}
@@ -341,7 +341,7 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .esc-clock{font-family:var(--kufi);font-size:1.5rem;direction:ltr}
 .esc-pen{position:absolute;left:0;top:-1.4rem;color:var(--bad);font-family:var(--kufi);font-size:.95rem;animation:penup 1.2s ease-out forwards}
 @keyframes penup{to{transform:translateY(-14px);opacity:0}}
-.door{width:74px;height:110px;margin:0 auto 1rem;border:3px solid var(--gold);border-radius:38px 38px 3px 3px;background:var(--lapis);position:relative;display:flex;align-items:center;justify-content:center;transform-origin:right;transition:transform .7s ease, background .7s}
+.door{width:74px;height:110px;margin:0 auto 1rem;border:3px solid var(--gold);border-radius:38px 38px 3px 3px;background:#1F3B73;position:relative;display:flex;align-items:center;justify-content:center;transform-origin:right;transition:transform .7s ease, background .7s}
 .door::after{content:"";position:absolute;left:12px;top:56px;width:9px;height:9px;border-radius:50%;background:var(--gold)}
 .door-no{font-family:var(--kufi);color:#F3EDDD;font-size:1.6rem}
 .door.open{transform:perspective(400px) rotateY(-55deg);background:var(--ok)}

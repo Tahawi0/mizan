@@ -412,6 +412,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     idx += [{"t": x["title"], "k": "معضلة", "d": x["question"], "u": f"dilemmas/{x['slug']}/", "x": x["scene"]} for x in dilemmas]
     idx += [{"t": x["title"], "k": "سؤال الأسبوع", "d": x["question"], "u": f"weekly/{x['slug']}/", "x": x["scene"]} for x in weekly]
     idx += [{"t": x["title"], "k": "وزن التريند", "d": x["verdict"], "u": f"trends/{x['slug']}/", "x": x["claim"]} for x in trends]
+    idx += [{"t": t, "k": "لعبة", "d": d, "u": h, "x": n} for n, _, gs in ARENA for h, t, d, _, _ in gs if h.startswith(("games/", "quiz/", "daily/"))]
     (OUT / "search.json").write_text(json.dumps(idx, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     body = f"""<h1>بحث</h1><p class="lead">دوّر في {len(idx)} صفحة: مغالطات وانحيازات وفلاسفة ومسارات ومعضلات.</p>
 <form class="search" role="search" onsubmit="return false"><input id="s-q" type="search" placeholder="مثلاً: تعميم، كانط، إعلانات" aria-label="كلمة البحث" autocomplete="off"></form>
