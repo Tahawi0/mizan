@@ -9,8 +9,11 @@ puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8")
 by_slug = {e["slug"]: e for e in entries}
 KIND = {"fallacy": "مغالطة", "bias": "انحياز"}
 e_ = html.escape
-VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js"])).hexdigest()[:8]
+VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js"])).hexdigest()[:8]
 dilemmas = json.loads((ROOT / "content/dilemmas.json").read_text(encoding="utf-8"))
+weekly = json.loads((ROOT / "content/weekly.json").read_text(encoding="utf-8"))
+paths = json.loads((ROOT / "content/paths.json").read_text(encoding="utf-8"))
+SITE = "https://tahawi0.github.io/mizan/"
 
 LOGO = ('<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
         '<path d="M16 4v24M8 28h16M5 9h22"/><path d="M9 9l-4 9h8zM23 9l-4 9h8z"/></svg>')
@@ -24,14 +27,20 @@ SCALE = """<svg class="scale" viewBox="0 0 200 150" fill="none" stroke="currentC
 ORN = '<div class="orn" aria-hidden="true"><span></span></div>'
 
 
-def page(title, body, root, active="", desc=""):
-    nav = [("daily/", "مغالطة اليوم"), ("atlas/", "الأطلس"), ("dilemmas/", "معضلات"), ("analyze/", "حلّل الكلام"), ("about/", "عن ميزان")]
+def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""):
+    nav = [("daily/", "مغالطة اليوم"), ("quiz/", "اختبر نفسك"), ("atlas/", "الأطلس"), ("paths/", "مسارات"), ("dilemmas/", "معضلات"), ("weekly/", "سؤال الأسبوع"), ("analyze/", "حلّل الكلام"), ("about/", "عن ميزان")]
+    d = e_(desc or "ميزان: مرجع مصري مفتوح عن التفكير الصح، المغالطات والانحيازات بأمثلة من حياتنا.")
     links = "".join(f'<a href="{root}{h}"{" class=active" if h == active else ""}>{t}</a>' for h, t in nav)
     return f"""<!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e_(title)}</title>
-<meta name="description" content="{e_(desc or 'ميزان: مرجع مصري مفتوح عن التفكير الصح، المغالطات والانحيازات بأمثلة من حياتنا.')}">
+<meta name="description" content="{d}">
+<meta property="og:type" content="website"><meta property="og:site_name" content="ميزان"><meta property="og:locale" content="ar_EG">
+<meta property="og:title" content="{e_(title)}"><meta property="og:description" content="{d}">
+<meta property="og:url" content="{SITE}{path}"><meta property="og:image" content="{SITE}{img}">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{SITE}{img}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Reem+Kufi:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}assets/style.css?v={VER}">
@@ -63,12 +72,16 @@ def build():
         shutil.rmtree(OUT)
     shutil.copytree(ROOT / "assets", OUT / "assets")
     (OUT / ".nojekyll").write_text("")
+    shutil.copytree(ROOT / "cards", OUT / "cards")
 
     # home
     sample = [by_slug[x] for x in ["straw-man", "confirmation-bias", "sunk-cost", "survivorship", "ad-hominem", "anchoring"] if x in by_slug]
     doors = [("daily/", "مغالطة اليوم", "لغز صغير كل يوم من مواقف حياتنا. اكتشف الغلط في الكلام وشارك نتيجتك."),
              ("atlas/", "الأطلس", f"{len(entries)} مغالطة وانحياز، كل واحدة بأمثلة من البيت والشارع، وإزاي ترد عليها."),
+             ("quiz/", "اختبر نفسك", "10 أسئلة سريعة. شوف بتكشف كام مغالطة، وشارك نتيجتك مع صحابك."),
+             ("paths/", "مسارات", f"{len(paths)} مسارات قصيرة، كل واحد 7 أيام، درس صغير ومهمة كل يوم."),
              ("dilemmas/", "معضلات", f"{len(dilemmas)} موقف مفيهوش إجابة سهلة. اختار، وشوف الناس اختارت إيه والفلاسفة قالوا إيه."),
+             ("weekly/", "سؤال الأسبوع", "سؤال فلسفي كبير كل أسبوع. صوّت وشوف الناس قالت إيه."),
              ("analyze/", "حلّل الكلام", "حط أي جملة سمعتها، وميزان يوزنها ويقولك فيها غلط ولا لأ.")]
     doors_html = "".join(f'<li><a href="{h}"><b>{t}</b><span>{d}</span></a></li>' for h, t, d in doors)
     idx = "".join(f'<li><a href="atlas/{e["slug"]}/"><b>{e_(e["name"])}</b><em>{KIND[e["kind"]]}</em><span>{e_(e["oneLine"])}</span></a></li>' for e in sample)
@@ -113,8 +126,9 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <h2>إزاي ترد من غير خناق</h2><p>{e_(e['respond'])}</p>
 {f"<h2>متتلخبطش بينها وبين: " + (f'<a href="{r}atlas/{nc["slug"]}/">{e_(nc["name"])}</a>' if nc.get("slug") else e_(nc["name"])) + f"</h2><p>{e_(nc['diff'])}</p>" if nc else ""}
 {ev}<h2>مصادر</h2><ul class="sources">{src}</ul>
+<h2>شاركها</h2><p><a class="btn ghost" href="{r}cards/post/{e['slug']}.png" download>نزّل الكارت للبوست</a> <a class="btn ghost" href="{r}cards/og/{e['slug']}.png" download>كارت عريض</a></p>
 <p class="back"><a href="{r}atlas/">ارجع للفهرس</a></p>"""
-        write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"]))
+        write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"], f"cards/og/{e['slug']}.png", f"atlas/{e['slug']}/"))
 
     # daily
     body = """<p class="kicker">لغز رقم <span id="dayno"></span></p>
@@ -153,6 +167,57 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <p class="note">متكتبش بيانات شخصية، زي أسماء أو أرقام تليفونات. الكلام بيتبعت لسيرفر عشان يتحلل.</p>
 <script>window.MIZAN_NAMES={names};</script><script src="../assets/config.js?v={VER}"></script><script src="../assets/analyze.js?v={VER}"></script>"""
     write("analyze/index.html", page("حلّل الكلام — ميزان", body, "../", "analyze/"))
+
+    # quiz
+    body = f"""<p class="kicker">10 أسئلة</p><h1>اختبر نفسك</h1>
+<div class="sheet"><div id="q-intro"><p class="scene">هنوريك 10 مواقف من حياتنا، وفي كل واحد مغالطة أو انحياز مستخبي. اختار الإجابة، وفي الآخر هتعرف بتكشف كام.</p>
+<p><button class="btn" id="q-start">ابدأ</button></p></div>
+<div id="q-play" style="display:none"><p class="kicker" id="q-no"></p><div class="bar"><i id="q-bar"></i></div>
+<p class="scene" id="q-scene"></p><div class="opts" id="q-opts"></div><p id="q-why" style="margin-top:1rem"></p>
+<p><button class="btn" id="q-next" style="display:none"></button></p></div>
+<div id="q-end" style="display:none" class="center"><p class="kicker">نتيجتك</p><p class="big"><span id="q-score">0</span><small> من 10</small></p>
+<h2 id="q-level" style="justify-content:center"></h2><p class="lead" style="margin:0 auto">أحسن نتيجة ليك: <b id="q-best">0</b></p>
+<p style="margin-top:1rem"><button class="btn" id="q-share">شارك نتيجتك</button> <button class="btn ghost" id="q-again">العب تاني</button></p>
+<div id="q-review-h"><h2 style="justify-content:center">راجع دول</h2><ul class="index" id="q-review" style="text-align:start"></ul></div></div></div>
+<p class="note">كل مرة هتطلعلك أسئلة مختلفة من {len(puzzles)} لغز.</p>
+<script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};window.MIZAN_NAMES={json.dumps({x["slug"]: x["name"] for x in entries}, ensure_ascii=False)};</script><script src="../assets/quiz.js?v={VER}"></script>"""
+    write("quiz/index.html", page("اختبر نفسك — ميزان", body, "../", "quiz/", "10 أسئلة سريعة: بتكشف كام مغالطة من 10؟", path="quiz/"))
+
+    # weekly question
+    wk = [{"slug": w["slug"], "title": w["title"], "question": w["question"]} for w in weekly]
+    body = f"""<p class="kicker">سؤال فلسفي كل أسبوع</p><h1>سؤال الأسبوع</h1>
+<section class="today"><h2 id="w-title">…</h2><blockquote id="w-q"></blockquote><a class="btn" id="w-go" href="#">صوّت</a></section>
+<h2 id="w-past-h">أسئلة فاتت</h2><div class="grid" id="w-past"></div>
+<script>(function(){{var W={json.dumps(wk, ensure_ascii=False)};var n=Math.floor((Date.now()-Date.UTC(2026,10,7))/6048e5);if(n<0)n=0;var c=n%W.length;
+document.getElementById("w-title").textContent=W[c].title;document.getElementById("w-q").textContent=W[c].question;document.getElementById("w-go").href=W[c].slug+"/";
+var past=document.getElementById("w-past");for(var k=Math.min(n,W.length)-1;k>=0;k--){{if(k===c)continue;var a=document.createElement("a");a.className="tile";a.href=W[k].slug+"/";a.innerHTML="<span>سؤال</span>";var b=document.createElement("b");b.textContent=W[k].title;a.appendChild(b);var s=document.createElement("span");s.textContent=W[k].question;a.appendChild(s);past.appendChild(a);}}
+if(!past.children.length){{past.style.display="none";document.getElementById("w-past-h").style.display="none";}}}})();</script>"""
+    write("weekly/index.html", page("سؤال الأسبوع — ميزان", body, "../", "weekly/", "سؤال فلسفي كبير كل أسبوع. صوّت وشوف الناس قالت إيه.", path="weekly/"))
+    for w in weekly:
+        r = "../../"
+        opts = "".join(f"<button>{e_(o)}</button>" for o in w["options"])
+        views = "".join(f'<div class="ex"><small>{e_(v["school"])}</small><div>{e_(v["text"])}</div></div>' for v in w["views"])
+        body = f"""<p class="kicker">سؤال الأسبوع</p><h1>{e_(w['title'])}</h1>
+<div class="sheet" id="dilemma" data-id="week-{w['slug']}"><p class="scene">{e_(w['scene'])}</p><h2 style="margin-top:4px">{e_(w['question'])}</h2>
+<div class="opts">{opts}</div><p class="lead" id="vote-note" style="font-size:14px;margin-top:10px"></p>
+<div class="reveal" id="views"><h2>الفلاسفة قالوا إيه؟</h2>{views}
+<p class="note">مفيش إجابة صح واحدة. المهم تعرف إنت اخترت ليه.</p></div></div>
+<p class="back"><a href="{r}weekly/">سؤال الأسبوع</a></p>
+<script src="{r}assets/config.js?v={VER}"></script><script src="{r}assets/dilemma.js?v={VER}"></script>"""
+        write(f"weekly/{w['slug']}/index.html", page(f"{w['title']} — ميزان", body, r, "weekly/", w["scene"], path=f"weekly/{w['slug']}/"))
+
+    # learning paths
+    tiles = "".join(f'<a class="tile" href="{p["slug"]}/"><span>{len(p["days"])} أيام</span><b>{e_(p["title"])}</b><span>{e_(p["intro"])}</span></a>' for p in paths)
+    write("paths/index.html", page("مسارات — ميزان", f'<h1>مسارات</h1><p class="lead">كورسات قصيرة: درس صغير ومهمة كل يوم، 5 دقايق بس. تقدمك بيتحفظ على جهازك.</p><div class="grid">{tiles}</div>', "../", "paths/", path="paths/"))
+    for p in paths:
+        r = "../../"
+        days = "".join(f"""<div class="day"><h3><small>اليوم {k + 1}</small><a href="{r}atlas/{d['entry']}/">{e_(by_slug[d['entry']]['name'])}</a></h3>
+<p>{e_(d['lesson'])}</p><p class="task"><b>مهمة النهارده:</b> {e_(d['task'])}</p><button class="btn ghost mark">خلصت اليوم ده</button></div>""" for k, d in enumerate(p["days"]))
+        body = f"""<p class="kicker">مسار — {len(p['days'])} أيام</p><h1>{e_(p['title'])}</h1><p class="lead">{e_(p['intro'])}</p>
+<div id="path" data-id="{p['slug']}"><p class="kicker" id="p-count"></p><div class="bar"><i id="p-bar"></i></div>{days}</div>
+<div class="today" id="p-done" style="display:none"><h2>خلصت المسار!</h2><p>جرّب تختبر نفسك وشوف الفرق.</p><a class="btn" href="{r}quiz/">اختبر نفسك</a></div>
+<p class="back"><a href="{r}paths/">كل المسارات</a></p><script src="{r}assets/paths.js?v={VER}"></script>"""
+        write(f"paths/{p['slug']}/index.html", page(f"{p['title']} — ميزان", body, r, "paths/", p["intro"], path=f"paths/{p['slug']}/"))
 
     # about
     body = """<h1>عن ميزان</h1>

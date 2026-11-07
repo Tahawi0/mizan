@@ -148,3 +148,18 @@ footer .logo{justify-content:center;font-size:1.2rem;margin-bottom:.3rem}
   .oneline{font-size:1.25rem;padding:1.1rem 1.2rem}
   .stats{gap:1.6rem}
 }
+
+/* شريط التقدم، الاختبار، المسارات */
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin:.6rem 0 1rem}
+.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .4s}
+.big{font-family:var(--kufi);font-size:4.5rem;line-height:1.1;color:var(--gold);text-align:center;margin:.6rem 0 0}
+.big small{font-size:1.4rem;color:var(--muted)}
+.center{text-align:center}
+.day{background:var(--leaf);border:1px solid var(--rule);border-radius:3px;padding:1.2rem 1.3rem;margin:0 0 14px}
+.day.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok-soft) 55%,var(--leaf))}
+.day h3{font-size:1.25rem;margin-bottom:.3rem}
+.day h3 small{font-family:var(--kufi);color:var(--gold);font-size:.95rem;margin-inline-end:.5rem}
+.day .task{border-inline-start:2px solid var(--gold);padding-inline-start:.9rem;color:var(--muted)}
+.day .task b{color:var(--ink);font-family:var(--kufi);font-weight:600}
+.day .mark{margin-top:.4rem}
+.day.done .mark{background:var(--ok);border-color:var(--ok)}
