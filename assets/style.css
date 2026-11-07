@@ -311,3 +311,24 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .court-end{text-align:center;margin-top:1.2rem}
 .big-score{font-family:var(--kufi);font-size:2.6rem;font-weight:700;margin:0;color:var(--ink)}
 .stats-line{color:var(--muted);font-size:.95rem}
+/* جروب العيلة */
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:.8rem}
+.meter span{font-family:var(--kufi);font-size:.9rem;color:var(--muted)}
+.meter .bar i{transition:width .5s}
+.chat{border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--paper)}
+.chat-top{background:var(--lapis);color:#F3EDDD;padding:.5rem 1rem;line-height:1.5}
+.chat-top b{display:block;font-family:var(--kufi)}
+.chat-top span{font-size:.85rem;opacity:.85}
+.chat-feed{display:flex;flex-direction:column;gap:8px;padding:1rem;max-height:60vh;min-height:12rem;overflow-y:auto}
+.msg{max-width:85%;background:var(--leaf);border:1px solid var(--rule);border-radius:12px 12px 12px 3px;padding:.35rem .9rem;align-self:flex-start}
+.msg small{display:block;font-family:var(--kufi);color:var(--gold);font-size:.8rem}
+.msg p{margin:0;font-size:1.05rem;line-height:1.8}
+.msg.me{align-self:flex-end;background:var(--lapis-soft);border-color:var(--lapis);border-radius:12px 12px 3px 12px}
+.typing{align-self:flex-start;font-size:.85rem;color:var(--muted);font-style:italic}
+.chat-act{margin-top:1rem}
+.chat-fb{border-inline-start:4px solid var(--rule);padding:.3rem 1rem;margin:.6rem 0 1rem;background:var(--leaf)}
+.chat-fb b{font-family:var(--kufi)}
+.chat-fb.smart{border-color:var(--ok)}.chat-fb.smart b{color:var(--ok)}
+.chat-fb.attack{border-color:var(--bad)}.chat-fb.attack b{color:var(--bad)}
+.chat-fb.quiet{border-color:var(--gold)}.chat-fb.quiet b{color:var(--gold)}
+.chat-fb p{margin:.2rem 0 0;font-size:1.02rem}
