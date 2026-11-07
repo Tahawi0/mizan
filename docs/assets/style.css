@@ -287,3 +287,27 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .prof-title{justify-content:center;font-size:2rem;margin:.2rem 0 0}
 .prof-title::before{display:none}
 .sub{font-size:1.15rem;margin-top:1.2rem}
+/* المحكمة */
+.case-tile{font:inherit;text-align:start;cursor:pointer;width:100%}
+.court-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--kufi);border-bottom:1px solid var(--rule);padding-bottom:.4rem}
+.court-head b{font-size:1.25rem}
+.cred{color:var(--gold);letter-spacing:2px}
+.brief{font-size:1rem;margin-top:.6rem}
+.court-log{display:grid;gap:12px;margin:1rem 0}
+.court-line{position:relative;border:1px solid var(--rule);border-radius:4px;padding:.6rem 1rem;background:var(--paper);max-width:92%}
+.court-line small{display:block;font-family:var(--kufi);font-size:.85rem}
+.court-line p{margin:0}
+.court-line.pro{border-inline-start:4px solid var(--bad)}.court-line.pro small{color:var(--bad)}
+.court-line.def{border-inline-start:4px solid var(--lapis);margin-inline-start:auto}.court-line.def small{color:var(--lapis)}
+.court-line.wit{border-inline-start:4px solid var(--gold);margin:0 auto}.court-line.wit small{color:var(--gold)}
+.court-line.struck>p:first-of-type{text-decoration:line-through;text-decoration-color:var(--bad);opacity:.6}
+.court-fb{font-size:1rem;margin-top:.5rem!important;padding-top:.4rem;border-top:1px dotted var(--rule)}
+.court-fb.ok{color:var(--ok)}.court-fb.bad{color:var(--bad)}
+.court-act{min-height:3rem}
+.btn.objection{background:var(--bad);border-color:var(--bad);font-size:1.15rem}
+.stamp{position:absolute;top:-12px;left:10px;font-family:var(--kufi);font-weight:700;color:var(--bad);border:2px solid var(--bad);background:var(--leaf);padding:0 10px;transform:rotate(-6deg);font-size:.95rem;animation:stamp .35s ease-out}
+@keyframes stamp{from{transform:scale(2.2) rotate(-6deg);opacity:0}to{transform:scale(1) rotate(-6deg);opacity:1}}
+@media (prefers-reduced-motion:reduce){.stamp{animation:none}}
+.court-end{text-align:center;margin-top:1.2rem}
+.big-score{font-family:var(--kufi);font-size:2.6rem;font-weight:700;margin:0;color:var(--ink)}
+.stats-line{color:var(--muted);font-size:.95rem}
