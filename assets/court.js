@@ -27,6 +27,7 @@
   function trial(c) {
     var i = 0, cred = 3, hit = 0, miss = 0, wrongObj = 0, total = c.lines.filter(function (l) { return l.f; }).length;
     box.innerHTML = "";
+    var bench = el("div", "bench"); bench.innerHTML = '<svg class="gavel" viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><g class="gv-head"><rect x="22" y="8" width="26" height="14" rx="3" transform="rotate(-35 35 15)" fill="currentColor" fill-opacity=".15"/><path d="M33 20L14 47"/></g><path d="M8 56h34M12 52h26v4H12z"/></svg>'; box.appendChild(bench);
     var head = el("div", "court-head");
     head.appendChild(el("b", null, c.title));
     var credEl = el("span", "cred", "مصداقيتك " + stars(cred)); head.appendChild(credEl);
@@ -47,7 +48,7 @@
     }
     function object(L, row) {
       act.innerHTML = "";
-      var stamp = el("div", "stamp", "اعتراض!"); row.appendChild(stamp);
+      var stamp = el("div", "stamp", "اعتراض!"); row.appendChild(stamp); strike();
       if (!L.f) {
         cred--; wrongObj++; credEl.textContent = "مصداقيتك " + stars(cred);
         row.appendChild(el("p", "court-fb bad", "الاعتراض مرفوض. الكلام ده معلومة أو دليل عادي، مفيهوش مغالطة."));
@@ -69,6 +70,7 @@
       });
       act.appendChild(o);
     }
+    function strike() { bench.classList.remove("hit"); void bench.offsetWidth; bench.classList.add("hit"); if (window.MizanFX) MizanFX.play("gavel"); }
     function verdict() {
       var V = c.verdict, sec = el("div", "today");
       sec.appendChild(el("h2", null, "الحكم"));
@@ -86,6 +88,7 @@
       sec.appendChild(o); act.appendChild(sec); sec.scrollIntoView({ block: "start", behavior: "smooth" });
     }
     function finish(right, sec) {
+      strike();
       var score = Math.max(0, Math.round((hit / total) * 6 + (right ? 3 : 0) + Math.max(0, cred) / 3));
       score = Math.min(10, score);
       var d = load(); d[c.id] = Math.max(d[c.id] || 0, score); save(d);

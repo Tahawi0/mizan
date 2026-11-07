@@ -59,6 +59,10 @@
     box.appendChild(el("p", "lead", "الأسبوع بيبدأ السبت وبيقفل الجمعة 12 بالليل بتوقيت القاهرة. " + d.members + " مشترك لحد دلوقتي."));
     if (!d.top.length) box.appendChild(el("p", "note", "لسه محدش جاب نقط الأسبوع ده. العب أي لعبة من اللي تحت، واطلع الأول."));
     else {
+      var pod = el("div", "podium");
+      [1, 0, 2].forEach(function (k) { var r = d.top[k]; if (!r) return; var c = el("div", "pod p" + (k + 1) + (r.nick === myNick ? " mine" : "")); c.appendChild(el("b", null, r.nick)); c.appendChild(el("small", null, r.pts + " نقطة")); var st = el("div", "step"); st.appendChild(el("span", null, MEDAL[k])); c.appendChild(st); pod.appendChild(c); });
+      box.appendChild(pod);
+      if (me && me.member && me.rank === 1 && me.pts > 0 && window.MizanFX) MizanFX.confetti();
       var ol = el("ol", "board");
       d.top.forEach(function (r, i) {
         var li = el("li", (i < 3 ? "top top" + (i + 1) : "") + (r.nick === myNick ? " mine" : ""));

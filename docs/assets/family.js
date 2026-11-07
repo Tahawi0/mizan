@@ -7,6 +7,21 @@
   var fast = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var NS = "http://www.w3.org/2000/svg";
+  // وجوه مرسومة بخطوط بسيطة بأسلوب المخطوطة
+  var FACE = {
+    m: { c: "#8C5A2B", x: '<path d="M11 25q5 3 10 0" stroke-width="2.2"/><path d="M9 12q7-6 14 0"/>' },
+    s: { c: "#7A3E6B", x: '<path d="M7 16q0-11 9-11t9 11" stroke-width="2"/><circle cx="16" cy="5" r="2.5" fill="currentColor"/>' },
+    k: { c: "#2F6B5B", x: '<path d="M8 11q8-7 16 0v1H8z" fill="currentColor"/><path d="M23 12h4"/>' },
+    h: { c: "#A47E2E", x: '<path d="M7 18q-1-13 9-13t9 13M7 18v6M25 18v6"/>' }
+  };
+  function avatar(who) {
+    var f = FACE[who] || FACE.m, s = document.createElementNS(NS, "svg");
+    s.setAttribute("viewBox", "0 0 32 32"); s.setAttribute("class", "ava"); s.setAttribute("aria-hidden", "true"); s.style.color = f.c;
+    s.innerHTML = '<circle cx="16" cy="16" r="15" fill="currentColor" opacity=".15"/><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="16" cy="17" r="8"/><circle cx="13" cy="16" r=".9" fill="currentColor"/><circle cx="19" cy="16" r=".9" fill="currentColor"/><path d="M13.5 20q2.5 1.5 5 0"/>' + f.x + '</g>';
+    return s;
+  }
+  var REACT = { smart: ["❤️", "👏", "😊"], attack: ["😠", "💢"], quiet: ["😐"] };
   function clamp(v) { return Math.max(0, Math.min(10, v)); }
 
   function start() {
@@ -25,15 +40,16 @@
     function upd() { mw.i.style.width = clamp(warm) * 10 + "%"; mc.i.style.width = clamp(conv) * 10 + "%"; }
     upd();
     function bubble(who, text, mine) {
-      var b = el("div", "msg" + (mine ? " me" : ""));
-      if (!mine) b.appendChild(el("small", null, G.people[who]));
-      b.appendChild(el("p", null, text)); feed.appendChild(b); feed.scrollTop = feed.scrollHeight;
+      var row = el("div", "msg-row" + (mine ? " me" : "")), b = el("div", "msg" + (mine ? " me" : ""));
+      if (!mine) { row.appendChild(avatar(who)); b.appendChild(el("small", null, G.people[who])); }
+      b.appendChild(el("p", null, text)); row.appendChild(b); feed.appendChild(row); feed.scrollTop = feed.scrollHeight;
+      return b;
     }
     function say(list, then) {
       var k = 0;
       (function next() {
         if (k >= list.length) return then();
-        var m = list[k++], typing = el("div", "typing", G.people[m.who] + " بيكتب…"); feed.appendChild(typing); feed.scrollTop = feed.scrollHeight;
+        var m = list[k++], typing = el("div", "typing"); typing.appendChild(avatar(m.who)); typing.appendChild(el("span", null, G.people[m.who] + " بيكتب")); typing.appendChild(el("i", "dots", "")); typing.lastChild.innerHTML = "<b></b><b></b><b></b>"; feed.appendChild(typing); feed.scrollTop = feed.scrollHeight;
         setTimeout(function () { typing.remove(); bubble(m.who, m.text); next(); }, fast ? 150 : 900);
       })();
     }
@@ -47,9 +63,10 @@
         shuffle(R.replies).forEach(function (rep) {
           var b = el("button", null, rep.text);
           b.onclick = function () {
-            act.innerHTML = ""; bubble(null, rep.text, true);
+            act.innerHTML = ""; var mineB = bubble(null, rep.text, true);
             warm += rep.warm; conv += rep.conv; upd();
             say(rep.back, function () {
+              var rx = el("div", "reacts"); (REACT[rep.kind] || []).forEach(function (e, i) { var s = el("span", null, e); s.style.animationDelay = (i * 0.15) + "s"; rx.appendChild(s); }); mineB.appendChild(rx);
               var fb = el("div", "chat-fb " + rep.kind);
               fb.appendChild(el("b", null, KIND[rep.kind]));
               var p = el("p", null, R.lesson + " "); var a = el("a", null, "اقرا عن «" + (NAMES[R.f] || R.f) + "»"); a.href = root + "atlas/" + R.f + "/"; p.appendChild(a);

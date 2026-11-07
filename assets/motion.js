@@ -79,7 +79,6 @@
       if (n.nodeType !== 1) return;
       var big = n.classList.contains("big-score") ? n : n.querySelector && n.querySelector(".big-score, .prof-title");
       if (big && !big.dataset.fx) { big.dataset.fx = 1; big.classList.add("fx-pop"); play("win"); if (/^(10|9)\b|سفير|1 \/|^0:[0-5]/.test(big.textContent) || big.classList.contains("prof-title")) confetti(); }
-      if (n.classList.contains("stamp")) play("gavel");
     }); });
   }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true, childList: true });
 

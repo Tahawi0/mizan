@@ -20,9 +20,9 @@
     proof.appendChild(el("div", "therefore", "إذن"));
     proof.appendChild(el("div", "concl", L.c));
     box.appendChild(proof);
-    box.appendChild(el("p", "lead", "اختار من الكروت المقدمتين اللي لو صح، النتيجة لازم تبقى صح."));
+    box.appendChild(el("p", "lead", "اسحب الكروت لخانات المقدمات، أو دوس عليها. اختار المقدمتين اللي لو صح، النتيجة لازم تبقى صح."));
     var deck = el("div", "deck"), order = shuffle(L.cards.map(function (c, i) { return i; })), btns = {};
-    order.forEach(function (i) { var b = el("button", "pcard", L.cards[i].t); b.type = "button"; b.onclick = function () { pick(i); }; btns[i] = b; deck.appendChild(b); });
+    order.forEach(function (i) { var b = el("button", "pcard", L.cards[i].t); b.type = "button"; b.onclick = function () { if (b.dataset.dragged) { delete b.dataset.dragged; return; } pick(i); }; drag(b, i); btns[i] = b; deck.appendChild(b); });
     box.appendChild(deck);
     var msg = el("div", "argue-msg"); box.appendChild(msg);
     var check = el("button", "btn", "اتأكد من الحجة"); check.disabled = true; box.appendChild(check);
@@ -37,6 +37,28 @@
       picked[k] = i; msg.innerHTML = ""; draw();
     }
     function unpick(k) { picked[k] = null; draw(); }
+    function put(i, k) { var was = picked.indexOf(i); if (was >= 0) picked[was] = null; picked[k] = i; msg.innerHTML = ""; draw(); slots[k].classList.add("drop"); setTimeout(function () { slots[k].classList.remove("drop"); }, 400); }
+    // سحب الكارت لخانة المقدمة (والدوس العادي شغال برضه)
+    function drag(b, i) {
+      b.addEventListener("pointerdown", function (e) {
+        if (b.disabled || e.button > 0) return;
+        var sx = e.clientX, sy = e.clientY, ghost = null, over = -1;
+        function mv(ev) {
+          var dx = ev.clientX - sx, dy = ev.clientY - sy;
+          if (!ghost && Math.hypot(dx, dy) < 8) return;
+          if (!ghost) { ghost = b.cloneNode(true); ghost.className = "pcard ghost"; ghost.style.width = b.offsetWidth + "px"; document.body.appendChild(ghost); b.classList.add("lifted"); }
+          ghost.style.transform = "translate(" + (ev.clientX - b.offsetWidth / 2) + "px," + (ev.clientY - 24) + "px) rotate(-3deg)";
+          over = -1; slots.forEach(function (s, k) { var r = s.getBoundingClientRect(), hit = ev.clientX > r.left && ev.clientX < r.right && ev.clientY > r.top && ev.clientY < r.bottom; s.classList.toggle("hover", hit); if (hit) over = k; });
+          ev.preventDefault();
+        }
+        function up() {
+          document.removeEventListener("pointermove", mv); document.removeEventListener("pointerup", up); document.removeEventListener("pointercancel", up);
+          slots.forEach(function (s) { s.classList.remove("hover"); });
+          if (ghost) { ghost.remove(); b.classList.remove("lifted"); b.dataset.dragged = "1"; if (over >= 0) put(i, over); }
+        }
+        document.addEventListener("pointermove", mv, { passive: false }); document.addEventListener("pointerup", up); document.addEventListener("pointercancel", up);
+      });
+    }
     check.onclick = function () {
       tries++; msg.innerHTML = "";
       var bad = picked.filter(function (i) { return !L.cards[i].ok; });
