@@ -36,7 +36,7 @@ ORN = '<div class="orn" aria-hidden="true"><span></span></div>'
 
 def page(title, body, root, active="", desc="", img="cards/og/site.png", path="", ld=None):
     groups = [("اتعلّم", [("atlas/", "الأطلس", "مغالطات وانحيازات"), ("philosophy/", "الفلسفة", "فلاسفة ومدارس"), ("paths/", "مسارات", "7 أيام، 5 دقايق في اليوم"), ("trends/", "وزن التريند", "كلام منتشر بنوزنه")]),
-              ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("games/", "الألعاب", "تجارب وتحديات"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك")]),
+              ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("games/", "الساحة", "كل الألعاب في مكان واحد"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك")]),
               ("قول رأيك", [("weekly/", "سؤال الأسبوع", "سؤال فلسفي وتصويت"), ("dilemmas/", "معضلات", "مواقف مفيهاش إجابة سهلة"), ("send/", "ابعت مغالطة", "جملة سمعتها وفيها غلط")])]
     def grp(name, items):
         on = any(h == active for h, _, _ in items)
@@ -104,7 +104,7 @@ def build():
     sample = [by_slug[x] for x in ["straw-man", "confirmation-bias", "sunk-cost", "survivorship", "ad-hominem", "anchoring"] if x in by_slug]
     doors = [("daily/", "مغالطة اليوم", "لغز صغير كل يوم من مواقف حياتنا. اكتشف الغلط في الكلام وشارك نتيجتك."),
              ("atlas/", "الأطلس", f"{len(entries)} مغالطة وانحياز، كل واحدة بأمثلة من البيت والشارع، وإزاي ترد عليها."),
-             ("games/", "ألعاب", "7 ألعاب: اختبر نفسك وتحدّى صحابك، وجرب تجارب علم النفس على نفسك، واكشف حيل الإعلانات."),
+             ("games/", "الساحة", "كل ألعاب ميزان في مكان واحد: اكشف الحيل، واعرف انحيازاتك، وتحدّى صحابك."),
              ("philosophy/", "الفلسفة", f"{len(philo)} فيلسوف ومدرسة، من سقراط لكامو، كل واحد بفكرته وإزاي تستخدمها النهارده."),
              ("trends/", "وزن التريند", "كلام منتشر على السوشيال، بنوزنه بهدوء: فيه إيه صح، وفيه إيه غلط."),
              ("paths/", "مسارات", f"{len(paths)} مسارات قصيرة، كل واحد 7 أيام، درس صغير ومهمة كل يوم."),
@@ -230,16 +230,30 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 
     # games
     gx = "../../"
-    GAMES = [
-        ("quiz", "اختبر نفسك", "10 أسئلة، وتحدّى صاحبك في نفس الأسئلة."),
-        ("lab", "معمل الانحيازات", "4 تجارب علم نفس حقيقية تتعمل عليك، وتشوف نتايج كل اللي جربوا."),
-        ("spot", "اكشف الحيلة", "3 إعلانات لماركات وهمية، وجوه كل واحد حيل مستخبية. لاقيها."),
-        ("philosopher", "أنهي فيلسوف إنت؟", "8 أسئلة خفيفة… وفي الآخر مفاجأة."),
-        ("calibration", "ميزان الثقة", "معلوماتك قد ثقتك؟ 10 أسئلة وهتعرف."),
-        ("fix", "صلّح الحجة", "مش بس تكشف الغلط. اختار إزاي الجملة تتقال صح."),
-        ("../daily", "مغالطة اليوم", "لغز جديد كل يوم، وسلسلة أيام ورا بعض.")]
-    tiles = "".join(f'<a class="tile" href="{"../quiz/" if k == "quiz" else (k + "/") if not k.startswith("..") else "../daily/"}"><span>لعبة</span><b>{t}</b><span>{d}</span></a>' for k, t, d in GAMES)
-    write("games/index.html", page("ألعاب — ميزان", f'<h1>ألعاب</h1><p class="lead">اتعلم التفكير وإنت بتلعب. كل لعبة بتاخد دقايق، وبتعلمك حاجة.</p><div class="grid">{tiles}</div>', "../", "games/", "ألعاب تفاعلية عن المغالطات والانحيازات: تجارب علم نفس، وكشف حيل الإعلانات، وتحدي صحابك.", path="games/"))
+    # الساحة: كل الألعاب واللوحات في مكان واحد
+    ARENA = [
+        ("كل يوم", "ارجع كل يوم، فيه حاجة جديدة مستنياك.", [
+            ("daily/", "مغالطة اليوم", "لغز جديد كل يوم، وسلسلة أيام ورا بعض.", "دقيقة", False),
+            ("weekly/", "سؤال الأسبوع", "سؤال فلسفي كبير، صوّت وشوف الناس قالت إيه.", "دقيقتين", False)]),
+        ("اكشف الغلط", "دوّر على الحيلة قبل ما تعدّي عليك.", [
+            ("quiz/", "اختبر نفسك", "10 أسئلة، وتحدّى صاحبك في نفس الأسئلة.", "5 دقايق", False),
+            ("games/spot/", "اكشف الحيلة", "إعلانات لماركات وهمية، وجوه كل واحد حيل مستخبية.", "5 دقايق", False)]),
+        ("اعرف نفسك", "مخك بيتأثر بإيه من غير ما تاخد بالك؟", [
+            ("games/lab/", "معمل الانحيازات", "4 تجارب علم نفس حقيقية تتعمل عليك.", "4 دقايق", False),
+            ("games/philosopher/", "أنهي فيلسوف إنت؟", "8 أسئلة خفيفة… وفي الآخر مفاجأة.", "3 دقايق", False),
+            ("games/calibration/", "ميزان الثقة", "معلوماتك قد ثقتك؟ 10 أسئلة وهتعرف.", "4 دقايق", False)]),
+        ("ابني صح", "مش بس تكشف الغلط، اتعلم تقول الكلام صح.", [
+            ("games/fix/", "صلّح الحجة", "اختار إزاي الجملة تتقال من غير الغلط.", "4 دقايق", False)]),
+        ("قول رأيك", "مواقف مفيهاش إجابة سهلة.", [
+            ("dilemmas/", "معضلات", "24 موقف صعب، صوّت وشوف الفلاسفة قالوا إيه.", "دقيقتين", False)]),
+    ]
+    def atile(h, t, d, m, new):
+        badge = '<em class="new">جديد</em>' if new else ''
+        return f'<a class="tile atile" href="../{h}"><span class="meta">{m}{badge}</span><b>{t}</b><span>{d}</span></a>'
+    secs = "".join(f'<section class="arena-sec"><h2>{n}</h2><p class="lead">{l}</p><div class="grid">{"".join(atile(*g) for g in gs)}</div></section>' for n, l, gs in ARENA)
+    count = sum(len(gs) for _, _, gs in ARENA)
+    body = f'''<div class="arena-hero"><p class="kicker">العب واتعلم</p><h1>الساحة</h1><p class="lead">{count} لعبة ولوحة في مكان واحد. كل واحدة بتاخد دقايق، وبتعلمك حاجة عن طريقة تفكيرك.</p></div>{secs}'''
+    write("games/index.html", page("الساحة — ميزان", body, "../", "games/", "الساحة: كل ألعاب ميزان في مكان واحد. تجارب علم نفس، وكشف حيل، ومعضلات، وتحدي صحابك.", path="games/"))
     names_js = json.dumps({x["slug"]: x["name"] for x in entries}, ensure_ascii=False)
     pn = json.dumps({k: {"name": p_slug[k]["name"]} for k in games["phil"]["results"]}, ensure_ascii=False)
     spec = {
@@ -251,7 +265,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     gid = {"lab": "lab", "spot": "spot", "philosopher": "phil", "calibration": "calib", "fix": "fix"}
     for slug, (title, lead, data, api) in spec.items():
         data["philNames"] = json.loads(pn)
-        body = f"""<p class="kicker"><a href="{gx}games/">ألعاب</a></p><h1>{title}</h1><p class="lead">{lead}</p>
+        body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>{title}</h1><p class="lead">{lead}</p>
 <div id="game" data-game="{gid[slug]}"{' class="sheet"' if slug != "lab" else ''}></div>
 <script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script>{f'<script src="{gx}assets/config.js?v={VER}"></script>' if api else ''}<script src="{gx}assets/games.js?v={VER}"></script>"""
         write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
