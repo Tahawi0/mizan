@@ -332,3 +332,24 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .chat-fb.attack{border-color:var(--bad)}.chat-fb.attack b{color:var(--bad)}
 .chat-fb.quiet{border-color:var(--gold)}.chat-fb.quiet b{color:var(--gold)}
 .chat-fb p{margin:.2rem 0 0;font-size:1.02rem}
+/* غرفة الهروب */
+.esc-hud{display:flex;justify-content:space-between;align-items:center;position:relative;margin-bottom:1rem}
+.esc-dots{display:flex;gap:8px}
+.esc-dots i{width:14px;height:14px;border:1px solid var(--gold);transform:rotate(45deg)}
+.esc-dots i.done{background:var(--gold)}
+.esc-dots i.now{background:var(--gold-soft);box-shadow:0 0 0 3px var(--gold-soft)}
+.esc-clock{font-family:var(--kufi);font-size:1.5rem;direction:ltr}
+.esc-pen{position:absolute;left:0;top:-1.4rem;color:var(--bad);font-family:var(--kufi);font-size:.95rem;animation:penup 1.2s ease-out forwards}
+@keyframes penup{to{transform:translateY(-14px);opacity:0}}
+.door{width:74px;height:110px;margin:0 auto 1rem;border:3px solid var(--gold);border-radius:38px 38px 3px 3px;background:var(--lapis);position:relative;display:flex;align-items:center;justify-content:center;transform-origin:right;transition:transform .7s ease, background .7s}
+.door::after{content:"";position:absolute;left:12px;top:56px;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.door-no{font-family:var(--kufi);color:#F3EDDD;font-size:1.6rem}
+.door.open{transform:perspective(400px) rotateY(-55deg);background:var(--ok)}
+.esc-stage h2{justify-content:center}
+.esc-clues{font-family:var(--kufi);direction:rtl;background:var(--paper);border:1px dashed var(--rule);padding:.6rem 2rem;border-radius:4px}
+.esc-code input{font-family:var(--kufi);font-size:1.6rem;letter-spacing:.5rem;text-align:center;direction:ltr;max-width:10rem}
+.esc-msg.ok{color:var(--ok)}.esc-msg.bad{color:var(--bad)}
+.esc-hint{margin-top:.8rem}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.door{transition:none}.shake,.esc-pen{animation:none}}
