@@ -563,3 +563,37 @@ main .lead{animation:rise .7s .25s ease both}
 @media (max-width:600px){.z-body{width:72px;height:72px}.z-x{bottom:56px;left:58px;opacity:1}.z-say{max-width:170px;font-size:.92rem}}
 @media (prefers-reduced-motion:reduce){.z-body,.zina.z-in .z-body,.zina.z-hop .z-body,.zina.z-sad .z-body{animation:none}.z-say{transition:none}}
 @media print{.zina{display:none}}
+
+/* ═════ المحكمة: المراحل والشخصيات ═════ */
+.map-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.map-head .lead{flex:1 1 18rem;font-size:1rem}
+.map-stars{font-family:var(--kufi);color:var(--gold);font-size:1.3rem;margin:0}
+.stage-map{list-style:none;padding:0;margin:1.2rem 0;display:grid;gap:10px;position:relative}
+.stage-map::before{content:"";position:absolute;right:31px;top:20px;bottom:20px;width:3px;background:repeating-linear-gradient(var(--gold) 0 8px,transparent 8px 14px);opacity:.6}
+.stage{position:relative}
+.stage-btn{display:flex;align-items:center;gap:14px;width:100%;font:inherit;text-align:start;background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:.6rem .9rem;cursor:pointer;color:var(--ink);transition:transform .15s,border-color .2s}
+.stage-btn:hover:not(:disabled){border-color:var(--gold);transform:translateX(-3px)}
+.stage-no{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--kufi);font-weight:700;background:var(--paper);border:2px solid var(--rule);position:relative;z-index:1}
+.stage.won .stage-no{background:var(--gold);color:var(--paper);border-color:var(--gold)}
+.stage.next .stage-no{border-color:var(--lapis);box-shadow:0 0 0 0 var(--lapis);animation:ping 1.8s infinite}
+.stage.boss .stage-btn{border:2px solid var(--gold);background:linear-gradient(90deg,var(--gold-soft),var(--leaf))}
+.stage-info b{display:block;font-family:var(--kufi);font-weight:600}
+.stage-info small{color:var(--muted);font-size:.92rem}
+.stage.won .stage-info small{color:var(--gold)}
+.stage.locked .stage-btn{opacity:.5;cursor:not-allowed}
+.stage.locked .stage-no::after{content:"🔒";position:absolute;font-size:.8rem;bottom:-6px;left:-4px}
+@keyframes ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--lapis) 50%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+.big-stars{font-size:2rem;color:var(--gold);letter-spacing:6px;margin:0;animation:pop .6s .3s both}
+.court-stage{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:6px;height:190px;margin:.8rem 0;padding:0 6px;border-radius:6px;background:linear-gradient(transparent 62%,color-mix(in srgb,var(--gold) 18%,transparent) 62%);border-bottom:4px double var(--rule);overflow:hidden}
+.judge{position:absolute;top:2px;left:50%;height:96px;transform:translateX(-50%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.2));z-index:0}
+.actor{margin:0;text-align:center;position:relative;z-index:1;transition:transform .3s,filter .3s;filter:grayscale(.35) brightness(.92);transform-origin:bottom}
+.actor img{height:118px;width:auto;max-width:100%;object-fit:contain}
+.actor figcaption{font-family:var(--kufi);font-size:.78rem;color:var(--muted);line-height:1.2}
+.a-pro{justify-self:start}.a-def{justify-self:end}.a-wit{justify-self:center;opacity:.85}
+.actor.talk{filter:none;transform:scale(1.08);animation:talk .5s ease-in-out 2}
+.actor.talk figcaption{color:var(--ink)}
+@keyframes talk{50%{transform:scale(1.08) translateY(-4px)}}
+.court-stage.deliberate .judge{animation:nod 1.2s ease-in-out 2}
+@keyframes nod{50%{transform:translateX(-50%) rotate(-4deg)}}
+@media (max-width:520px){.court-stage{height:160px}.actor img{height:96px}.judge{height:78px}}
+@media (prefers-reduced-motion:reduce){.stage.next .stage-no,.actor.talk,.court-stage.deliberate .judge,.big-stars{animation:none}}

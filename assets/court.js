@@ -10,21 +10,32 @@
   function save(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
   function stars(n) { return "★★★".slice(0, Math.max(0, n)) + "☆☆☆".slice(0, 3 - Math.max(0, n)); }
 
+  function starsFor(sc) { return sc == null ? 0 : sc >= 9 ? 3 : sc >= 6 ? 2 : 1; }
+  // خريطة المراحل: كل قضية بتفتح اللي بعدها، والعاشرة قضية الزعيم
   function list() {
     box.innerHTML = "";
-    var done = load();
-    box.appendChild(el("p", "lead", "اختار قضية. المحامين هيتكلموا جملة جملة. أول ما تسمع مغالطة، دوس «اعتراض!». بس خلي بالك: لو اعترضت على كلام سليم، مصداقيتك بتقل."));
-    var g = el("div", "grid");
-    G.cases.forEach(function (c) {
-      var a = el("button", "tile case-tile");
-      a.appendChild(el("span", null, done[c.id] != null ? "اتحكمت: " + done[c.id] + " من 10" : "قضية جديدة"));
-      a.appendChild(el("b", null, c.title)); a.appendChild(el("span", null, c.brief));
-      a.onclick = function () { trial(c); }; g.appendChild(a);
+    var done = load(), total = 0;
+    G.cases.forEach(function (c) { total += starsFor(done[c.id]); });
+    var top = el("div", "map-head");
+    top.appendChild(el("p", "lead", "10 قضايا، كل واحدة أصعب من اللي قبلها. المحامين هيتكلموا جملة جملة، وأول ما تسمع مغالطة دوس «اعتراض!». لو اعترضت على كلام سليم، مصداقيتك بتقل."));
+    top.appendChild(el("p", "map-stars", "★ " + total + " من " + G.cases.length * 3));
+    box.appendChild(top);
+    var map = el("ol", "stage-map");
+    G.cases.forEach(function (c, k) {
+      var open = k === 0 || done[G.cases[k - 1].id] != null, st = starsFor(done[c.id]), boss = k === G.cases.length - 1;
+      var li = el("li", "stage" + (open ? "" : " locked") + (st ? " won" : "") + (boss ? " boss" : "") + (open && !st ? " next" : ""));
+      var b = el("button", "stage-btn"); b.type = "button"; b.disabled = !open;
+      b.appendChild(el("span", "stage-no", boss ? "👑" : String(k + 1)));
+      var info = el("span", "stage-info");
+      info.appendChild(el("b", null, open ? c.title : "قضية مقفولة"));
+      info.appendChild(el("small", null, open ? (st ? stars(st) + " · " + done[c.id] + " من 10" : (boss ? "قضية الزعيم: 5 مغالطات مستخبية" : "قضية جديدة")) : "خلّص القضية اللي قبلها عشان تفتحها"));
+      b.appendChild(info);
+      b.onclick = function () { trial(c, k); };
+      li.appendChild(b); map.appendChild(li);
     });
-    box.appendChild(g);
+    box.appendChild(map);
   }
-
-  function trial(c) {
+  function trial(c, k) {
     var i = 0, cred = 3, hit = 0, miss = 0, wrongObj = 0, total = c.lines.filter(function (l) { return l.f; }).length;
     box.innerHTML = "";
     var bench = el("div", "bench"); bench.innerHTML = '<svg class="gavel" viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><g class="gv-head"><rect x="22" y="8" width="26" height="14" rx="3" transform="rotate(-35 35 15)" fill="currentColor" fill-opacity=".15"/><path d="M33 20L14 47"/></g><path d="M8 56h34M12 52h26v4H12z"/></svg>'; box.appendChild(bench);
@@ -33,12 +44,17 @@
     var credEl = el("span", "cred", "مصداقيتك " + stars(cred)); head.appendChild(credEl);
     box.appendChild(head);
     box.appendChild(el("p", "lead brief", c.brief));
+    var stage = el("div", "court-stage"), cast = {};
+    ["pro", "wit", "def"].forEach(function (w) { var f = el("figure", "actor a-" + w), im = el("img"); im.src = root + "assets/court/" + w + ".webp"; im.alt = ""; f.appendChild(im); f.appendChild(el("figcaption", null, WHO[w])); cast[w] = f; stage.appendChild(f); });
+    var judge = el("img", "judge"); judge.src = root + "assets/court/judge.webp"; judge.alt = "القاضي"; stage.appendChild(judge);
+    box.appendChild(stage);
+    function speak(w) { Object.keys(cast).forEach(function (x) { cast[x].classList.toggle("talk", x === w); }); }
     var log = el("div", "court-log"); box.appendChild(log);
     var act = el("div", "court-act"); box.appendChild(act);
     function line() {
       act.innerHTML = "";
       if (i >= c.lines.length) return verdict();
-      var L = c.lines[i], row = el("div", "court-line " + L.who);
+      var L = c.lines[i], row = el("div", "court-line " + L.who); speak(L.who);
       row.appendChild(el("small", null, WHO[L.who])); row.appendChild(el("p", null, L.text));
       log.appendChild(row); row.scrollIntoView({ block: "nearest", behavior: "smooth" });
       var ob = el("button", "btn objection", "اعتراض!"), go = el("button", "btn ghost", "كمّل");
@@ -72,6 +88,7 @@
     }
     function strike() { bench.classList.remove("hit"); void bench.offsetWidth; bench.classList.add("hit"); if (window.MizanFX) MizanFX.play("gavel"); }
     function verdict() {
+      speak(null); stage.classList.add("deliberate");
       var V = c.verdict, sec = el("div", "today");
       sec.appendChild(el("h2", null, "الحكم"));
       sec.appendChild(el("p", "scene", V.q));
@@ -98,8 +115,11 @@
       r.appendChild(el("p", "stats-line", "مغالطات مسكتها: " + hit + " من " + total + " · اعتراضات في غير محلها: " + wrongObj));
       r.appendChild(el("p", "big-score", score + " / 10"));
       r.appendChild(el("p", "lead", rank));
-      var p = el("p"), again = el("button", "btn", "قضية تانية"), sh = el("button", "btn ghost", "شارك");
-      again.onclick = list;
+      var st = starsFor(score), last = k === G.cases.length - 1;
+      r.appendChild(el("p", "big-stars", stars(st)));
+      var p = el("p"), again = el("button", "btn", last ? "خريطة القضايا" : "القضية اللي بعدها"), sh = el("button", "btn ghost", "شارك"), map = el("button", "btn ghost", "الخريطة");
+      again.onclick = function () { if (last) list(); else trial(G.cases[k + 1], k + 1); };
+      map.onclick = list; p.appendChild(map); p.appendChild(document.createTextNode(" "));
       sh.onclick = function () {
         var t = "حكمت في «" + c.title + "» في محكمة ميزان ⚖️ وجبت " + score + " من 10.\nتقدر تمسك المغالطات أحسن مني؟ " + location.href.split("?")[0];
         if (navigator.share) navigator.share({ text: t }).catch(function () {});
