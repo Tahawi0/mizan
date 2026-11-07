@@ -15,7 +15,7 @@
   var st = load("mizan-stats", { streak: 0, best: 0, last: -1, played: 0, wins: 0 });
   var done = practice ? null : load("mizan-day-" + dayNo, null);
 
-  if (practice) { var lab = document.getElementById("dayno").parentNode; lab.firstChild.textContent = "تمرين: لغز #"; }
+  if (practice) { var lab = document.getElementById("dayno").parentNode; lab.firstChild.textContent = "تمرين، لغز رقم "; }
   document.getElementById("dayno").textContent = practice ? (q + 1) : (dayNo + 1);
   var past = document.getElementById("past");
   if (past) {
