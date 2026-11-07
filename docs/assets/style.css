@@ -130,7 +130,10 @@ main{padding:2.4rem 0 4rem}
 .btn:hover{color:#F3EDDD;filter:brightness(1.12)}
 .btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
 .btn.ghost:hover{border-color:var(--gold);color:var(--ink);filter:none}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#121A2C}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#121A2C}}
+:root[data-theme="dark"] .btn:not(.ghost){color:#121A2C}
+[hidden]{display:none!important}
+.hp{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
 textarea{width:100%;font:inherit;font-size:1.1rem;border:1px solid var(--rule);border-radius:4px;padding:.8rem;background:var(--paper);color:var(--ink);line-height:1.9}
 .note{background:var(--gold-soft);border-radius:3px;padding:.6rem 1rem;font-size:1rem;margin:1.2rem 0;line-height:1.8}
@@ -162,7 +165,7 @@ footer .logo{justify-content:center;font-size:1.2rem;margin-bottom:.3rem}
 .day .task{border-inline-start:2px solid var(--gold);padding-inline-start:.9rem;color:var(--muted)}
 .day .task b{color:var(--ink);font-family:var(--kufi);font-weight:600}
 .day .mark{margin-top:.4rem}
-.day.done .mark{background:var(--ok);border-color:var(--ok)}
+.day.done .mark{background:var(--ok);border-color:var(--ok);color:var(--paper)}
 
 /* الفلسفة، البحث، الشهادة، التثبيت */
 .search{display:flex;gap:8px;margin:1rem 0}
@@ -197,3 +200,7 @@ label{font-family:var(--kufi);display:block;margin:1rem 0 .3rem;font-size:1rem}
 .tf{display:flex;gap:10px;margin:1rem 0}.tf .btn{min-width:6rem}.tf .btn.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .conf-row{display:flex;flex-wrap:wrap;gap:8px}.conf-row button{font-family:var(--kufi);font-size:1.05rem;padding:.4rem .9rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);cursor:pointer}.conf-row button:hover{border-color:var(--gold)}
 .big{word-break:break-word}
+
+html,body{overflow-x:hidden}
+img,svg,canvas{max-width:100%}
+.btn{max-width:100%;white-space:normal}

@@ -334,7 +334,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <form id="send-form" class="sheet"><label for="send-text">الجملة</label><textarea id="send-text" rows="4" maxlength="600" required placeholder="اكتب الجملة زي ما اتقالت"></textarea>
 <label for="send-where">سمعتها فين؟ (اختياري)</label><input type="text" id="send-where" maxlength="60" placeholder="إعلان، فيسبوك، في الشغل…">
 <label for="send-guess">تفتكر فيها أنهي مغالطة؟ (اختياري)</label><input type="text" id="send-guess" maxlength="80" placeholder="مش لازم تعرف">
-<input type="text" id="send-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+<input type="text" id="send-hp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 <p style="margin-top:1rem"><button class="btn" type="submit">ابعت</button> <span id="send-status" class="lead" style="font-size:15px" aria-live="polite"></span></p></form>
 <p class="note">متكتبش أسماء ناس حقيقيين ولا أرقام تليفونات. كل جملة بتتراجع بإيد إنسان قبل ما تتنشر.</p>
 <script src="../assets/config.js?v={VER}"></script><script src="../assets/send.js?v={VER}"></script>"""
