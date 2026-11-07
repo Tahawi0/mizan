@@ -51,6 +51,7 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
     return f"""<!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>{e_(title)}</title>
 <meta name="description" content="{d}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="ميزان"><meta property="og:locale" content="ar_EG">
@@ -119,7 +120,7 @@ def build():
 <section class="today" id="dilemma" data-id=""><p class="kicker">قول رأيك</p><h2 id="hw-title">سؤال الأسبوع</h2><p id="hw-q"></p><div class="opts"><button></button><button></button></div>
 <p class="lead small" id="vote-note"></p><div class="reveal" id="views"><a class="btn ghost" id="hw-more" href="weekly/">شوف الفلاسفة قالوا إيه</a></div></section>
 <section class="today"><p class="kicker">جرّب</p><h2>حلّل جملة</h2><p>سمعت كلام حاسس فيه حاجة غلط؟ حطه هنا، وميزان يوزنه.</p>
-<form action="analyze/" method="get" class="mini-an"><textarea name="t" rows="3" maxlength="1000" required placeholder="«كل الناس بتعمل كده…»"></textarea><button class="btn cta-btn" type="submit">وزّن الكلام</button></form></section>
+<form action="analyze/" method="get" class="mini-an" onsubmit="try{{sessionStorage.setItem('mizan-an-go','1')}}catch(e){{}}"><textarea name="t" rows="3" maxlength="1000" required placeholder="«كل الناس بتعمل كده…»"></textarea><button class="btn cta-btn" type="submit">وزّن الكلام</button></form></section>
 </div>
 {ORN}<h2>إيه اللي في ميزان؟</h2><ul class="doors">{doors_html}</ul>
 {ORN}<h2>من الأطلس</h2><ul class="index">{idx}</ul><p class="back"><a href="atlas/">كل المداخل</a></p>

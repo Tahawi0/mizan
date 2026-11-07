@@ -14,6 +14,7 @@ ${SLUGS.join(", ")}
 - متخترعش مغالطة مش موجودة. لو الكلام سليم، رجّع findings فاضية وقول كده في summary.
 - بحد أقصى 3 findings.
 - quote لازم يبقى جزء منقول حرفياً من النص.
+- لو النص عن شخص حقيقي أو دين أو حزب أو جهة أو بلد، حلّل الحجة نفسها بس. متحكمش على الشخص أو الجهة، ومتقولش رأيك في الموضوع نفسه.
 - رد بـ JSON بس، بالشكل ده بالظبط ومن غير أي كلام تاني:
 {"summary":"جملة واحدة","findings":[{"slug":"...","quote":"...","why":"ليه دي مغالطة أو انحياز","reply":"إزاي ترد بهدوء"}]}`;
 
@@ -65,13 +66,14 @@ async function analyze(req, env) {
   const g = parseInt((await env.KV.get(gKey)) || "0", 10);
   if (g >= parseInt(env.DAILY_GLOBAL_LIMIT, 10)) return json(env, { error: "الخدمة وصلت لحدها النهارده. جرب بكرة." }, 429);
 
+  await bump(env, ipKey, 90000); await bump(env, gKey, 90000);
+  const refund = async () => { for (const k of [ipKey, gKey]) { const n = parseInt((await env.KV.get(k)) || "1", 10); await env.KV.put(k, String(Math.max(0, n - 1)), { expirationTtl: 90000 }); } };
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({ model: env.MODEL, max_tokens: 800, system: SYSTEM, messages: [{ role: "user", content: "<text>\n" + text + "\n</text>" }] })
   });
-  if (!r.ok) return json(env, { error: "السيرفر مش متاح دلوقتي، جرب بعد شوية." }, 502);
-  await bump(env, ipKey, 90000); await bump(env, gKey, 90000);
+  if (!r.ok) { await refund(); return json(env, { error: "السيرفر مش متاح دلوقتي، جرب بعد شوية." }, 502); }
 
   const data = await r.json();
   const raw = (data.content || []).map(c => c.text || "").join("");
@@ -155,7 +157,7 @@ async function authUser(req, env) {
     const [hd, pl, sg] = h.slice(7).split(".");
     const head = JSON.parse(new TextDecoder().decode(b64u(hd))), p = JSON.parse(new TextDecoder().decode(b64u(pl)));
     const now = Math.floor(Date.now() / 1000), proj = env.FIREBASE_PROJECT;
-    if (head.alg !== "RS256" || p.aud !== proj || p.iss !== "https://securetoken.google.com/" + proj || !p.sub || p.exp < now || p.iat > now + 300) return null;
+    if (head.alg !== "RS256" || p.aud !== proj || p.iss !== "https://securetoken.google.com/" + proj || !p.sub || typeof p.sub !== "string" || p.sub.length > 128 || p.exp < now || (p.auth_time && p.auth_time > now + 300) || p.iat > now + 300) return null;
     const jwk = (await jwks()).find(k => k.kid === head.kid);
     if (!jwk) return null;
     const key = await crypto.subtle.importKey("jwk", jwk, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
@@ -185,7 +187,12 @@ async function me(req, env) {
     const raw = await req.text();
     if (raw.length > 65000) return json(env, { error: "البيانات كبيرة." }, 413);
     let b; try { b = JSON.parse(raw); } catch { return json(env, { error: "طلب غلط." }, 400); }
-    const prog = b.progress && typeof b.progress === "object" ? JSON.stringify(b.progress) : u.progress;
+    let prog = u.progress;
+    if (b.progress && typeof b.progress === "object" && !Array.isArray(b.progress)) {
+      const clean = {};
+      for (const [k, v] of Object.entries(b.progress).slice(0, 300)) if (/^mizan-[a-z0-9-]{1,60}$/.test(k) && typeof v === "string" && v.length <= 4000) clean[k] = v;
+      prog = JSON.stringify(clean);
+    }
     const name = typeof b.name === "string" ? b.name.trim().slice(0, 60) : u.name;
     await env.DB.prepare("UPDATE users SET progress=?, name=?, updated=? WHERE uid=?").bind(prog, name, Date.now(), a.uid).run();
     u.progress = prog; u.name = name;

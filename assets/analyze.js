@@ -47,5 +47,5 @@
       }, function () { form.querySelector("button").disabled = false; st.textContent = "مقدرتش أوصل للسيرفر، جرب تاني."; });
   };
   var pre = new URLSearchParams(location.search).get("t");
-  if (pre) { document.getElementById("an-text").value = pre.slice(0, 1000); history.replaceState(null, "", location.pathname); if (pre.trim().length >= 15) form.requestSubmit ? form.requestSubmit() : form.onsubmit(new Event("submit")); }
+  if (pre) { document.getElementById("an-text").value = pre.slice(0, 1000); history.replaceState(null, "", location.pathname); var go = false; try { go = sessionStorage.getItem("mizan-an-go") === "1"; sessionStorage.removeItem("mizan-an-go"); } catch (e) {} if (go && pre.trim().length >= 15) form.requestSubmit ? form.requestSubmit() : form.onsubmit(new Event("submit")); }
 })();

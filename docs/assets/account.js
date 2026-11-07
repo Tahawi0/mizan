@@ -35,7 +35,7 @@
   }
   function merge(server) {
     var local = snapshot(), out = {}, k;
-    for (k in server) out[k] = server[k];
+    for (k in server) if (/^mizan-[a-z0-9-]{1,60}$/.test(k) && typeof server[k] === "string") out[k] = server[k];
     for (k in local) {
       if (!(k in out)) { out[k] = local[k]; continue; }
       if (k === "mizan-stats") { try { var a = JSON.parse(local[k]), b = JSON.parse(out[k]); if ((a.played || 0) > (b.played || 0)) out[k] = local[k]; } catch (e) {} }
