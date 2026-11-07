@@ -256,3 +256,5 @@ header.top .wrap{flex-wrap:nowrap}
   body.menu-open header.top{position:fixed;inset:0;overflow-y:auto}
   nav{width:auto}
 }
+.report{margin-top:2rem;font-family:var(--kufi);font-size:.95rem}.report a{color:var(--muted)}
+.note.warn{border-inline-start:3px solid var(--gold)}

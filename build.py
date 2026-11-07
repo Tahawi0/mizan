@@ -43,7 +43,7 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
         li = "".join(f'<a href="{root}{h}"{" class=active" if h == active else ""}><b>{t}</b><span>{d}</span></a>' for h, t, d in items)
         return f'<details class="dd{" on" if on else ""}"><summary>{name}</summary><div class="menu">{li}</div></details>'
     links = "".join(grp(n, it) for n, it in groups) + f'<a class="cta{" active" if active == "analyze/" else ""}" href="{root}analyze/">حلّل الكلام</a>'
-    foot = [("about/", "عن ميزان"), ("search/", "بحث"), ("send/", "ابعت مغالطة")]
+    foot = [("about/", "عن ميزان"), ("privacy/", "الخصوصية"), ("search/", "بحث"), ("send/", "ابعت مغالطة")]
     flinks = "".join(f'<a href="{root}{h}">{t}</a>' for h, t in foot)
     ldj = f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>' if ld else ""
     beacon = f'<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token": "{ANALYTICS}"}}\'></script>' if ANALYTICS else ""
@@ -166,6 +166,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 {f"<h2>متتلخبطش بينها وبين: " + (f'<a href="{r}atlas/{nc["slug"]}/">{e_(nc["name"])}</a>' if nc.get("slug") else e_(nc["name"])) + f"</h2><p>{e_(nc['diff'])}</p>" if nc else ""}
 {ev}<h2>مصادر</h2><ul class="sources">{src}</ul>
 <h2>شاركها</h2><p><a class="btn ghost" href="{r}cards/post/{e['slug']}.png" download>نزّل الكارت للبوست</a> <a class="btn ghost" href="{r}cards/og/{e['slug']}.png" download>كارت عريض</a></p>
+<p class="report"><a href="{r}send/?err=atlas/{e['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}atlas/">ارجع للفهرس</a></p>"""
         write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"], f"cards/og/{e['slug']}.png", f"atlas/{e['slug']}/",
               {"@context": "https://schema.org", "@type": "DefinedTerm", "name": e["name"], "alternateName": e["intl"], "description": e["oneLine"], "inLanguage": "ar-EG",
@@ -195,6 +196,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <div class="opts">{opts}</div><p class="lead" id="vote-note" style="font-size:14px;margin-top:10px"></p>
 <div class="reveal" id="views"><h2>الفلاسفة شايفينها إزاي؟</h2>{views}
 <p class="note">مفيش إجابة صح واحدة هنا. الهدف إنك تعرف إنت اخترت ليه.</p></div></div>
+<p class="report"><a href="{r}send/?err=dilemmas/{d['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}dilemmas/">كل المعضلات</a></p>
 <script src="{r}assets/config.js?v={VER}"></script><script src="{r}assets/dilemma.js?v={VER}"></script>"""
         write(f"dilemmas/{d['slug']}/index.html", page(f"{d['title']} — ميزان", body, r, "dilemmas/", d["scene"]))
@@ -204,6 +206,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     body = f"""<h1>حلّل الكلام</h1><p class="lead">حط أي جملة أو بوست أو كلام سمعته، وميزان هيقولك فيه مغالطة ولا انحياز، وترد إزاي.</p>
 <form id="an-form" class="sheet"><textarea id="an-text" rows="6" maxlength="1000" placeholder="مثلاً: «كل الناس بتشتري الموبايل ده، يبقى أكيد أحسن واحد.»"></textarea>
 <p style="margin:10px 0 0"><button class="btn" type="submit">وزّن الكلام</button> <span id="an-status" class="lead" style="font-size:14px"></span></p></form>
+<p class="note warn">ده تحليل آلي بالذكاء الاصطناعي، وممكن يغلط. خده كرأي يساعدك تفكر، مش حكم نهائي، وراجع المدخل في الأطلس قبل ما تعتمد عليه.</p>
 <div id="an-out" style="margin-top:16px"></div>
 <p class="note">متكتبش بيانات شخصية، زي أسماء أو أرقام تليفونات. الكلام بيتبعت لسيرفر عشان يتحلل.</p>
 <script>window.MIZAN_NAMES={names};</script><script src="../assets/config.js?v={VER}"></script><script src="../assets/analyze.js?v={VER}"></script>"""
@@ -271,6 +274,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <div class="opts">{opts}</div><p class="lead" id="vote-note" style="font-size:14px;margin-top:10px"></p>
 <div class="reveal" id="views"><h2>الفلاسفة قالوا إيه؟</h2>{views}
 <p class="note">مفيش إجابة صح واحدة. المهم تعرف إنت اخترت ليه.</p></div></div>
+<p class="report"><a href="{r}send/?err=weekly/{w['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}weekly/">سؤال الأسبوع</a></p>
 <script src="{r}assets/config.js?v={VER}"></script><script src="{r}assets/dilemma.js?v={VER}"></script>"""
         write(f"weekly/{w['slug']}/index.html", page(f"{w['title']} — ميزان", body, r, "weekly/", w["scene"], path=f"weekly/{w['slug']}/"))
@@ -287,6 +291,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <div class="today" id="p-done" style="display:none"><h2>خلصت المسار!</h2><p>اعمل شهادتك وشاركها. اسمك بيتكتب على جهازك بس، ومش بيتبعت لأي حد.</p>
 <label for="cert-name">اسمك زي ما تحب يتكتب</label><input type="text" id="cert-name" maxlength="40" placeholder="اسمك">
 <p style="margin-top:.8rem"><button class="btn" id="cert-make">اعمل الشهادة</button> <a class="btn ghost" href="{r}quiz/">اختبر نفسك</a></p><div id="cert-out"></div></div>
+<p class="report"><a href="{r}send/?err=paths/{p['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}paths/">كل المسارات</a></p><script src="{r}assets/paths.js?v={VER}"></script>"""
         write(f"paths/{p['slug']}/index.html", page(f"{p['title']} — ميزان", body, r, "paths/", p["intro"], path=f"paths/{p['slug']}/"))
 
@@ -314,6 +319,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 {f'<h2>اقرا كمان</h2><p>{rel}</p>' if rel else ''}
 <h2>مصادر</h2><ul class="sources">{src}</ul>
 <h2>شاركها</h2><p><a class="btn ghost" href="{r}cards/post/{x['slug']}.png" download>نزّل الكارت للبوست</a> <a class="btn ghost" href="{r}cards/og/{x['slug']}.png" download>كارت عريض</a></p>
+<p class="report"><a href="{r}send/?err=philosophy/{x['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}philosophy/">كل الفلاسفة والمدارس</a></p>"""
         ld = {"@context": "https://schema.org", "@type": "Person" if x["kind"] == "philosopher" else "DefinedTerm", "name": x["name"], "alternateName": x["intl"],
               "description": x["oneLine"], "url": f"{SITE}philosophy/{x['slug']}/"}
@@ -330,6 +336,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <h2>اللي فيه صح</h2><p>{e_(t['fair'])}</p>
 <h2>اللي فيه غلط</h2>{an}
 <h2>الوزن النهائي</h2><p class="verdict">{e_(t['verdict'])}</p>
+<p class="report"><a href="{r}send/?err=trends/{t['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}trends/">كل التريندات</a></p>"""
         write(f"trends/{t['slug']}/index.html", page(f"{t['title']} — ميزان", body, r, "trends/", t["verdict"], path=f"trends/{t['slug']}/"))
 
@@ -359,6 +366,20 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 
     # offline
     (OUT / "offline.html").write_text(page("مفيش نت — ميزان", '<section class="hero">' + SCALE + '<h1 style="font-size:2.4rem">مفيش نت دلوقتي</h1><p class="lead">الصفحات اللي فتحتها قبل كده لسه شغالة. ارجع لما النت يرجع.</p><p><a class="btn" href="./">الرئيسية</a></p></section>', "./"), encoding="utf-8")
+
+    # privacy
+    body = """<h1>الخصوصية</h1><p class="lead">ميزان مش بيطلب منك اسم ولا إيميل ولا حساب. ودي كل البيانات اللي بتتعامل في الموقع، بالظبط.</p>
+<h2>اللي بيتحفظ على جهازك بس</h2><p>نتايج الألغاز، والسلسلة، وتقدمك في المسارات، وأحسن نتيجة في الاختبارات، واختياراتك في التصويت. دي بتتحفظ في متصفحك (localStorage) ومش بتتبعت لأي حد. لو مسحت بيانات المتصفح، هتتمسح.</p>
+<h2>الشهادة</h2><p>اسمك في شهادة المسار بيترسم على جهازك، ومش بيتبعت لأي سيرفر.</p>
+<h2>اللي بيتبعت لسيرفر ميزان</h2>
+<ul><li><b>التصويت ونتايج المعمل:</b> بنسجل اختيارك من غير اسمك. عشان كل واحد يصوّت مرة واحدة، بنحوّل عنوان الـ IP لكود مشفّر (hash) ميتعرفش منه العنوان الأصلي، وبيتمسح بعد سنة.</li>
+<li><b>حلّل الكلام:</b> النص اللي بتكتبه بيتبعت لخدمة Claude من شركة Anthropic عشان يتحلل. بنحتفظ بنتيجة التحليل 30 يوم عشان لو حد كتب نفس النص ميتحللش تاني. متكتبش أسماء ولا أرقام تليفونات ولا أي بيانات شخصية.</li>
+<li><b>ابعت مغالطة وبلاغات الأخطاء:</b> الجملة اللي بتبعتها بتتحفظ لحد 120 يوم عشان نراجعها بإيدينا. مش بنسجل مين بعتها.</li></ul>
+<h2>عدّاد الزيارات</h2><p>بنستخدم Cloudflare Web Analytics عشان نعرف عدد الزيارات والصفحات اللي الناس بتحبها. مش بيستخدم كوكيز، ومش بيتتبعك من موقع لموقع.</p>
+<h2>اللي مش بنعمله</h2><p>مش بنبيع بيانات، ومش بنعرض إعلانات، ومش بنستخدم كوكيز تتبع.</p>
+<h2>عايز تمسح حاجة؟</h2><p>بياناتك على جهازك تقدر تمسحها من إعدادات المتصفح. ولو بعتلنا جملة وعايزها تتمسح، <a href="../send/">ابعتلنا</a> نصها، وإحنا نمسحها.</p>
+<p class="note">ميزان ماشي حسب قانون حماية البيانات الشخصية المصري رقم 151 لسنة 2020. الصفحة دي اتحدّثت نوفمبر 2026.</p>"""
+    write("privacy/index.html", page("الخصوصية — ميزان", body, "../", "", "ميزان بيتعامل مع بياناتك إزاي.", path="privacy/"))
 
     # about
     body = """<h1>عن ميزان</h1>

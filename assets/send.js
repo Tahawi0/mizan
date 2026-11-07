@@ -1,6 +1,16 @@
 (function () {
   var f = document.getElementById("send-form"), st = document.getElementById("send-status");
   if (!f) return;
+  var err = new URLSearchParams(location.search).get("err");
+  if (err) {
+    err = err.replace(/[^a-z0-9\-\/]/gi, "").slice(0, 50);
+    document.querySelector("h1").textContent = "فيه غلط؟ قولّنا";
+    document.querySelector("main .lead").textContent = "شكراً إنك أخدت بالك. اكتب الغلط اللي لقيته، ولو تعرف الصح اكتبه. هنراجعه بإيدينا ونصلّحه.";
+    document.querySelector('label[for="send-text"]').textContent = "الغلط إيه؟";
+    document.getElementById("send-text").placeholder = "مثلاً: التاريخ ده غلط، أو المثال ده مش مناسب…";
+    var w = document.getElementById("send-where"); w.value = "غلط: " + err; w.readOnly = true;
+    var g = document.getElementById("send-guess"); g.closest ? null : null; document.querySelector('label[for="send-guess"]').hidden = true; g.hidden = true;
+  }
   f.onsubmit = function (e) {
     e.preventDefault();
     var text = document.getElementById("send-text").value.trim();
