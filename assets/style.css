@@ -407,3 +407,72 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .champ span{display:block;font-family:var(--kufi);font-size:1.4rem;color:var(--gold)}
 .champ b{display:block;font-family:var(--kufi);overflow-wrap:anywhere}
 .champ small{color:var(--muted)}
+
+/* ═════ الهوية المتحركة ═════ */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vt-out .28s ease both}
+::view-transition-new(root){animation:vt-in .38s cubic-bezier(.2,.8,.2,1) both}
+@keyframes vt-out{to{opacity:0;transform:translateX(-14px)}}
+@keyframes vt-in{from{opacity:0;transform:translateX(18px)}}
+
+/* الميزان الحي في الشعار */
+.logo svg .lbeam{transform-origin:16px 9px;transition:transform .5s cubic-bezier(.3,1.7,.5,1)}
+.logo svg{overflow:visible}
+.logo:hover svg .lbeam{transform:rotate(-6deg)}
+.logo.tilt-r svg .lbeam{animation:tiltR 1.5s cubic-bezier(.3,1.6,.5,1)}
+.logo.tilt-w svg .lbeam{animation:tiltW 1.5s cubic-bezier(.3,1.6,.5,1)}
+.logo.tilt-r svg{color:var(--ok)}.logo.tilt-w svg{color:var(--bad)}
+@keyframes tiltR{0%{transform:rotate(0)}25%{transform:rotate(-16deg)}55%{transform:rotate(7deg)}80%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+@keyframes tiltW{0%{transform:rotate(0)}25%{transform:rotate(16deg)}55%{transform:rotate(-7deg)}80%{transform:rotate(3deg)}100%{transform:rotate(0)}}
+
+/* حبر بينكتب: العنوان بيظهر من اليمين للشمال */
+main h1{animation:ink 1.1s cubic-bezier(.6,.1,.2,1) both}
+@keyframes ink{from{clip-path:inset(0 0 0 100%);opacity:.2}to{clip-path:inset(0 0 0 0);opacity:1}}
+main .lead{animation:rise .7s .25s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+.orn::before,.orn::after{transform-origin:center;animation:drawline 1s .2s ease both}
+.orn span{animation:spin45 1s .2s ease both}
+@keyframes drawline{from{transform:scaleX(0)}}
+@keyframes spin45{from{transform:rotate(-135deg) scale(0)}}
+
+/* الظهور مع النزول */
+.rv-ready [data-rv]:not(.in){opacity:0;transform:translateY(14px)}
+.rv-ready [data-rv].in{animation:rvin .6s calc(var(--i,0)*60ms) cubic-bezier(.2,.8,.2,1) both}
+@keyframes rvin{from{opacity:0;transform:translateY(14px)}}
+
+/* الأزرار: ضغطة ختم، ولمعة دهب */
+.btn,.opts button,.pcard,.slot,.tile{transition:transform .12s ease,border-color .2s,box-shadow .2s,background-color .2s}
+.btn:active,.opts button:active:not(:disabled),.pcard:active,.case-tile:active{transform:scale(.96)}
+.btn:not(.ghost){position:relative;overflow:hidden}
+.btn:not(.ghost)::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);transform:translateX(120%);transition:transform .7s}
+.btn:not(.ghost):hover::after{transform:translateX(-120%)}
+.tile:hover{box-shadow:0 6px 18px -10px color-mix(in srgb,var(--gold) 70%,transparent)}
+
+/* ردود فعل الإجابة */
+.fx-glow{animation:glow .7s ease}
+@keyframes glow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent)}100%{box-shadow:0 0 0 14px transparent}}
+.fx-shake{animation:shake .4s}
+.fx-pop{animation:pop .7s cubic-bezier(.3,1.8,.5,1) both}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+
+/* قصاصات دهب */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
+.confetti i{position:absolute;top:-20px;left:var(--x);width:8px;height:14px;background:var(--gold);border-radius:1px;animation:fall var(--d) var(--delay) cubic-bezier(.3,.6,.5,1) forwards}
+.confetti i.b{background:var(--lapis);width:6px;height:6px;border-radius:50%}
+@keyframes fall{to{transform:translateY(110vh) rotate(var(--r));opacity:.2}}
+
+/* زرار الصوت */
+.snd .x{display:inline}.snd .w{display:none}
+.snd.on .x{display:none}.snd.on .w{display:inline}
+.snd.on{color:var(--gold)}
+
+/* الميزان الكبير في الرئيسية بيتنفس */
+.scale{animation:breathe 6s 3s ease-in-out infinite}
+@keyframes breathe{50%{transform:translateY(-4px)}}
+
+@media (prefers-reduced-motion:reduce){
+  ::view-transition-old(root),::view-transition-new(root){animation:none}
+  main h1,main .lead,.orn::before,.orn::after,.orn span,.scale,.fx-glow,.fx-shake,.fx-pop{animation:none}
+  .btn:not(.ghost)::after{display:none}
+  .btn:active,.opts button:active,.pcard:active,.case-tile:active{transform:none}
+}

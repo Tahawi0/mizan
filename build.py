@@ -22,8 +22,8 @@ _tok = ROOT / "content/analytics.txt"
 ANALYTICS = _tok.read_text().strip() if _tok.exists() else ""
 URLS = []
 
-LOGO = ('<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
-        '<path d="M16 4v24M8 28h16M5 9h22"/><path d="M9 9l-4 9h8zM23 9l-4 9h8z"/></svg>')
+LOGO = ('<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">'
+        '<path d="M16 4v24M8 28h16"/><g class="lbeam"><path d="M5 9h22"/><path class="lpan-r" d="M9 9l-4 9h8z"/><path class="lpan-l" d="M23 9l-4 9h8z"/></g></svg>')
 
 
 SCALE = """<svg class="scale" viewBox="0 0 200 150" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -66,11 +66,11 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
 <link rel="icon" type="image/png" href="{root}assets/icons/icon-192.png"><link rel="apple-touch-icon" href="{root}assets/icons/apple-touch.png">
 <link rel="canonical" href="{SITE}{path}">{ldj}
 </head><body data-root="{root}">
-<header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><div class="top-tools"><a class="icon-btn acct" id="acct-btn" href="{root}account/" aria-label="تسجيل الدخول"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></a><a class="icon-btn" href="{root}search/" aria-label="بحث"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></a><button class="icon-btn burger" aria-label="القايمة" aria-expanded="false" aria-controls="mainnav"><span></span><span></span><span></span></button></div><nav id="mainnav" aria-label="الأقسام">{links}</nav></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><div class="top-tools"><a class="icon-btn acct" id="acct-btn" href="{root}account/" aria-label="تسجيل الدخول"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></a><button class="icon-btn snd" id="snd-btn" type="button" aria-pressed="false" aria-label="شغّل الأصوات" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button><a class="icon-btn" href="{root}search/" aria-label="بحث"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></a><button class="icon-btn burger" aria-label="القايمة" aria-expanded="false" aria-controls="mainnav"><span></span><span></span><span></span></button></div><nav id="mainnav" aria-label="الأقسام">{links}</nav></div></header>
 <main><div class="wrap">{body}</div></main>
 <footer><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav class="foot-links" aria-label="روابط تانية">{flinks}</nav><p>زِن كلامك. مرجع مفتوح، اتكتب بإيد إنسان مع الذكاء الاصطناعي، وكل مدخل اتراجع قبل النشر.</p>
 <button class="btn ghost" id="install" hidden>نزّل ميزان على موبايلك</button><p class="note" id="install-hint" hidden>على الآيفون: دوس زرار المشاركة في سفاري، وبعدين «إضافة إلى الشاشة الرئيسية».</p></div></footer>
-<script src="{root}assets/app.js?v={VER}"></script><script src="{root}assets/config.js?v={VER}"></script><script src="{root}assets/account.js?v={VER}"></script>{beacon}
+<script src="{root}assets/app.js?v={VER}"></script><script src="{root}assets/motion.js?v={VER}"></script><script src="{root}assets/config.js?v={VER}"></script><script src="{root}assets/account.js?v={VER}"></script>{beacon}
 </body></html>"""
 
 
@@ -489,7 +489,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>', encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8")
     # service worker
-    pre = ["./", "offline.html", "daily/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "daily.js", "quiz.js", "search.js"]]
+    pre = ["./", "offline.html", "daily/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "motion.js", "daily.js", "quiz.js", "search.js"]]
     sw = (ROOT / "tools/sw.template.js").read_text(encoding="utf-8").replace("__VER__", VER).replace("__PRE__", json.dumps(pre))
     (OUT / "sw.js").write_text(sw, encoding="utf-8")
     print("built", len(entries), "entries,", len(philo), "philosophy,", len(URLS), "pages")
