@@ -597,3 +597,8 @@ main .lead{animation:rise .7s .25s ease both}
 @keyframes nod{50%{transform:translateX(-50%) rotate(-4deg)}}
 @media (max-width:520px){.court-stage{height:160px}.actor img{height:96px}.judge{height:78px}}
 @media (prefers-reduced-motion:reduce){.stage.next .stage-no,.actor.talk,.court-stage.deliberate .judge,.big-stars{animation:none}}
+.stage-no.has-icon{background:var(--leaf);overflow:visible}
+.stage-no.has-icon img{width:34px;height:34px;object-fit:contain}
+.stage.won .stage-no.has-icon{background:var(--gold-soft)}
+.esc-art{width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
+.ava{border-radius:50%;object-fit:cover;object-position:top;background:var(--gold-soft)}

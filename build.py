@@ -238,16 +238,16 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         ("اكشف الغلط", "دوّر على الحيلة قبل ما تعدّي عليك.", [
             ("quiz/", "اختبر نفسك", "10 أسئلة، وتحدّى صاحبك في نفس الأسئلة.", "5 دقايق", False),
             ("games/court/", "محكمة ميزان", "10 قضايا ومراحل بتتفتح ورا بعض. اعترض أول ما تسمع مغالطة.", "5 دقايق", True),
-            ("games/family/", "جروب العيلة", "خالك نشر رسالة غلط. هترد إزاي من غير ما العيلة تزعل؟", "4 دقايق", True),
-            ("games/spot/", "اكشف الحيلة", "7 إعلانات لماركات وهمية، كل مرة 3 منهم، وجوه كل واحد حيل مستخبية.", "5 دقايق", True)]),
+            ("games/family/", "جروب العيلة", "10 مواقف في جروب العيلة بمراحل. هترد إزاي من غير ما حد يزعل؟", "4 دقايق", True),
+            ("games/spot/", "اكشف الحيلة", "10 إعلانات بمراحل، كل واحد حيله مستخبية أكتر من اللي قبله.", "5 دقايق", True)]),
         ("اعرف نفسك", "مخك بيتأثر بإيه من غير ما تاخد بالك؟", [
             ("games/lab/", "معمل الانحيازات", "4 تجارب علم نفس حقيقية تتعمل عليك.", "4 دقايق", False),
             ("games/philosopher/", "أنهي فيلسوف إنت؟", "8 أسئلة خفيفة… وفي الآخر مفاجأة.", "3 دقايق", False),
             ("games/profile/", "بصمتك المعرفية", "15 موقف، وفي الآخر رسم لأكتر انحيازات بتأثر عليك.", "4 دقايق", True),
             ("games/calibration/", "ميزان الثقة", "معلوماتك قد ثقتك؟ 10 أسئلة وهتعرف.", "4 دقايق", False)]),
         ("ابني صح", "مش بس تكشف الغلط، اتعلم تقول الكلام صح.", [
-            ("games/escape/", "غرفة الهروب", "5 أوض، وكل باب قفله بيتفتح بالتفكير بس. والعدّاد شغال.", "8 دقايق", True),
-            ("games/argue/", "ابني الحجة", "اختار المقدمتين اللي يثبتوا النتيجة. اتعلم المنطق نفسه.", "5 دقايق", True),
+            ("games/escape/", "غرفة الهروب", "10 أوض بمراحل، وكل باب قفله بيتفتح بالتفكير بس.", "8 دقايق", True),
+            ("games/argue/", "ابني الحجة", "10 مستويات بتعلّمك المنطق نفسه: اختار المقدمات اللي تثبت النتيجة.", "5 دقايق", True),
             ("games/fix/", "صلّح الحجة", "اختار إزاي الجملة تتقال من غير الغلط.", "4 دقايق", False)]),
         ("قول رأيك", "مواقف مفيهاش إجابة سهلة.", [
             ("dilemmas/", "معضلات", "24 موقف صعب، صوّت وشوف الفلاسفة قالوا إيه.", "دقيقتين", False)]),
@@ -275,7 +275,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         data["philNames"] = json.loads(pn)
         body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>{title}</h1><p class="lead">{lead}</p>
 <div id="game" data-game="{gid[slug]}"{' class="sheet"' if slug != "lab" else ''}></div>
-<script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script>{f'<script src="{gx}assets/config.js?v={VER}"></script>' if api else ''}<script src="{gx}assets/games.js?v={VER}"></script>"""
+<script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script>{f'<script src="{gx}assets/config.js?v={VER}"></script>' if api else ''}<script src="{gx}assets/stages.js?v={VER}"></script><script src="{gx}assets/games.js?v={VER}"></script>"""
         write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
 
     # ألعاب الساحة الجديدة: كل لعبة ملف JS لوحدها
@@ -291,7 +291,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>{title}</h1><p class="lead">{lead}</p>
 <div id="game" class="sheet"></div>
 <p class="report"><a href="{gx}send/?err=games/{slug}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
-<script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script><script src="{gx}assets/{slug}.js?v={VER}"></script>"""
+<script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script><script src="{gx}assets/stages.js?v={VER}"></script><script src="{gx}assets/{slug}.js?v={VER}"></script>"""
         write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
 
     # مرآة الناس

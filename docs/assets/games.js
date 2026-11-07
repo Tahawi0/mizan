@@ -85,8 +85,13 @@
 
   /* ───── اكشف الحيلة ───── */
   function spot(box) {
-    var ALL = G.spot; G.spot = shuffle(ALL).slice(0, 3);
-    var i = 0, total = { f: 0, t: 0 };
+    var S = window.MizanStages, SKEY = "mizan-spot-stages", i = 0;
+    function map() {
+      S.render(box, { key: SKEY, bossLabel: "إعلان الزعيم: 6 حيل",
+        intro: "10 إعلانات لماركات خيالية، كل واحد حيله مستخبية أكتر من اللي قبله. دوس على كل جملة فيها حيلة. لو لقيتهم كلهم من غير غلط تاخد 3 نجوم.",
+        items: G.spot.map(function (ad, k) { return { id: "s" + k, title: ad.brand, sub: ad.lines.filter(function (l) { return l.e; }).length + " حيل" }; }),
+        onPlay: function (k) { i = k; show(); } });
+    }
     function show() {
       box.innerHTML = "";
       var ad = G.spot[i], picked = {};
@@ -112,25 +117,18 @@
           else if (picked[k]) { s.classList.add("bad"); wrong++; }
           if (l.e) { var d = el("div", "ex"), sm = el("small"); sm.appendChild(link(l.e)); d.appendChild(sm); d.appendChild(el("div", null, "«" + l.t + "» " + l.why)); out.appendChild(d); }
         });
-        total.f += found; total.t += n;
+        var score = Math.max(0, Math.round(10 * found / n) - wrong * 2);
+        S.record(SKEY, "s" + i, score);
         var h = el("h2", null, "لقيت " + found + " من " + n + (wrong ? "، وعلّمت " + wrong + " جملة سليمة" : ""));
         box.appendChild(h); box.appendChild(el("p", "lead small", "الأخضر لقيته، والأصفر فاتك، والأحمر جملة سليمة.")); box.appendChild(out);
-        var nx = el("button", "btn", i < G.spot.length - 1 ? "الإعلان اللي بعده" : "النتيجة النهائية");
-        nx.onclick = function () { i++; if (i < G.spot.length) show(); else end(); }; box.appendChild(nx);
+        var nx = el("div", "court-end"); nx.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
+        nx.appendChild(S.endBar({ k: i, count: G.spot.length, map: map, play: function (k) { i = k; show(); },
+          share: "لقيت " + found + " من " + n + " حيل في إعلان «" + ad.brand + "» على ميزان ⚖️\nجرّب إنت: " + location.href.split("?")[0] }));
+        box.appendChild(nx);
         h.scrollIntoView({ behavior: "smooth", block: "start" });
       };
     }
-    function end() {
-      box.innerHTML = "";
-      var w = el("div", "center"); w.appendChild(el("p", "kicker", "النتيجة"));
-      var big = el("p", "big"); big.textContent = total.f; big.appendChild(el("small", null, " من " + total.t)); w.appendChild(big);
-      w.appendChild(el("h2", null, total.f === total.t ? "مفيش إعلان يضحك عليك." : total.f >= total.t * 0.7 ? "عينك حلوة. شوية حيل بس عدّت." : "الإعلانات شاطرة. مسار الإعلانات هيساعدك."));
-      var p = el("p"); var a = el("a", "btn", "مسار: الإعلانات متضحكش عليك"); a.href = root + "paths/ads/"; p.appendChild(a); p.appendChild(document.createTextNode(" "));
-      p.appendChild(shareBtn(function () { return "ميزان — اكشف الحيلة\nلقيت " + total.f + " من " + total.t + " حيلة في الإعلانات 🔍\nجرب إنت: " + location.href; })); w.appendChild(p);
-      var r = el("button", "btn ghost", "العب تاني"); r.onclick = function () { G.spot = shuffle(ALL).slice(0, 3); i = 0; total = { f: 0, t: 0 }; show(); }; w.appendChild(r);
-      box.appendChild(w);
-    }
-    show();
+    map();
   }
 
   /* ───── أنهي فيلسوف إنت؟ ───── */
