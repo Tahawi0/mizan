@@ -247,7 +247,7 @@ header.top .wrap{flex-wrap:nowrap}
   #mainnav{display:none;order:4;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 14px;margin:0}
   #mainnav.open{display:flex}
   .dd summary{font-size:1.1rem;padding:12px 4px;pointer-events:none}.dd summary::after{display:none}
-  .dd summary{color:var(--gold)}
+  .dd summary{color:var(--gold);background:transparent!important;border-bottom:1px solid var(--rule);border-radius:0;box-shadow:none!important}
   .menu{position:static;box-shadow:none;border:0;background:transparent;padding:0 0 8px;min-width:0}
   .dd:not([open]) .menu{display:none}
   #mainnav a.cta{margin:10px 0 0;text-align:center;padding:12px;font-size:1.05rem}
