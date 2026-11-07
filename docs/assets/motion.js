@@ -30,6 +30,37 @@
   };
   function play(name) { if (on && SFX[name]) try { SFX[name](); } catch (e) {} }
   window.MizanFX = { play: play, tilt: tilt, confetti: confetti };
+  /* ───── زِنة: البومة اللي بتلعب معاك ───── */
+  var Z = null, zt = null, root = document.body.getAttribute("data-root") || "./";
+  var LINES = {
+    right: ["برافو! عينك حلوة.", "وزنتها صح!", "كده أنا فخورة بيك.", "ولا حيلة بتعدّي عليك!"],
+    wrong: ["ولا يهمك، الحيلة دي بتعدّي على ناس كتير.", "قربت! بص على الشرح.", "المرة الجاية هتمسكها.", "حتى الفلاسفة بيغلطوا."],
+    win: ["عاش! شارك نتيجتك.", "ده مستوى قاضي محنّك!", "أنا قلت إنك هتعملها."],
+    think: ["خد وقتك وفكّر…", "اقرا الكلام كويس.", "مين بيستفيد من الجملة دي؟"],
+    hi: ["أهلاً! أنا زِنة، وهلعب معاك.", "يلا بينا! أنا معاك.", "جاهز؟ ركّز معايا."]
+  };
+  var FACE = { right: "happy", wrong: "sad", win: "wink", think: "think", hi: "explain", shock: "shock" };
+  function pickL(k) { var l = LINES[k] || LINES.hi; return l[Math.floor(Math.random() * l.length)]; }
+  function zina(mood, say) {
+    if (!Z) return;
+    var img = Z.querySelector("img"), face = FACE[mood] || mood;
+    img.src = root + "assets/zina/" + face + ".webp";
+    Z.classList.remove("z-hop", "z-sad", "z-in"); void Z.offsetWidth;
+    Z.classList.add(mood === "wrong" ? "z-sad" : "z-hop", "z-in");
+    var b = Z.querySelector(".z-say"); b.textContent = say || pickL(mood); b.classList.add("show");
+    clearTimeout(zt); zt = setTimeout(function () { b.classList.remove("show"); img.src = root + "assets/zina/think.webp"; }, 3200);
+  }
+  if (document.getElementById("game") || document.getElementById("q-play") || document.getElementById("dilemma") || document.querySelector(".today #opts, #opts")) {
+    Z = document.createElement("div"); Z.className = "zina"; Z.setAttribute("aria-live", "polite");
+    Z.innerHTML = '<p class="z-say"></p><button type="button" class="z-body" aria-label="زِنة"><img alt="" width="96" height="96" src="' + root + 'assets/zina/explain.webp"></button><button type="button" class="z-x" aria-label="خبّي زِنة">×</button>';
+    document.body.appendChild(Z);
+    if (ls("mizan-zina") === "0") Z.classList.add("z-off");
+    Z.querySelector(".z-body").onclick = function () { if (Z.classList.contains("z-off")) { Z.classList.remove("z-off"); ls("mizan-zina", "1"); } zina("think"); };
+    Z.querySelector(".z-x").onclick = function () { Z.classList.add("z-off"); ls("mizan-zina", "0"); };
+    setTimeout(function () { zina("hi"); }, 900);
+  }
+  window.MizanFX.zina = zina;
+
 
   var sb = document.getElementById("snd-btn");
   function paint() { if (!sb) return; sb.hidden = false; sb.classList.toggle("on", on); sb.setAttribute("aria-pressed", on); sb.setAttribute("aria-label", on ? "اقفل الأصوات" : "شغّل الأصوات"); }
@@ -62,7 +93,7 @@
   var last = 0;
   function verdict(el, ok) {
     var now = Date.now(); if (now - last < 120) return; last = now;
-    tilt(ok ? "r" : "w"); play(ok ? "right" : "wrong");
+    tilt(ok ? "r" : "w"); play(ok ? "right" : "wrong"); zina(ok ? "right" : "wrong");
     if (!reduce && el) { el.classList.add(ok ? "fx-glow" : "fx-shake"); setTimeout(function () { el.classList.remove("fx-glow", "fx-shake"); }, 700); }
   }
   new MutationObserver(function (ms) {
@@ -78,7 +109,7 @@
     ms.forEach(function (m) { m.addedNodes && [].forEach.call(m.addedNodes, function (n) {
       if (n.nodeType !== 1) return;
       var big = n.classList.contains("big-score") ? n : n.querySelector && n.querySelector(".big-score, .prof-title");
-      if (big && !big.dataset.fx) { big.dataset.fx = 1; big.classList.add("fx-pop"); play("win"); if (/^(10|9)\b|سفير|1 \/|^0:[0-5]/.test(big.textContent) || big.classList.contains("prof-title")) confetti(); }
+      if (big && !big.dataset.fx) { big.dataset.fx = 1; big.classList.add("fx-pop"); play("win"); zina("win"); if (/^(10|9)\b|سفير|1 \/|^0:[0-5]/.test(big.textContent) || big.classList.contains("prof-title")) confetti(); }
     }); });
   }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true, childList: true });
 
