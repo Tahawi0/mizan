@@ -89,6 +89,7 @@
       var score = Math.max(0, Math.round((hit / total) * 6 + (right ? 3 : 0) + Math.max(0, cred) / 3));
       score = Math.min(10, score);
       var d = load(); d[c.id] = Math.max(d[c.id] || 0, score); save(d);
+      window.MizanAuth && MizanAuth.score && MizanAuth.score("court", score);
       var rank = score >= 9 ? "قاضي محنّك: مفيش حيلة بتعدّي عليك." : score >= 6 ? "قاضي كويس، بس فيه حيل لسه بتعدّي." : "القاضي محتاج يركز أكتر. جرّب تاني.";
       var r = el("div", "court-end");
       r.appendChild(el("p", "stats-line", "مغالطات مسكتها: " + hit + " من " + total + " · اعتراضات في غير محلها: " + wrongObj));

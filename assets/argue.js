@@ -57,6 +57,7 @@
   }
   function end() {
     var d = load(); d.best = Math.max(d.best || 0, first); save(d);
+    window.MizanAuth && MizanAuth.score && MizanAuth.score("argue", first / G.levels.length * 10);
     var w = el("div", "today");
     w.appendChild(el("p", "kicker", "خلّصت كل المستويات"));
     w.appendChild(el("p", "big-score", first + " / " + G.levels.length));

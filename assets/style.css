@@ -385,3 +385,25 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .split-legend{display:grid;gap:2px;font-size:.95rem;line-height:1.7}
 .split-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:6px}
 .split small{color:var(--muted)}
+/* دوري ميزان */
+.league-me{margin-top:1rem}
+.league-today{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.league-today li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted var(--rule);padding:.2rem 0}
+.league-today li span{color:var(--muted);font-size:.95rem}
+.league-today li.done span{color:var(--ok)}
+.league-today li.done a::before{content:"✓ ";color:var(--ok)}
+.league-tools{margin-top:1rem}
+.nick-form input{width:12rem}
+.board{list-style:none;padding:0;margin:1rem 0;counter-reset:none}
+.board li{display:grid;grid-template-columns:2.4rem 1fr auto;align-items:center;gap:10px;padding:.55rem .8rem;border-bottom:1px solid var(--rule)}
+.board .pos{font-family:var(--kufi);color:var(--muted);text-align:center}
+.board b{font-family:var(--kufi);font-weight:600}
+.board .pts{color:var(--muted);font-size:.95rem}
+.board li.top .pos{width:2rem;height:2rem;line-height:2rem;border-radius:50%;color:var(--paper);font-weight:700}
+.board li.top1 .pos{background:var(--gold)}.board li.top2 .pos{background:#8A8F98}.board li.top3 .pos{background:#9C6B3F}
+.board li.mine{background:var(--lapis-soft);border-radius:4px}
+.champs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.champ{text-align:center;background:var(--leaf);border:1px solid var(--rule);border-radius:4px;padding:.6rem .4rem}
+.champ span{display:block;font-family:var(--kufi);font-size:1.4rem;color:var(--gold)}
+.champ b{display:block;font-family:var(--kufi);overflow-wrap:anywhere}
+.champ small{color:var(--muted)}

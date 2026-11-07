@@ -56,6 +56,7 @@
     $("q-bar").style.width = "100%";
     $("q-score").textContent = score;
     $("q-level").textContent = level(score);
+    window.MizanAuth && MizanAuth.score && MizanAuth.score("quiz", score);
     var vs = $("q-vs");
     if (ch) { vs.hidden = false; vs.textContent = score > ch.s ? "كسبت صاحبك! إنت " + score + " وهو " + ch.s + "." : score === ch.s ? "تعادل! إنتوا الاتنين " + score + "." : "صاحبك كسب المرة دي: هو " + ch.s + " وإنت " + score + "."; ch = null; $("q-banner").hidden = true; }
     else vs.hidden = true;

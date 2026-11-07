@@ -119,7 +119,17 @@
         return user.delete().catch(function (e) { if (e.code === "auth/requires-recent-login") return F.signOut(A); throw e; });
       });
     },
-    push: push
+    push: push,
+    // دوري ميزان: بنبعت النقط بس لو المستخدم مسجّل (السيرفر بيتجاهلها لو مش مشترك في الدوري)
+    score: function (game, pts) {
+      if (ls(FLAG) !== "1") return;
+      load().then(function () {
+        if (!user) return;
+        return user.getIdToken().then(function (t) {
+          return fetch(window.MIZAN_API + "/league/score", { method: "POST", headers: { "Authorization": "Bearer " + t, "Content-Type": "application/json" }, body: JSON.stringify({ game: game, pts: Math.max(0, Math.min(10, Math.round(pts))) }) });
+        });
+      }).catch(function () {});
+    }
   };
 
   // لو مسجّل قبل كده، نكمّل المزامنة في الخلفية

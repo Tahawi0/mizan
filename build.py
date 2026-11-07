@@ -252,6 +252,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         ("قول رأيك", "مواقف مفيهاش إجابة سهلة.", [
             ("dilemmas/", "معضلات", "24 موقف صعب، صوّت وشوف الفلاسفة قالوا إيه.", "دقيقتين", False)]),
         ("لوحات", "شوف الناس بتفكر إزاي، وإنت فين منهم.", [
+            ("games/league/", "دوري ميزان", "ترتيب أسبوعي بلقب تختاره. العب كل يوم، واجمع نقط، واطلع الأول.", "كل يوم", True),
             ("games/mirror/", "مرآة الناس", "لوحة حية بنتايج كل التصويت والتجارب: الناس اختارت إيه، ووقعت في إيه.", "دقيقتين", True)]),
     ]
     def atile(h, t, d, m, new):
@@ -305,6 +306,19 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <div id="game"></div>
 <script>window.MIZAN_GAME={json.dumps({"lab": mlab, "items": mitems}, ensure_ascii=False)};</script><script src="{gx}assets/config.js?v={VER}"></script><script src="{gx}assets/mirror.js?v={VER}"></script>"""
     write("games/mirror/index.html", page("مرآة الناس — ميزان", body, gx, "games/", lead, path="games/mirror/"))
+
+    # دوري ميزان
+    lg = [{"id": "daily", "name": "مغالطة اليوم", "url": "daily/", "rule": "10 نقط لو حليتها صح، و2 لو حاولت."},
+          {"id": "quiz", "name": "اختبر نفسك", "url": "quiz/", "rule": "نقطة لكل إجابة صح."},
+          {"id": "court", "name": "محكمة ميزان", "url": "games/court/", "rule": "درجتك في القضية من 10."},
+          {"id": "escape", "name": "غرفة الهروب", "url": "games/escape/", "rule": "10 لو خرجت في 3 دقايق، والنقط بتقل كل ما الوقت يزيد."},
+          {"id": "argue", "name": "ابني الحجة", "url": "games/argue/", "rule": "على حسب الحجج اللي بنيتها صح من أول محاولة."},
+          {"id": "family", "name": "جروب العيلة", "url": "games/family/", "rule": "متوسط الود والإقناع في آخر الجروب."}]
+    lead = "ترتيب أسبوعي لأصحاب الحسابات. اختار لقب، والعب كل يوم، واجمع نقط. الترتيب بيتصفّر كل سبت."
+    body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>دوري ميزان</h1><p class="lead">{lead}</p>
+<div id="game"></div>
+<script>window.MIZAN_GAME={json.dumps({"games": lg}, ensure_ascii=False)};</script><script src="{gx}assets/league.js?v={VER}"></script>"""
+    write("games/league/index.html", page("دوري ميزان — ميزان", body, gx, "games/", lead, path="games/league/"))
 
     # weekly question
     wk = [{"slug": w["slug"], "title": w["title"], "question": w["question"]} for w in weekly]
@@ -435,7 +449,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <h2>تقدمك</h2><div class="stats wrapstats" id="ac-stats"></div>
 <div class="today"><h2>ميزان بلس (قريباً)</h2><p>تحليلات أكتر كل يوم، ونصوص أطول، وتحليلاتك محفوظة. لسه بنجهزه.</p></div>
 <p style="margin-top:2rem"><button class="btn ghost" id="ac-out">خروج</button> <button class="btn ghost danger" id="ac-del">امسح حسابي</button></p>
-<div class="note" id="ac-del-confirm" hidden><p>متأكد؟ حسابك وكل تقدمك المحفوظ هيتمسحوا نهائي، ومش هينفع يرجعوا.</p><p><button class="btn danger-fill" id="ac-del-yes">أيوه، امسح</button> <button class="btn ghost" id="ac-del-no">لأ</button></p></div>
+<div class="note" id="ac-del-confirm" hidden><p>متأكد؟ حسابك وكل تقدمك المحفوظ ونقطك في الدوري هيتمسحوا نهائي، ومش هينفع يرجعوا.</p><p><button class="btn danger-fill" id="ac-del-yes">أيوه، امسح</button> <button class="btn ghost" id="ac-del-no">لأ</button></p></div>
 </section>
 <script defer src="../assets/acct-page.js?v={VER}"></script>"""
     write("account/index.html", page("حسابي — ميزان", body, "../", "", "احفظ تقدمك في ميزان على أي جهاز.", path="account/"))
@@ -449,6 +463,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <li><b>حلّل الكلام:</b> النص اللي بتكتبه بيتبعت لخدمة Claude من شركة Anthropic عشان يتحلل. بنحتفظ بنتيجة التحليل 30 يوم عشان لو حد كتب نفس النص ميتحللش تاني. متكتبش أسماء ولا أرقام تليفونات ولا أي بيانات شخصية.</li>
 <li><b>ابعت مغالطة وبلاغات الأخطاء:</b> الجملة اللي بتبعتها بتتحفظ لحد 120 يوم عشان نراجعها بإيدينا. مش بنسجل مين بعتها.</li></ul>
 <h2>لو عملت حساب (اختياري)</h2><p>الحساب مش إجباري، والموقع كله شغال من غيره. لو سجّلت دخول بجوجل أو بالإيميل، بنحفظ: إيميلك، والاسم اللي تختاره، وتقدمك (نتايج الألغاز والمسارات والاختبارات)، عشان يفضل معاك على أي جهاز. تسجيل الدخول بيتم عن طريق Firebase من جوجل، والبيانات محفوظة على Cloudflare. مش بنحفظ كلمات سر خالص. تقدر تمسح حسابك وكل بياناته من صفحة <a href="../account/">حسابي</a> في أي وقت، وبيتمسح على طول.</p>
+<h2>دوري ميزان (اختياري)</h2><p>لو اشتركت في الدوري، بنحفظ اللقب اللي اخترته ونقطك في كل لعبة كل يوم. اللقب بس هو اللي بيظهر للناس في الترتيب، واسمك الحقيقي وإيميلك عمرهم ما بيظهروا. تقدر تخرج من الدوري من صفحته، ونقطك ولقبك بيتمسحوا على طول.</p>
 <h2>عدّاد الزيارات</h2><p>بنستخدم Cloudflare Web Analytics عشان نعرف عدد الزيارات والصفحات اللي الناس بتحبها. مش بيستخدم كوكيز، ومش بيتتبعك من موقع لموقع.</p>
 <h2>اللي مش بنعمله</h2><p>مش بنبيع بيانات، ومش بنعرض إعلانات، ومش بنستخدم كوكيز تتبع.</p>
 <h2>عايز تمسح حاجة؟</h2><p>بياناتك على جهازك تقدر تمسحها من إعدادات المتصفح. ولو بعتلنا جملة وعايزها تتمسح، <a href="../send/">ابعتلنا</a> نصها، وإحنا نمسحها.</p>

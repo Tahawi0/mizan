@@ -178,7 +178,7 @@ async function me(req, env) {
   const a = await authUser(req, env);
   if (!a) return json(env, { error: "سجّل دخول الأول." }, 401);
   if (req.method === "DELETE") {
-    await env.DB.prepare("DELETE FROM users WHERE uid=?").bind(a.uid).run();
+    await env.DB.batch([env.DB.prepare("DELETE FROM users WHERE uid=?").bind(a.uid), env.DB.prepare("DELETE FROM league_points WHERE uid=?").bind(a.uid), env.DB.prepare("DELETE FROM league_members WHERE uid=?").bind(a.uid)]);
     return json(env, { ok: true });
   }
   const u = await getUser(env, a);
@@ -198,6 +198,66 @@ async function me(req, env) {
   }
   const used = parseInt((await env.KV.get("uq:" + today() + ":" + a.uid)) || "0", 10), lim = limitFor(env, u.plan);
   return json(env, { uid: u.uid, email: u.email, name: u.name, plan: u.plan, created: u.created, progress: JSON.parse(u.progress || "{}"), analyze: { used, limit: lim } });
+}
+
+// ───── دوري ميزان: ترتيب أسبوعي بلقب اختياري ─────
+const LEAGUE_GAMES = new Set(["daily", "quiz", "court", "escape", "argue", "family"]);
+const BAD_NICK = ["admin", "ميزان", "mizan", "شرموط", "متناك", "عرص", "fuck", "shit"];
+function cairoDay(t = Date.now()) { return new Date(t).toLocaleDateString("en-CA", { timeZone: "Africa/Cairo" }); }
+function weekOf(day) {
+  const d = new Date(day + "T00:00:00Z"), off = (d.getUTCDay() + 1) % 7; // الأسبوع بيبدأ السبت
+  return new Date(d.getTime() - off * 864e5).toISOString().slice(0, 10);
+}
+function cleanNick(n) {
+  n = String(n || "").normalize("NFC").replace(/\s+/g, " ").trim();
+  if (n.length < 2 || n.length > 20 || !/^[\p{L}\p{N} _.-]+$/u.test(n)) return null;
+  const k = n.toLowerCase();
+  if (BAD_NICK.some(b => k.includes(b))) return null;
+  return { nick: n, key: k.replace(/[ _.-]/g, "") };
+}
+async function league(req, env, url) {
+  const a = await authUser(req, env);
+  const day = cairoDay(), week = weekOf(day);
+  if (url.pathname === "/league" && req.method === "GET") {
+    const top = (await env.DB.prepare("SELECT m.nick nick, SUM(p.pts) pts FROM league_points p JOIN league_members m ON m.uid=p.uid WHERE p.week=? GROUP BY p.uid ORDER BY pts DESC, MIN(m.joined) ASC LIMIT 50").bind(week).all()).results;
+    const lastWeek = weekOf(new Date(new Date(week + "T00:00:00Z").getTime() - 864e5).toISOString().slice(0, 10));
+    const last = (await env.DB.prepare("SELECT m.nick nick, SUM(p.pts) pts FROM league_points p JOIN league_members m ON m.uid=p.uid WHERE p.week=? GROUP BY p.uid ORDER BY pts DESC LIMIT 3").bind(lastWeek).all()).results;
+    const count = (await env.DB.prepare("SELECT COUNT(*) n FROM league_members").first()).n;
+    let me = null;
+    if (a) {
+      const m = await env.DB.prepare("SELECT nick FROM league_members WHERE uid=?").bind(a.uid).first();
+      if (m) {
+        const mine = (await env.DB.prepare("SELECT COALESCE(SUM(pts),0) s FROM league_points WHERE uid=? AND week=?").bind(a.uid, week).first()).s;
+        const above = (await env.DB.prepare("SELECT COUNT(*) n FROM (SELECT uid, SUM(pts) s FROM league_points WHERE week=? GROUP BY uid HAVING s > ?)").bind(week, mine).first()).n;
+        const todayRows = (await env.DB.prepare("SELECT game, pts FROM league_points WHERE uid=? AND day=?").bind(a.uid, day).all()).results;
+        me = { member: true, nick: m.nick, pts: mine, rank: above + 1, today: todayRows };
+      } else me = { member: false };
+    }
+    return json(env, { week, day, top, last, members: count, me });
+  }
+  if (!a) return json(env, { error: "سجّل دخول الأول." }, 401);
+  let b = {}; if (req.method === "POST") { try { b = await req.json(); } catch { return json(env, { error: "طلب غلط." }, 400); } }
+  if (url.pathname === "/league/join" && req.method === "POST") {
+    const c = cleanNick(b.nick);
+    if (!c) return json(env, { error: "اللقب لازم يكون من 2 لـ 20 حرف أو رقم، ومن غير كلام مش لطيف." }, 400);
+    const taken = await env.DB.prepare("SELECT uid FROM league_members WHERE nick_key=?").bind(c.key).first();
+    if (taken && taken.uid !== a.uid) return json(env, { error: "اللقب ده محجوز، جرّب لقب تاني." }, 409);
+    await env.DB.prepare("INSERT INTO league_members(uid,nick,nick_key,joined) VALUES(?,?,?,?) ON CONFLICT(uid) DO UPDATE SET nick=excluded.nick, nick_key=excluded.nick_key").bind(a.uid, c.nick, c.key, Date.now()).run();
+    return json(env, { ok: true, nick: c.nick });
+  }
+  if (url.pathname === "/league/join" && req.method === "DELETE") {
+    await env.DB.batch([env.DB.prepare("DELETE FROM league_points WHERE uid=?").bind(a.uid), env.DB.prepare("DELETE FROM league_members WHERE uid=?").bind(a.uid)]);
+    return json(env, { ok: true });
+  }
+  if (url.pathname === "/league/score" && req.method === "POST") {
+    const game = String(b.game || ""), pts = b.pts;
+    if (!LEAGUE_GAMES.has(game) || !Number.isInteger(pts) || pts < 0 || pts > 10) return json(env, { error: "طلب غلط." }, 400);
+    const m = await env.DB.prepare("SELECT uid FROM league_members WHERE uid=?").bind(a.uid).first();
+    if (!m) return json(env, { ok: true, member: false });
+    await env.DB.prepare("INSERT INTO league_points(uid,day,week,game,pts) VALUES(?,?,?,?,?) ON CONFLICT(uid,day,game) DO UPDATE SET pts=MAX(pts, excluded.pts)").bind(a.uid, day, week, game, pts).run();
+    return json(env, { ok: true, member: true });
+  }
+  return json(env, { error: "مش موجودة." }, 404);
 }
 
 // مرآة الناس: كل النتايج المجمعة في طلب واحد، متخزنة في الكاش 5 دقايق.
@@ -228,6 +288,7 @@ export default {
       if (!LAB[exp]) return json(env, { error: "مش موجودة." }, 404);
       return json(env, await labGet(env, exp));
     }
+    if (url.pathname === "/league" || url.pathname.startsWith("/league/")) return league(req, env, url);
     if (req.method === "GET" && url.pathname === "/mirror") return mirror(req, env, ctx);
     if (req.method === "GET" && url.pathname === "/votes") {
       const id = url.searchParams.get("id") || "";

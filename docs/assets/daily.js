@@ -69,6 +69,7 @@
     } else { st.streak = 0; }
     st.last = dayNo;
     save("mizan-stats", st);
+    window.MizanAuth && MizanAuth.score && MizanAuth.score("daily", ok ? 10 : 2);
     show(i);
   }
 

@@ -67,6 +67,7 @@
       var W = clamp(warm), C = clamp(conv), rank = G.ranks[G.ranks.length - 1];
       for (var i = 0; i < G.ranks.length; i++) if (W >= G.ranks[i].warm && C >= G.ranks[i].conv) { rank = G.ranks[i]; break; }
       try { localStorage.setItem(KEY, JSON.stringify({ warm: W, conv: C, title: rank.title })); } catch (e) {}
+      window.MizanAuth && MizanAuth.score && MizanAuth.score("family", (W + C) / 2);
       var s = el("div", "today");
       s.appendChild(el("p", "kicker", "نتيجتك في الجروب"));
       s.appendChild(el("h2", "prof-title", rank.title));

@@ -70,6 +70,7 @@
       clearInterval(timer);
       var s = secs(), b0 = best(), rec = !b0 || s < b0;
       if (rec) try { localStorage.setItem(KEY, String(s)); } catch (e) {}
+      window.MizanAuth && MizanAuth.score && MizanAuth.score("escape", s <= 180 ? 10 : s <= 300 ? 8 : s <= 480 ? 6 : 4);
       [].forEach.call(dots.children, function (d) { d.className = "done"; });
       var w = el("div", "today");
       w.appendChild(el("p", "kicker", "خرجت من البيت!"));
