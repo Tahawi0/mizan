@@ -9,7 +9,7 @@ puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8")
 by_slug = {e["slug"]: e for e in entries}
 KIND = {"fallacy": "مغالطة", "bias": "انحياز", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
 e_ = html.escape
-VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js", "search.js", "app.js", "send.js", "games.js", "account.js", "acct-page.js"])).hexdigest()[:8]
+VER = hashlib.md5(b"".join(f.read_bytes() for f in sorted((ROOT / "assets").glob("*.js")) + [ROOT / "assets" / "style.css"])).hexdigest()[:8]
 dilemmas = json.loads((ROOT / "content/dilemmas.json").read_text(encoding="utf-8"))
 weekly = json.loads((ROOT / "content/weekly.json").read_text(encoding="utf-8"))
 paths = json.loads((ROOT / "content/paths.json").read_text(encoding="utf-8"))
@@ -241,6 +241,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         ("اعرف نفسك", "مخك بيتأثر بإيه من غير ما تاخد بالك؟", [
             ("games/lab/", "معمل الانحيازات", "4 تجارب علم نفس حقيقية تتعمل عليك.", "4 دقايق", False),
             ("games/philosopher/", "أنهي فيلسوف إنت؟", "8 أسئلة خفيفة… وفي الآخر مفاجأة.", "3 دقايق", False),
+            ("games/profile/", "بصمتك المعرفية", "15 موقف، وفي الآخر رسم لأكتر انحيازات بتأثر عليك.", "4 دقايق", True),
             ("games/calibration/", "ميزان الثقة", "معلوماتك قد ثقتك؟ 10 أسئلة وهتعرف.", "4 دقايق", False)]),
         ("ابني صح", "مش بس تكشف الغلط، اتعلم تقول الكلام صح.", [
             ("games/fix/", "صلّح الحجة", "اختار إزاي الجملة تتقال من غير الغلط.", "4 دقايق", False)]),
@@ -268,6 +269,18 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>{title}</h1><p class="lead">{lead}</p>
 <div id="game" data-game="{gid[slug]}"{' class="sheet"' if slug != "lab" else ''}></div>
 <script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script>{f'<script src="{gx}assets/config.js?v={VER}"></script>' if api else ''}<script src="{gx}assets/games.js?v={VER}"></script>"""
+        write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
+
+    # ألعاب الساحة الجديدة: كل لعبة ملف JS لوحدها
+    NEW_GAMES = {
+        "profile": ("بصمتك المعرفية", "15 موقف من حياتنا. جاوب بصراحة، وفي الآخر هتشوف أكتر الانحيازات اللي بتأثر على قراراتك، في كارت تقدر تشاركه.", "profile"),
+    }
+    for slug, (title, lead, src) in NEW_GAMES.items():
+        data = json.loads((ROOT / "content" / f"{src}.json").read_text(encoding="utf-8"))
+        body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>{title}</h1><p class="lead">{lead}</p>
+<div id="game" class="sheet"></div>
+<p class="report"><a href="{gx}send/?err=games/{slug}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
+<script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script><script src="{gx}assets/{slug}.js?v={VER}"></script>"""
         write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
 
     # weekly question
