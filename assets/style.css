@@ -353,3 +353,18 @@ input[type=email]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);
 .shake{animation:shake .4s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 @media (prefers-reduced-motion:reduce){.door{transition:none}.shake,.esc-pen{animation:none}}
+/* ابني الحجة */
+.proof{display:grid;gap:8px;margin:1rem 0;padding:1rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper);transition:border-color .3s}
+.proof.valid{border-color:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)}
+.slot{font:inherit;font-size:1.05rem;text-align:start;min-height:3rem;border:2px dashed var(--rule);border-radius:4px;background:transparent;color:var(--muted);padding:.4rem .9rem;cursor:pointer}
+.slot.full{border-style:solid;border-color:var(--lapis);color:var(--ink);background:var(--lapis-soft)}
+.therefore{font-family:var(--kufi);color:var(--gold);text-align:center;border-top:2px solid var(--ink);padding-top:.3rem}
+.concl{font-family:var(--kufi);font-weight:600;font-size:1.2rem;text-align:center}
+.deck{display:flex;flex-wrap:wrap;gap:8px;margin:.6rem 0 1rem}
+.pcard{font:inherit;font-size:1rem;line-height:1.7;background:var(--leaf);color:var(--ink);border:1px solid var(--rule);border-radius:4px;padding:.4rem .9rem;cursor:pointer;text-align:start}
+.pcard:hover:not(:disabled){border-color:var(--gold)}
+.pcard.used{opacity:.35}
+.argue-msg{margin-bottom:1rem}
+.argue-msg b{font-family:var(--kufi)}
+.argue-msg p{margin:.3rem 0 0;font-size:1.02rem}
+.argue-msg.ok b{color:var(--ok)}.argue-msg.bad b{color:var(--bad)}
