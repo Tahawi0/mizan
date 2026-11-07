@@ -85,6 +85,7 @@
 
   /* ───── اكشف الحيلة ───── */
   function spot(box) {
+    var ALL = G.spot; G.spot = shuffle(ALL).slice(0, 3);
     var i = 0, total = { f: 0, t: 0 };
     function show() {
       box.innerHTML = "";
@@ -126,7 +127,7 @@
       w.appendChild(el("h2", null, total.f === total.t ? "مفيش إعلان يضحك عليك." : total.f >= total.t * 0.7 ? "عينك حلوة. شوية حيل بس عدّت." : "الإعلانات شاطرة. مسار الإعلانات هيساعدك."));
       var p = el("p"); var a = el("a", "btn", "مسار: الإعلانات متضحكش عليك"); a.href = root + "paths/ads/"; p.appendChild(a); p.appendChild(document.createTextNode(" "));
       p.appendChild(shareBtn(function () { return "ميزان — اكشف الحيلة\nلقيت " + total.f + " من " + total.t + " حيلة في الإعلانات 🔍\nجرب إنت: " + location.href; })); w.appendChild(p);
-      var r = el("button", "btn ghost", "العب تاني"); r.onclick = function () { i = 0; total = { f: 0, t: 0 }; show(); }; w.appendChild(r);
+      var r = el("button", "btn ghost", "العب تاني"); r.onclick = function () { G.spot = shuffle(ALL).slice(0, 3); i = 0; total = { f: 0, t: 0 }; show(); }; w.appendChild(r);
       box.appendChild(w);
     }
     show();
