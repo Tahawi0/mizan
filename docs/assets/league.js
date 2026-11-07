@@ -1,7 +1,7 @@
 // دوري ميزان: ترتيب أسبوعي بلقب يختاره اللاعب.
 (function () {
   var G = window.MIZAN_GAME || {}, root = document.body.getAttribute("data-root") || "./";
-  var box = document.getElementById("game"), API = window.MIZAN_API;
+  var box = document.getElementById("game");
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function signedFlag() { try { return localStorage.getItem("mizan-signed-in") === "1"; } catch (e) { return false; } }
   function token() {
@@ -11,7 +11,7 @@
   function call(method, path, body) {
     return token().then(function (t) {
       var h = { "Content-Type": "application/json" }; if (t) h.Authorization = "Bearer " + t;
-      return fetch(API + path, { method: method, headers: h, body: body ? JSON.stringify(body) : undefined }).then(function (r) { return r.json().then(function (j) { j._status = r.status; return j; }); });
+      return fetch(window.MIZAN_API + path, { method: method, headers: h, body: body ? JSON.stringify(body) : undefined }).then(function (r) { return r.json().then(function (j) { j._status = r.status; return j; }); });
     });
   }
   var MEDAL = ["١", "٢", "٣"];

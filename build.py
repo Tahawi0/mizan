@@ -317,7 +317,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     lead = "ترتيب أسبوعي لأصحاب الحسابات. اختار لقب، والعب كل يوم، واجمع نقط. الترتيب بيتصفّر كل سبت."
     body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>دوري ميزان</h1><p class="lead">{lead}</p>
 <div id="game"></div>
-<script>window.MIZAN_GAME={json.dumps({"games": lg}, ensure_ascii=False)};</script><script src="{gx}assets/league.js?v={VER}"></script>"""
+<script>window.MIZAN_GAME={json.dumps({"games": lg}, ensure_ascii=False)};</script><script src="{gx}assets/config.js?v={VER}"></script><script src="{gx}assets/league.js?v={VER}"></script>"""
     write("games/league/index.html", page("دوري ميزان — ميزان", body, gx, "games/", lead, path="games/league/"))
 
     # weekly question
