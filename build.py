@@ -35,13 +35,19 @@ ORN = '<div class="orn" aria-hidden="true"><span></span></div>'
 
 
 def page(title, body, root, active="", desc="", img="cards/og/site.png", path="", ld=None):
-    nav = [("daily/", "مغالطة اليوم"), ("atlas/", "الأطلس"), ("philosophy/", "الفلسفة"), ("paths/", "مسارات"), ("games/", "ألعاب"), ("trends/", "وزن التريند"), ("dilemmas/", "معضلات"), ("search/", "بحث")]
-    foot = [("quiz/", "اختبر نفسك"), ("weekly/", "سؤال الأسبوع"), ("analyze/", "حلّل الكلام"), ("send/", "ابعت مغالطة"), ("about/", "عن ميزان")]
+    groups = [("اتعلّم", [("atlas/", "الأطلس", "مغالطات وانحيازات"), ("philosophy/", "الفلسفة", "فلاسفة ومدارس"), ("paths/", "مسارات", "7 أيام، 5 دقايق في اليوم"), ("trends/", "وزن التريند", "كلام منتشر بنوزنه")]),
+              ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("games/", "الألعاب", "تجارب وتحديات"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك")]),
+              ("قول رأيك", [("weekly/", "سؤال الأسبوع", "سؤال فلسفي وتصويت"), ("dilemmas/", "معضلات", "مواقف مفيهاش إجابة سهلة"), ("send/", "ابعت مغالطة", "جملة سمعتها وفيها غلط")])]
+    def grp(name, items):
+        on = any(h == active for h, _, _ in items)
+        li = "".join(f'<a href="{root}{h}"{" class=active" if h == active else ""}><b>{t}</b><span>{d}</span></a>' for h, t, d in items)
+        return f'<details class="dd{" on" if on else ""}"><summary>{name}</summary><div class="menu">{li}</div></details>'
+    links = "".join(grp(n, it) for n, it in groups) + f'<a class="cta{" active" if active == "analyze/" else ""}" href="{root}analyze/">حلّل الكلام</a>'
+    foot = [("about/", "عن ميزان"), ("search/", "بحث"), ("send/", "ابعت مغالطة")]
     flinks = "".join(f'<a href="{root}{h}">{t}</a>' for h, t in foot)
     ldj = f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>' if ld else ""
     beacon = f'<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token": "{ANALYTICS}"}}\'></script>' if ANALYTICS else ""
     d = e_(desc or "ميزان: مرجع مصري مفتوح عن التفكير الصح، المغالطات والانحيازات بأمثلة من حياتنا.")
-    links = "".join(f'<a href="{root}{h}"{" class=active" if h == active else ""}>{t}</a>' for h, t in nav)
     return f"""<!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -59,7 +65,7 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
 <link rel="icon" type="image/png" href="{root}assets/icons/icon-192.png"><link rel="apple-touch-icon" href="{root}assets/icons/apple-touch.png">
 <link rel="canonical" href="{SITE}{path}">{ldj}
 </head><body data-root="{root}">
-<header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav>{links}</nav></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><div class="top-tools"><a class="icon-btn" href="{root}search/" aria-label="بحث"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></a><button class="icon-btn burger" aria-label="القايمة" aria-expanded="false" aria-controls="mainnav"><span></span><span></span><span></span></button></div><nav id="mainnav" aria-label="الأقسام">{links}</nav></div></header>
 <main><div class="wrap">{body}</div></main>
 <footer><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav class="foot-links" aria-label="روابط تانية">{flinks}</nav><p>زِن كلامك. مرجع مفتوح، اتكتب بإيد إنسان مع الذكاء الاصطناعي، وكل مدخل اتراجع قبل النشر.</p>
 <button class="btn ghost" id="install" hidden>نزّل ميزان على موبايلك</button><p class="note" id="install-hint" hidden>على الآيفون: دوس زرار المشاركة في سفاري، وبعدين «إضافة إلى الشاشة الرئيسية».</p></div></footer>
@@ -108,10 +114,21 @@ def build():
     idx = "".join(f'<li><a href="atlas/{e["slug"]}/"><b>{e_(e["name"])}</b><em>{KIND[e["kind"]]}</em><span>{e_(e["oneLine"])}</span></a></li>' for e in sample)
     body = f"""<section class="hero">{SCALE}<h1>زِن كلامك</h1>
 <p class="lead">ميزان مرجع مصري مفتوح عن إزاي نفكر صح، وليه بنغلط. بالبلدي، وبأمثلة من حياتنا.</p></section>
-<section class="today"><h2>لغز النهارده</h2><blockquote id="today-scene">…</blockquote><a class="btn" href="daily/">حلّ اللغز</a></section>
+<div class="trio">
+<section class="today"><p class="kicker">العب</p><h2>لغز النهارده</h2><blockquote id="today-scene">…</blockquote><a class="btn" href="daily/">حلّ اللغز</a></section>
+<section class="today" id="dilemma" data-id=""><p class="kicker">قول رأيك</p><h2 id="hw-title">سؤال الأسبوع</h2><p id="hw-q"></p><div class="opts"><button></button><button></button></div>
+<p class="lead small" id="vote-note"></p><div class="reveal" id="views"><a class="btn ghost" id="hw-more" href="weekly/">شوف الفلاسفة قالوا إيه</a></div></section>
+<section class="today"><p class="kicker">جرّب</p><h2>حلّل جملة</h2><p>سمعت كلام حاسس فيه حاجة غلط؟ حطه هنا، وميزان يوزنه.</p>
+<form action="analyze/" method="get" class="mini-an"><textarea name="t" rows="3" maxlength="1000" required placeholder="«كل الناس بتعمل كده…»"></textarea><button class="btn cta-btn" type="submit">وزّن الكلام</button></form></section>
+</div>
 {ORN}<h2>إيه اللي في ميزان؟</h2><ul class="doors">{doors_html}</ul>
 {ORN}<h2>من الأطلس</h2><ul class="index">{idx}</ul><p class="back"><a href="atlas/">كل المداخل</a></p>
 <script>(function(){{var d={json.dumps([p["scene"] for p in puzzles], ensure_ascii=False)};var n=Math.floor((Date.now()-Date.UTC(2026,10,1))/864e5);document.getElementById("today-scene").textContent=d[((n%d.length)+d.length)%d.length];}})();</script>"""
+    hw = [{"slug": w["slug"], "title": w["title"], "question": w["question"], "options": w["options"]} for w in weekly]
+    body += f"""<script>(function(){{var W={json.dumps(hw, ensure_ascii=False)};var n=Math.floor((Date.now()-Date.UTC(2026,10,7))/6048e5);if(n<0)n=0;var w=W[n%W.length],b=document.getElementById("dilemma");
+b.setAttribute("data-id","week-"+w.slug);document.getElementById("hw-title").textContent=w.title;document.getElementById("hw-q").textContent=w.question;document.getElementById("hw-more").href="weekly/"+w.slug+"/";
+b.querySelectorAll(".opts button").forEach(function(x,i){{x.textContent=w.options[i];}});}})();</script>
+<script src="assets/config.js?v={VER}"></script><script src="assets/dilemma.js?v={VER}"></script>"""
     write("index.html", page("ميزان — زِن كلامك", body, "./", "", ld={"@context": "https://schema.org", "@type": "WebSite", "name": "ميزان", "url": SITE, "inLanguage": "ar-EG",
         "potentialAction": {"@type": "SearchAction", "target": SITE + "search/?q={q}", "query-input": "required name=q"}}))
 

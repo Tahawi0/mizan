@@ -1,4 +1,12 @@
 (function () {
+  // القايمة: قسم واحد مفتوح، وزرار ☰ على الموبايل
+  var dds = document.querySelectorAll("nav .dd"), nav = document.getElementById("mainnav"), bg = document.querySelector(".burger");
+  dds.forEach(function (d) { d.addEventListener("toggle", function () { if (d.open && !nav.classList.contains("open")) dds.forEach(function (o) { if (o !== d) o.open = false; }); }); });
+  document.addEventListener("click", function (e) { if (!e.target.closest("nav") && !e.target.closest(".burger")) { dds.forEach(function (d) { if (!nav.classList.contains("open")) d.open = false; }); } });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { dds.forEach(function (d) { d.open = false; }); if (nav.classList.contains("open")) bg.click(); } });
+  if (bg) bg.onclick = function () { var o = nav.classList.toggle("open"); bg.setAttribute("aria-expanded", o); document.body.classList.toggle("menu-open", o); dds.forEach(function (d) { d.open = o; }); };
+})();
+(function () {
   var root = document.body.getAttribute("data-root") || "./";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () { navigator.serviceWorker.register(root + "sw.js").catch(function () {}); });

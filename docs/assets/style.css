@@ -205,3 +205,54 @@ html,body{overflow-x:hidden}
 img,svg,canvas{max-width:100%}
 .btn{max-width:100%;white-space:normal}
 .search input{min-width:0;width:100%}
+
+/* القايمة الجديدة */
+header.top{position:relative;z-index:50;background:var(--paper)}
+header.top .wrap{flex-wrap:nowrap}
+#mainnav{display:flex;align-items:center;gap:2px;overflow:visible;white-space:nowrap;margin-inline-start:auto}
+.top-tools{display:flex;align-items:center;gap:4px;order:3}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:6px;color:var(--muted);background:transparent;border:0;cursor:pointer}
+.icon-btn:hover{color:var(--ink);background:var(--gold-soft)}
+.burger{display:none;flex-direction:column;gap:4px}.burger span{display:block;width:20px;height:2px;background:currentColor;border-radius:2px;transition:transform .2s,opacity .2s}
+.burger[aria-expanded=true] span:nth-child(1){transform:translateY(6px) rotate(45deg)}.burger[aria-expanded=true] span:nth-child(2){opacity:0}.burger[aria-expanded=true] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.dd{position:relative}
+.dd summary{list-style:none;cursor:pointer;font-family:var(--kufi);font-size:1rem;color:var(--muted);padding:8px 12px;border-radius:4px;display:flex;align-items:center;gap:6px}
+.dd summary::-webkit-details-marker{display:none}
+.dd summary::after{content:"";width:6px;height:6px;border-inline-end:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+.dd[open] summary::after{transform:rotate(-135deg)}
+.dd summary:hover,.dd[open] summary{color:var(--ink);background:var(--gold-soft)}
+.dd.on summary{color:var(--ink);box-shadow:inset 0 -2px 0 var(--gold)}
+.menu{position:absolute;top:calc(100% + 6px);inset-inline-start:0;min-width:15rem;background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:6px;box-shadow:0 12px 30px rgba(0,0,0,.18);display:grid;gap:2px}
+.menu a{display:block;padding:8px 12px;border-radius:4px;text-decoration:none;white-space:normal}
+.menu a b{display:block;font-family:var(--kufi);font-weight:600;color:var(--ink);font-size:1rem}
+.menu a span{display:block;font-size:.88rem;color:var(--muted);line-height:1.6}
+.menu a:hover,.menu a.active{background:var(--gold-soft)}
+#mainnav a.cta,.cta-btn{font-family:var(--kufi);font-weight:600;background:var(--gold);color:#1a1408;border-radius:20px;padding:7px 16px;margin-inline-start:6px;text-decoration:none;box-shadow:none}
+#mainnav a.cta:hover{filter:brightness(1.08);background:var(--gold);color:#1a1408}
+.cta-btn{border:1px solid var(--gold)}
+/* الرئيسية: 3 كروت */
+.trio{display:grid;gap:14px;grid-template-columns:repeat(3,1fr);margin:2rem 0 0}
+.trio .today{margin:0;display:flex;flex-direction:column;padding:1.4rem 1.2rem}
+.trio .today h2{font-size:1.25rem;margin:.1rem 0 .6rem}
+.trio .today blockquote{font-size:1.1rem;flex:1;margin:0 0 1rem}
+.trio .today .btn{align-self:flex-start}
+.trio .opts{margin-top:.4rem}.trio .opts button{font-size:1rem;padding:.55rem .8rem}
+.trio .kicker{margin:0}
+.mini-an{display:flex;flex-direction:column;gap:10px;margin-top:auto}.mini-an textarea{font-size:1rem}.mini-an .btn{align-self:flex-start}
+.wrap:has(.trio){max-width:64rem}
+@media (max-width:860px){.trio{grid-template-columns:1fr}}
+@media (max-width:860px){
+  .burger{display:inline-flex}
+  header.top .wrap{flex-wrap:wrap}
+  #mainnav{display:none;order:4;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 14px;margin:0}
+  #mainnav.open{display:flex}
+  .dd summary{font-size:1.1rem;padding:12px 4px;pointer-events:none}.dd summary::after{display:none}
+  .dd summary{color:var(--gold)}
+  .menu{position:static;box-shadow:none;border:0;background:transparent;padding:0 0 8px;min-width:0}
+  .dd:not([open]) .menu{display:none}
+  #mainnav a.cta{margin:10px 0 0;text-align:center;padding:12px;font-size:1.05rem}
+  .top-tools{margin-inline-start:auto}
+  body.menu-open{overflow:hidden}
+  body.menu-open header.top{position:fixed;inset:0;overflow-y:auto}
+  nav{width:auto}
+}

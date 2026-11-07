@@ -38,4 +38,6 @@
         var n = document.createElement("p"); n.className = "note"; n.textContent = "التحليل ده بالذكاء الاصطناعي وممكن يغلط. استخدمه كبداية تفكير، مش كحكم نهائي."; out.appendChild(n);
       }, function () { form.querySelector("button").disabled = false; st.textContent = "مقدرتش أوصل للسيرفر، جرب تاني."; });
   };
+  var pre = new URLSearchParams(location.search).get("t");
+  if (pre) { document.getElementById("an-text").value = pre.slice(0, 1000); history.replaceState(null, "", location.pathname); if (pre.trim().length >= 15) form.requestSubmit ? form.requestSubmit() : form.onsubmit(new Event("submit")); }
 })();
