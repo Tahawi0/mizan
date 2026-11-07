@@ -3,7 +3,7 @@
   --paper:#E9E1CC; --leaf:#F3EDDD; --ink:#221C14; --muted:#6B604E; --rule:#CDBF9F;
   --lapis:#1F3B73; --lapis-soft:#DCE2EE; --gold:#A47E2E; --gold-soft:#EADBB4;
   --ok:#2F6B5B; --ok-soft:#D6E6DC; --bad:#8C2E26; --bad-soft:#F1D9D2;
-  --kufi:"Reem Kufi","Amiri",serif; --naskh:"Amiri","Noto Naskh Arabic",serif;
+  --kufi:"El Messiri","Amiri",serif; --naskh:"Amiri","Noto Naskh Arabic",serif;
   --measure:40rem;
 }
 @media (prefers-color-scheme: dark){
@@ -163,3 +163,21 @@ footer .logo{justify-content:center;font-size:1.2rem;margin-bottom:.3rem}
 .day .task b{color:var(--ink);font-family:var(--kufi);font-weight:600}
 .day .mark{margin-top:.4rem}
 .day.done .mark{background:var(--ok);border-color:var(--ok)}
+
+/* الفلسفة، البحث، الشهادة، التثبيت */
+.search{display:flex;gap:8px;margin:1rem 0}
+.search input{flex:1;font:inherit;font-size:1.2rem;padding:.6rem 1rem;border:1px solid var(--rule);border-radius:4px;background:var(--leaf);color:var(--ink)}
+.search input:focus{outline:2px solid var(--gold);outline-offset:1px}
+input[type=text]{font:inherit;padding:.5rem .9rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);width:100%;max-width:22rem}
+label{font-family:var(--kufi);display:block;margin:1rem 0 .3rem;font-size:1rem}
+.era{font-family:var(--kufi);color:var(--muted);font-size:1rem;margin-top:.2rem}
+.pair{display:grid;gap:14px;grid-template-columns:1fr 1fr;margin:1rem 0}
+.pair .card h3{font-size:1.1rem;color:var(--gold);margin-bottom:.3rem}
+.verdict{border:1px solid var(--gold);background:var(--gold-soft);padding:1rem 1.2rem;border-radius:3px}
+.claim{font-size:1.4rem;line-height:1.9;border-inline-start:4px solid var(--bad);padding:.4rem 1.1rem;margin:1rem 0;background:var(--leaf)}
+.ex a{font-family:var(--kufi)}
+.cert-img{width:100%;max-width:420px;border:1px solid var(--rule);display:block;margin:1rem auto}
+.foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin:.8rem 0;font-family:var(--kufi);font-size:.95rem}
+.foot-links a{color:var(--muted);text-decoration:none}.foot-links a:hover{color:var(--gold)}
+#install{margin-top:.6rem}
+@media (max-width:560px){.pair{grid-template-columns:1fr}}

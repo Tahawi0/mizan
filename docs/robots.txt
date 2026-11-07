@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tahawi0.github.io/mizan/sitemap.xml

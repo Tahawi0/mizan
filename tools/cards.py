@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 FONTS = ROOT / "tools" / "fonts"
 SITE = "tahawi0.github.io/mizan"
-KIND = {"fallacy": "مغالطة", "bias": "انحياز"}
+KIND = {"fallacy": "مغالطة", "bias": "انحياز", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
 PAPER, LEAF, INK, MUTED, GOLD, LAPIS = "#E9E1CC", "#F3EDDD", "#221C14", "#6B604E", "#A47E2E", "#1F3B73"
 
 
@@ -66,11 +66,11 @@ def scale_icon(d, cx, cy, s, col):
 def fit_title(d, name, maxw, start):
     size = start
     while size > 40:
-        f = font("ReemKufi-Bold.ttf", size)
+        f = font("ElMessiri-Bold.ttf", size)
         if tw(d, name, f) <= maxw:
             return f
         size -= 4
-    return font("ReemKufi-Bold.ttf", 40)
+    return font("ElMessiri-Bold.ttf", 40)
 
 
 def card(e, W, H, out):
@@ -82,7 +82,7 @@ def card(e, W, H, out):
     right, inner = W - pad, W - 2 * pad
     portrait = H > W
     y = pad + (30 if portrait else 0)
-    rtl(d, right, y, KIND[e["kind"]], font("ReemKufi-Bold.ttf", 34 if portrait else 30), GOLD)
+    rtl(d, right, y, KIND[e["kind"]], font("ElMessiri-Bold.ttf", 34 if portrait else 30), GOLD)
     y += 70 if portrait else 58
     tf = fit_title(d, e["name"], inner, 104 if portrait else 84)
     rtl(d, right, y, e["name"], tf, INK)
@@ -95,11 +95,12 @@ def card(e, W, H, out):
     for ln in lines[: (7 if portrait else 4)]:
         rtl(d, right, y, ln, bf, INK)
         y += lh
-    if portrait and e.get("examples"):
+    exs = e.get("examples") or ([{"where": "من حياتنا", "text": e["life"]}] if e.get("life") else [])
+    if portrait and exs:
         y += 26
-        ex = e["examples"][0]
+        ex = exs[0]
         ef = font("Amiri-Regular.ttf", 36)
-        rtl(d, right, y, ex["where"], font("ReemKufi-Bold.ttf", 28), LAPIS)
+        rtl(d, right, y, ex["where"], font("ElMessiri-Bold.ttf", 28), LAPIS)
         y += 52
         exl = wrap(d, ex["text"], ef, inner - 30)
         top = y
@@ -107,14 +108,15 @@ def card(e, W, H, out):
             rtl(d, right - 30, y, ln, ef, MUTED)
             y += int(ef.size * 1.7)
         d.line([(right, top + 8), (right, y - 10)], fill=GOLD, width=3)
-        if e.get("detect"):
+        tip = e.get("detect") or e.get("useIt")
+        if tip:
             y += 40
-            rtl(d, right, y, "إزاي تكشفها؟", font("ReemKufi-Bold.ttf", 34), GOLD)
+            rtl(d, right, y, "إزاي تكشفها؟" if e.get("detect") else "استخدمها النهارده", font("ElMessiri-Bold.ttf", 34), GOLD)
             y += 62
             df = font("Amiri-Regular.ttf", 38)
             limit = H - pad - 120
             lh2 = int(df.size * 1.7)
-            sents = [s.strip() + "." for s in e["detect"].replace("؟", "؟.").split(".") if s.strip()]
+            sents = [s.strip() + "." for s in tip.replace("؟", "؟.").split(".") if s.strip()]
             sents = [s[:-1] if s.endswith("؟.") else s for s in sents]
             best = []
             for i in range(1, len(sents) + 1):
@@ -127,7 +129,7 @@ def card(e, W, H, out):
                 y += lh2
     # footer
     fy = H - pad - (40 if portrait else 34)
-    ff = font("ReemKufi-Bold.ttf", 36 if portrait else 32)
+    ff = font("ElMessiri-Bold.ttf", 36 if portrait else 32)
     label = "ميزان"
     rtl(d, right - 58, fy - 6, label, ff, INK)
     scale_icon(d, right - 22, fy + 18, 40, GOLD)
@@ -143,7 +145,7 @@ def site_card(out):
     d = ImageDraw.Draw(im)
     frame(d, W, H, 34)
     scale_icon(d, W / 2, 175, 120, GOLD)
-    center(d, W / 2, 250, "زِن كلامك", font("ReemKufi-Bold.ttf", 110), INK)
+    center(d, W / 2, 250, "زِن كلامك", font("ElMessiri-Bold.ttf", 110), INK)
     center(d, W / 2, 420, "مرجع مصري مفتوح عن المغالطات والانحيازات وإزاي نفكر صح", font("Amiri-Regular.ttf", 36), MUTED)
     center(d, W / 2, 510, SITE, font("Amiri-Regular.ttf", 28), GOLD)
     im.save(out, optimize=True)
@@ -154,8 +156,26 @@ def main():
     for e in entries:
         card(e, 1200, 630, ROOT / "cards/og" / f"{e['slug']}.png")
         card(e, 1080, 1350, ROOT / "cards/post" / f"{e['slug']}.png")
+    phil = json.loads((ROOT / "content/philosophy.json").read_text(encoding="utf-8"))
+    for e in phil:
+        card(e, 1200, 630, ROOT / "cards/og" / f"{e['slug']}.png")
+        card(e, 1080, 1350, ROOT / "cards/post" / f"{e['slug']}.png")
     site_card(ROOT / "cards/og/site.png")
-    print("cards:", len(entries))
+    icons()
+    print("cards:", len(entries) + len(phil))
+
+
+def icons():
+    out = ROOT / "assets" / "icons"
+    out.mkdir(parents=True, exist_ok=True)
+    for size, pad in [(192, 0), (512, 0), (512, 1), (180, 0)]:
+        im = Image.new("RGB", (size, size), LAPIS if pad else PAPER)
+        d = ImageDraw.Draw(im)
+        if not pad:
+            d.rounded_rectangle([size * .04, size * .04, size * .96, size * .96], radius=size * .18, fill=PAPER, outline=GOLD, width=max(2, size // 60))
+        scale_icon(d, size / 2, size / 2, size * (.38 if pad else .46), GOLD)
+        name = "maskable-512.png" if pad else ("apple-touch.png" if size == 180 else f"icon-{size}.png")
+        im.save(out / name, optimize=True)
 
 
 if __name__ == "__main__":

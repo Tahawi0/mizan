@@ -90,12 +90,30 @@ async function vote(req, env) {
   return json(env, { counts: c });
 }
 
+// «ابعت مغالطة شفتها»: بيتحفظ في KV لمراجعة بشرية، ومش بيتنشر أوتوماتيك.
+async function submit(req, env) {
+  let body; try { body = await req.json(); } catch { return json(env, { error: "طلب غلط." }, 400); }
+  if (body.website) return json(env, { ok: true }); // فخ للبوتات
+  const text = String(body.text || "").trim(), where = String(body.where || "").trim().slice(0, 60), guess = String(body.guess || "").trim().slice(0, 80);
+  if (text.length < 15 || text.length > 600) return json(env, { error: "الكلام لازم يبقى بين 15 و600 حرف." }, 400);
+  const ip = req.headers.get("CF-Connecting-IP") || "x";
+  const k = "sub-ip:" + today() + ":" + (await sha(ip)).slice(0, 16);
+  if (parseInt((await env.KV.get(k)) || "0", 10) >= 3) return json(env, { error: "بعت 3 النهارده، شكراً ليك! كمّل بكرة." }, 429);
+  const g = "sub-g:" + today();
+  if (parseInt((await env.KV.get(g)) || "0", 10) >= 200) return json(env, { error: "وصلنا لحدنا النهارده، جرب بكرة." }, 429);
+  await bump(env, k, 90000); await bump(env, g, 90000);
+  const id = "sub:" + new Date().toISOString() + ":" + crypto.randomUUID().slice(0, 8);
+  await env.KV.put(id, JSON.stringify({ text, where, guess }), { expirationTtl: 60 * 60 * 24 * 120 });
+  return json(env, { ok: true });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { headers: cors(env) });
     if (req.method === "POST" && url.pathname === "/analyze") return analyze(req, env);
     if (req.method === "POST" && url.pathname === "/vote") return vote(req, env);
+    if (req.method === "POST" && url.pathname === "/submit") return submit(req, env);
     if (req.method === "GET" && url.pathname === "/votes") {
       const id = url.searchParams.get("id") || "";
       if (!VOTABLE.has(id)) return json(env, { error: "مش موجودة." }, 404);

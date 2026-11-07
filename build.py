@@ -7,13 +7,19 @@ OUT = ROOT / "docs"
 entries = json.loads((ROOT / "content/entries.json").read_text(encoding="utf-8"))
 puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8"))
 by_slug = {e["slug"]: e for e in entries}
-KIND = {"fallacy": "مغالطة", "bias": "انحياز"}
+KIND = {"fallacy": "مغالطة", "bias": "انحياز", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
 e_ = html.escape
-VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js"])).hexdigest()[:8]
+VER = hashlib.md5(b"".join((ROOT / "assets" / f).read_bytes() for f in ["daily.js", "style.css", "dilemma.js", "analyze.js", "config.js", "quiz.js", "paths.js", "search.js", "app.js", "send.js"])).hexdigest()[:8]
 dilemmas = json.loads((ROOT / "content/dilemmas.json").read_text(encoding="utf-8"))
 weekly = json.loads((ROOT / "content/weekly.json").read_text(encoding="utf-8"))
 paths = json.loads((ROOT / "content/paths.json").read_text(encoding="utf-8"))
 SITE = "https://tahawi0.github.io/mizan/"
+philo = json.loads((ROOT / "content/philosophy.json").read_text(encoding="utf-8"))
+trends = json.loads((ROOT / "content/trends.json").read_text(encoding="utf-8"))
+p_slug = {x["slug"]: x for x in philo}
+_tok = ROOT / "content/analytics.txt"
+ANALYTICS = _tok.read_text().strip() if _tok.exists() else ""
+URLS = []
 
 LOGO = ('<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
         '<path d="M16 4v24M8 28h16M5 9h22"/><path d="M9 9l-4 9h8zM23 9l-4 9h8z"/></svg>')
@@ -27,8 +33,12 @@ SCALE = """<svg class="scale" viewBox="0 0 200 150" fill="none" stroke="currentC
 ORN = '<div class="orn" aria-hidden="true"><span></span></div>'
 
 
-def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""):
-    nav = [("daily/", "مغالطة اليوم"), ("quiz/", "اختبر نفسك"), ("atlas/", "الأطلس"), ("paths/", "مسارات"), ("dilemmas/", "معضلات"), ("weekly/", "سؤال الأسبوع"), ("analyze/", "حلّل الكلام"), ("about/", "عن ميزان")]
+def page(title, body, root, active="", desc="", img="cards/og/site.png", path="", ld=None):
+    nav = [("daily/", "مغالطة اليوم"), ("atlas/", "الأطلس"), ("philosophy/", "الفلسفة"), ("paths/", "مسارات"), ("quiz/", "اختبر نفسك"), ("trends/", "وزن التريند"), ("dilemmas/", "معضلات"), ("search/", "بحث")]
+    foot = [("weekly/", "سؤال الأسبوع"), ("analyze/", "حلّل الكلام"), ("send/", "ابعت مغالطة"), ("about/", "عن ميزان")]
+    flinks = "".join(f'<a href="{root}{h}">{t}</a>' for h, t in foot)
+    ldj = f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>' if ld else ""
+    beacon = f'<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token": "{ANALYTICS}"}}\'></script>' if ANALYTICS else ""
     d = e_(desc or "ميزان: مرجع مصري مفتوح عن التفكير الصح، المغالطات والانحيازات بأمثلة من حياتنا.")
     links = "".join(f'<a href="{root}{h}"{" class=active" if h == active else ""}>{t}</a>' for h, t in nav)
     return f"""<!doctype html>
@@ -42,17 +52,23 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{SITE}{img}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Reem+Kufi:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=El+Messiri:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}assets/style.css?v={VER}">
 <link rel="manifest" href="{root}manifest.webmanifest"><meta name="theme-color" content="#A47E2E">
+<link rel="icon" type="image/png" href="{root}assets/icons/icon-192.png"><link rel="apple-touch-icon" href="{root}assets/icons/apple-touch.png">
+<link rel="canonical" href="{SITE}{path}">{ldj}
 </head><body data-root="{root}">
 <header class="top"><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav>{links}</nav></div></header>
 <main><div class="wrap">{body}</div></main>
-<footer><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><p>زِن كلامك. مرجع مفتوح، اتكتب بإيد إنسان مع الذكاء الاصطناعي، وكل مدخل اتراجع قبل النشر.</p></div></footer>
+<footer><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav class="foot-links" aria-label="روابط تانية">{flinks}</nav><p>زِن كلامك. مرجع مفتوح، اتكتب بإيد إنسان مع الذكاء الاصطناعي، وكل مدخل اتراجع قبل النشر.</p>
+<button class="btn ghost" id="install" hidden>نزّل ميزان على موبايلك</button><p class="note" id="install-hint" hidden>على الآيفون: دوس زرار المشاركة في سفاري، وبعدين «إضافة إلى الشاشة الرئيسية».</p></div></footer>
+<script src="{root}assets/app.js?v={VER}"></script>{beacon}
 </body></html>"""
 
 
 def write(rel, content):
+    if rel.endswith("index.html"):
+        URLS.append(rel[: -len("index.html")])
     p = OUT / rel
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(content, encoding="utf-8")
@@ -79,6 +95,8 @@ def build():
     doors = [("daily/", "مغالطة اليوم", "لغز صغير كل يوم من مواقف حياتنا. اكتشف الغلط في الكلام وشارك نتيجتك."),
              ("atlas/", "الأطلس", f"{len(entries)} مغالطة وانحياز، كل واحدة بأمثلة من البيت والشارع، وإزاي ترد عليها."),
              ("quiz/", "اختبر نفسك", "10 أسئلة سريعة. شوف بتكشف كام مغالطة، وشارك نتيجتك مع صحابك."),
+             ("philosophy/", "الفلسفة", f"{len(philo)} فيلسوف ومدرسة، من سقراط لكامو، كل واحد بفكرته وإزاي تستخدمها النهارده."),
+             ("trends/", "وزن التريند", "كلام منتشر على السوشيال، بنوزنه بهدوء: فيه إيه صح، وفيه إيه غلط."),
              ("paths/", "مسارات", f"{len(paths)} مسارات قصيرة، كل واحد 7 أيام، درس صغير ومهمة كل يوم."),
              ("dilemmas/", "معضلات", f"{len(dilemmas)} موقف مفيهوش إجابة سهلة. اختار، وشوف الناس اختارت إيه والفلاسفة قالوا إيه."),
              ("weekly/", "سؤال الأسبوع", "سؤال فلسفي كبير كل أسبوع. صوّت وشوف الناس قالت إيه."),
@@ -91,7 +109,8 @@ def build():
 {ORN}<h2>إيه اللي في ميزان؟</h2><ul class="doors">{doors_html}</ul>
 {ORN}<h2>من الأطلس</h2><ul class="index">{idx}</ul><p class="back"><a href="atlas/">كل المداخل</a></p>
 <script>(function(){{var d={json.dumps([p["scene"] for p in puzzles], ensure_ascii=False)};var n=Math.floor((Date.now()-Date.UTC(2026,10,1))/864e5);document.getElementById("today-scene").textContent=d[((n%d.length)+d.length)%d.length];}})();</script>"""
-    write("index.html", page("ميزان — زِن كلامك", body, "./", ""))
+    write("index.html", page("ميزان — زِن كلامك", body, "./", "", ld={"@context": "https://schema.org", "@type": "WebSite", "name": "ميزان", "url": SITE, "inLanguage": "ar-EG",
+        "potentialAction": {"@type": "SearchAction", "target": SITE + "search/?q={q}", "query-input": "required name=q"}}))
 
     # atlas index
     def key(e):
@@ -128,7 +147,9 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 {ev}<h2>مصادر</h2><ul class="sources">{src}</ul>
 <h2>شاركها</h2><p><a class="btn ghost" href="{r}cards/post/{e['slug']}.png" download>نزّل الكارت للبوست</a> <a class="btn ghost" href="{r}cards/og/{e['slug']}.png" download>كارت عريض</a></p>
 <p class="back"><a href="{r}atlas/">ارجع للفهرس</a></p>"""
-        write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"], f"cards/og/{e['slug']}.png", f"atlas/{e['slug']}/"))
+        write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"], f"cards/og/{e['slug']}.png", f"atlas/{e['slug']}/",
+              {"@context": "https://schema.org", "@type": "DefinedTerm", "name": e["name"], "alternateName": e["intl"], "description": e["oneLine"], "inLanguage": "ar-EG",
+               "url": f"{SITE}atlas/{e['slug']}/", "inDefinedTermSet": {"@type": "DefinedTermSet", "name": "أطلس ميزان", "url": f"{SITE}atlas/"}}))
 
     # daily
     body = """<p class="kicker">لغز رقم <span id="dayno"></span></p>
@@ -214,10 +235,82 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
         days = "".join(f"""<div class="day"><h3><small>اليوم {k + 1}</small><a href="{r}atlas/{d['entry']}/">{e_(by_slug[d['entry']]['name'])}</a></h3>
 <p>{e_(d['lesson'])}</p><p class="task"><b>مهمة النهارده:</b> {e_(d['task'])}</p><button class="btn ghost mark">خلصت اليوم ده</button></div>""" for k, d in enumerate(p["days"]))
         body = f"""<p class="kicker">مسار — {len(p['days'])} أيام</p><h1>{e_(p['title'])}</h1><p class="lead">{e_(p['intro'])}</p>
-<div id="path" data-id="{p['slug']}"><p class="kicker" id="p-count"></p><div class="bar"><i id="p-bar"></i></div>{days}</div>
-<div class="today" id="p-done" style="display:none"><h2>خلصت المسار!</h2><p>جرّب تختبر نفسك وشوف الفرق.</p><a class="btn" href="{r}quiz/">اختبر نفسك</a></div>
+<div id="path" data-id="{p['slug']}" data-title="{e_(p['title'])}"><p class="kicker" id="p-count"></p><div class="bar"><i id="p-bar"></i></div>{days}</div>
+<div class="today" id="p-done" style="display:none"><h2>خلصت المسار!</h2><p>اعمل شهادتك وشاركها. اسمك بيتكتب على جهازك بس، ومش بيتبعت لأي حد.</p>
+<label for="cert-name">اسمك زي ما تحب يتكتب</label><input type="text" id="cert-name" maxlength="40" placeholder="اسمك">
+<p style="margin-top:.8rem"><button class="btn" id="cert-make">اعمل الشهادة</button> <a class="btn ghost" href="{r}quiz/">اختبر نفسك</a></p><div id="cert-out"></div></div>
 <p class="back"><a href="{r}paths/">كل المسارات</a></p><script src="{r}assets/paths.js?v={VER}"></script>"""
         write(f"paths/{p['slug']}/index.html", page(f"{p['title']} — ميزان", body, r, "paths/", p["intro"], path=f"paths/{p['slug']}/"))
+
+    # philosophy
+    def plink(slug, r):
+        if slug in by_slug: return f'<a href="{r}atlas/{slug}/">{e_(by_slug[slug]["name"])}</a>'
+        if slug in p_slug: return f'<a href="{r}philosophy/{slug}/">{e_(p_slug[slug]["name"])}</a>'
+        return ""
+    def plist(kind):
+        return "".join(f'<li><a href="{x["slug"]}/"><b>{e_(x["name"])}</b><em>{e_(x["era"])}</em><span>{e_(x["oneLine"])}</span></a></li>' for x in philo if x["kind"] == kind)
+    body = f"""<p class="kicker">قسم جديد</p><h1>الفلسفة</h1><p class="lead">أكبر الأسئلة اللي سألها البشر، مشروحة بالبلدي. كل فيلسوف وكل مدرسة: الفكرة، ومثال من حياتنا، وتستخدمها إزاي النهارده، واتنقدت في إيه.</p>
+{ORN}<h2>فلاسفة</h2><ul class="index">{plist("philosopher")}</ul>
+{ORN}<h2>مدارس وأفكار</h2><ul class="index">{plist("school")}</ul>"""
+    write("philosophy/index.html", page("الفلسفة — ميزان", body, "../", "philosophy/", "أشهر الفلاسفة والمدارس الفلسفية مشروحة بالعامية المصرية وبأمثلة من حياتنا.", path="philosophy/"))
+    for x in philo:
+        r = "../../"
+        rel = " · ".join(filter(None, (plink(s_, r) for s_ in x.get("related", []))))
+        src = "".join(f"<li>{e_(s_)}</li>" for s_ in x.get("sources", []))
+        body = f"""<p class="kicker">{KIND[x['kind']]}</p><h1>{e_(x['name'])}</h1><span class="intl">{e_(x['intl'])}</span><p class="era">{e_(x['era'])}</p>
+<p class="oneline">{e_(x['oneLine'])}</p>
+<h2>الفكرة</h2><p>{e_(x['idea'])}</p>
+<h2>من حياتنا</h2><div class="ex"><div>{e_(x['life'])}</div></div>
+<h2>استخدمها النهارده</h2><p>{e_(x['useIt'])}</p>
+<h2>اتنقدت في إيه؟</h2><p>{e_(x['critique'])}</p>
+{f'<h2>اقرا كمان</h2><p>{rel}</p>' if rel else ''}
+<h2>مصادر</h2><ul class="sources">{src}</ul>
+<h2>شاركها</h2><p><a class="btn ghost" href="{r}cards/post/{x['slug']}.png" download>نزّل الكارت للبوست</a> <a class="btn ghost" href="{r}cards/og/{x['slug']}.png" download>كارت عريض</a></p>
+<p class="back"><a href="{r}philosophy/">كل الفلاسفة والمدارس</a></p>"""
+        ld = {"@context": "https://schema.org", "@type": "Person" if x["kind"] == "philosopher" else "DefinedTerm", "name": x["name"], "alternateName": x["intl"],
+              "description": x["oneLine"], "url": f"{SITE}philosophy/{x['slug']}/"}
+        write(f"philosophy/{x['slug']}/index.html", page(f"{x['name']} — ميزان", body, r, "philosophy/", x["oneLine"], f"cards/og/{x['slug']}.png", f"philosophy/{x['slug']}/", ld))
+
+    # trends
+    tiles = "".join(f'<a class="tile" href="{t["slug"]}/"><span>وزن التريند</span><b>{e_(t["title"])}</b><span>{e_(t["verdict"])}</span></a>' for t in trends)
+    write("trends/index.html", page("وزن التريند — ميزان", f'<h1>وزن التريند</h1><p class="lead">كلام بيتقال كتير على السوشيال وفي القعدات. بنوزن الحجة نفسها: فيها إيه صح، وفيها إيه غلط. ومن غير ما نهاجم حد.</p><div class="grid">{tiles}</div><p class="note">سمعت كلام منتشر عايز نوزنه؟ <a href="../send/">ابعتهولنا</a>.</p>', "../", "trends/", path="trends/"))
+    for t in trends:
+        r = "../../"
+        an = "".join(f'<div class="ex"><small>{plink(a["entry"], r)}</small><div>{e_(a["text"])}</div></div>' for a in t["analysis"])
+        body = f"""<p class="kicker">وزن التريند</p><h1>{e_(t['title'])}</h1>
+<p class="claim">{e_(t['claim'])}</p>
+<h2>اللي فيه صح</h2><p>{e_(t['fair'])}</p>
+<h2>اللي فيه غلط</h2>{an}
+<h2>الوزن النهائي</h2><p class="verdict">{e_(t['verdict'])}</p>
+<p class="back"><a href="{r}trends/">كل التريندات</a></p>"""
+        write(f"trends/{t['slug']}/index.html", page(f"{t['title']} — ميزان", body, r, "trends/", t["verdict"], path=f"trends/{t['slug']}/"))
+
+    # search
+    idx = [{"t": x["name"], "k": KIND[x["kind"]], "d": x["oneLine"], "u": f"atlas/{x['slug']}/", "x": " ".join([x["intl"], x["detect"], x["respond"]] + [ex["text"] for ex in x["examples"]])} for x in entries]
+    idx += [{"t": x["name"], "k": KIND[x["kind"]], "d": x["oneLine"], "u": f"philosophy/{x['slug']}/", "x": " ".join([x["intl"], x["era"], x["idea"], x["life"]])} for x in philo]
+    idx += [{"t": x["title"], "k": "مسار", "d": x["intro"], "u": f"paths/{x['slug']}/", "x": " ".join(d["lesson"] for d in x["days"])} for x in paths]
+    idx += [{"t": x["title"], "k": "معضلة", "d": x["question"], "u": f"dilemmas/{x['slug']}/", "x": x["scene"]} for x in dilemmas]
+    idx += [{"t": x["title"], "k": "سؤال الأسبوع", "d": x["question"], "u": f"weekly/{x['slug']}/", "x": x["scene"]} for x in weekly]
+    idx += [{"t": x["title"], "k": "وزن التريند", "d": x["verdict"], "u": f"trends/{x['slug']}/", "x": x["claim"]} for x in trends]
+    (OUT / "search.json").write_text(json.dumps(idx, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    body = f"""<h1>بحث</h1><p class="lead">دوّر في {len(idx)} صفحة: مغالطات وانحيازات وفلاسفة ومسارات ومعضلات.</p>
+<form class="search" role="search" onsubmit="return false"><input id="s-q" type="search" placeholder="مثلاً: تعميم، كانط، إعلانات" aria-label="كلمة البحث" autocomplete="off"></form>
+<div id="s-out" aria-live="polite"></div><script src="../assets/search.js?v={VER}"></script>"""
+    write("search/index.html", page("بحث — ميزان", body, "../", "search/", path="search/"))
+
+    # send a fallacy
+    body = f"""<h1>ابعت مغالطة شفتها</h1><p class="lead">سمعت جملة في إعلان أو بوست أو قعدة، وحسيت إن فيها حاجة غلط؟ ابعتهالنا. أحسن الجمل هتبقى ألغاز في «مغالطة اليوم» أو تريند نوزنه.</p>
+<form id="send-form" class="sheet"><label for="send-text">الجملة</label><textarea id="send-text" rows="4" maxlength="600" required placeholder="اكتب الجملة زي ما اتقالت"></textarea>
+<label for="send-where">سمعتها فين؟ (اختياري)</label><input type="text" id="send-where" maxlength="60" placeholder="إعلان، فيسبوك، في الشغل…">
+<label for="send-guess">تفتكر فيها أنهي مغالطة؟ (اختياري)</label><input type="text" id="send-guess" maxlength="80" placeholder="مش لازم تعرف">
+<input type="text" id="send-hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+<p style="margin-top:1rem"><button class="btn" type="submit">ابعت</button> <span id="send-status" class="lead" style="font-size:15px" aria-live="polite"></span></p></form>
+<p class="note">متكتبش أسماء ناس حقيقيين ولا أرقام تليفونات. كل جملة بتتراجع بإيد إنسان قبل ما تتنشر.</p>
+<script src="../assets/config.js?v={VER}"></script><script src="../assets/send.js?v={VER}"></script>"""
+    write("send/index.html", page("ابعت مغالطة — ميزان", body, "../", "", "ابعت جملة سمعتها وفيها مغالطة، وممكن تبقى لغز في ميزان.", path="send/"))
+
+    # offline
+    (OUT / "offline.html").write_text(page("مفيش نت — ميزان", '<section class="hero">' + SCALE + '<h1 style="font-size:2.4rem">مفيش نت دلوقتي</h1><p class="lead">الصفحات اللي فتحتها قبل كده لسه شغالة. ارجع لما النت يرجع.</p><p><a class="btn" href="./">الرئيسية</a></p></section>', "./"), encoding="utf-8")
 
     # about
     body = """<h1>عن ميزان</h1>
@@ -228,8 +321,19 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     write("about/index.html", page("عن ميزان", body, "../", "about/"))
 
     write("manifest.webmanifest", json.dumps({"name": "ميزان", "short_name": "ميزان", "lang": "ar", "dir": "rtl",
-        "start_url": "./", "display": "standalone", "background_color": "#E9E1CC", "theme_color": "#A47E2E"}, ensure_ascii=False))
-    print("built", len(entries), "entries,", len(puzzles), "puzzles")
+        "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#E9E1CC", "theme_color": "#A47E2E",
+        "description": "مرجع مصري مفتوح عن المغالطات والانحيازات والفلسفة.",
+        "icons": [{"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+                  {"src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}, ensure_ascii=False))
+    # sitemap + robots
+    sm = "".join(f"<url><loc>{SITE}{u}</loc></url>" for u in URLS)
+    (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>', encoding="utf-8")
+    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8")
+    # service worker
+    pre = ["./", "offline.html", "daily/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "daily.js", "quiz.js", "search.js"]]
+    sw = (ROOT / "tools/sw.template.js").read_text(encoding="utf-8").replace("__VER__", VER).replace("__PRE__", json.dumps(pre))
+    (OUT / "sw.js").write_text(sw, encoding="utf-8")
+    print("built", len(entries), "entries,", len(philo), "philosophy,", len(URLS), "pages")
 
 
 if __name__ == "__main__":
