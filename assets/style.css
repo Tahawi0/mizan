@@ -715,6 +715,9 @@ body.zina-hide .zina{display:none}
 .ch-res{font-family:var(--kufi);font-size:1.15rem;text-align:center;padding:.5rem;border-radius:6px}
 .ch-res.win{background:var(--ok-soft);color:var(--ok)}.ch-res.lose{background:var(--bad-soft);color:var(--bad)}.ch-res.tie{background:var(--gold-soft)}
 .ch-btn{margin-top:.5rem}
+.ch-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.5rem}
+.ch-row .ch-btn{margin-top:0}
+.ch-name{flex:1 1 12rem;min-width:0;font:inherit;padding:.55rem .75rem;border:1px solid var(--line,#cdbf9a);border-radius:8px;background:var(--paper,#fbf6ea);color:inherit}
 /* ───── للمدرسين ───── */
 .lesson{border-top:2px solid var(--gold-soft);margin-top:2.4rem;padding-top:1rem}
 .lesson h3{font-size:1.1rem;margin:1.2rem 0 .3rem}

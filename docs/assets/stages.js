@@ -81,13 +81,17 @@
       [mp, nx, sh].forEach(function (b) { p.appendChild(b); p.appendChild(document.createTextNode(" ")); });
       if (o.score != null) {
         var ch = el("button", "btn ghost ch-btn", "⚔ تحدّى صاحبك في المرحلة دي");
+        // خانة اسم جوه الصفحة بدل prompt() اللي متصفحات فيسبوك وإنستجرام بتمنعه
+        var nm = el("input", "ch-name"); nm.type = "text"; nm.maxLength = 20; nm.placeholder = "اسمك اللي هيظهر لصاحبك (اختياري)";
+        nm.setAttribute("aria-label", "اسمك اللي هيظهر لصاحبك"); nm.value = myName();
         ch.onclick = function () {
-          var n = myName();
-          if (!n) { try { n = (prompt("اسمك اللي هيظهر لصاحبك؟") || "").replace(/[<>]/g, "").trim().slice(0, 20); } catch (e) {} if (n) try { localStorage.setItem("mizan-duel-name", n); } catch (e) {} }
+          var n = String(nm.value || "").replace(/[<>]/g, "").trim().slice(0, 20);
+          if (n) try { localStorage.setItem("mizan-duel-name", n); } catch (e) {}
           var url = location.origin + location.pathname + "?ch=" + o.k + "&cs=" + o.score + (n ? "&cn=" + encodeURIComponent(n) : "");
           share("ميزان — تحدّي ⚔\n" + (n || "أنا") + " جبت " + o.score + " من 10 في المرحلة دي. تقدر تغلبني؟\n" + url, ch);
         };
-        p.appendChild(ch);
+        var chRow = el("span", "ch-row"); chRow.appendChild(nm); chRow.appendChild(ch);
+        p.appendChild(chRow);
       }
       wrap.appendChild(p);
       return wrap;

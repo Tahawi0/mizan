@@ -59,7 +59,8 @@
     function end() {
       clearTimeout(timer); document.body.classList.remove("zina-hide");
       Array.prototype.slice.call(feed.children).forEach(gone);
-      var score = Math.max(0, Math.min(10, Math.round(10 * (hits - falses * 0.5) / bad)));
+      // بث من غير ولا كومنت فيه مغالطة: الدرجة الكاملة لو مخبيتش حاجة سليمة
+      var score = bad ? Math.max(0, Math.min(10, Math.round(10 * (hits - falses * 0.5) / bad))) : Math.max(0, 10 - falses * 2);
       S.record(KEY, "l" + k, score);
       if (window.MizanAuth && MizanAuth.score) MizanAuth.score("live", score);
       box.innerHTML = "";
