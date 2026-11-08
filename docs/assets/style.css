@@ -560,7 +560,10 @@ main .lead{animation:rise .7s .25s ease both}
 @keyframes zin{from{transform:translateY(60px) scale(.5);opacity:0}}
 @keyframes zhop{30%{transform:translateY(-22px) rotate(-6deg)}60%{transform:translateY(0) scale(1.06,.94)}}
 @keyframes zsad{30%{transform:translateY(4px) rotate(4deg)}60%{transform:rotate(-3deg)}}
-@media (max-width:600px){.z-body{width:72px;height:72px}.z-x{bottom:56px;left:58px;opacity:1}.z-say{max-width:170px;font-size:.92rem}}
+@media (max-width:600px){.z-body{width:72px;height:72px}.z-x{bottom:56px;left:58px;opacity:1}.z-say{max-width:170px;font-size:.92rem}
+  /* على الموبايل: زِنة بتستخبى على جنب وهي ساكتة عشان متغطيش الأزرار، وبتطلع لما تتكلم */
+  .zina{left:0;transition:transform .35s cubic-bezier(.3,1.4,.5,1)}.zina:not(.z-act):not(.z-off){transform:translateX(-62%)}.zina:not(.z-act):not(.z-off) .z-x{opacity:0}.zina.z-off{left:8px}}
+body.zina-hide .zina{display:none}
 @media (prefers-reduced-motion:reduce){.z-body,.zina.z-in .z-body,.zina.z-hop .z-body,.zina.z-sad .z-body{animation:none}.z-say{transition:none}}
 @media print{.zina{display:none}}
 
@@ -694,7 +697,7 @@ main .lead{animation:rise .7s .25s ease both}
 .sky-star{cursor:pointer;outline:none;transition:opacity .3s;animation:sky-tw 3.2s ease-in-out infinite}
 .sky-core{fill:#F2D58A}.sky-star.b .sky-core{fill:#9DC4FF}
 .sky-halo{fill:#F2D58A;opacity:.12}.sky-star.b .sky-halo{fill:#9DC4FF}
-.sky-name{fill:#EDE4CF;font:11px var(--kufi);opacity:0;transition:opacity .3s;pointer-events:none}
+.sky-name{fill:#EDE4CF;font:13px var(--kufi);paint-order:stroke;stroke:#0b1020;stroke-width:3px;opacity:0;transition:opacity .3s;pointer-events:none}
 .sky-star:hover .sky-name,.sky-star:focus .sky-name,.sky-star.sel .sky-name,.sky-wrap:has(.sel) .sky-star:not(.dim) .sky-name{opacity:1}
 .sky-star.dim{opacity:.18;animation:none}.sky-star.sel .sky-halo{opacity:.4}
 .sky-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;align-items:center;font-size:.92rem}
@@ -702,3 +705,27 @@ main .lead{animation:rise .7s .25s ease both}
 .sky-card{background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:1rem 1.2rem;margin-top:1rem}
 @keyframes sky-tw{50%{opacity:.75}}
 @media (prefers-reduced-motion:reduce){.sky-star,.sk-glow,.lv-c{animation:none}}
+/* ───── ابدأ من هنا + تحدّي المراحل ───── */
+.start-here{background:var(--leaf);border:1px solid var(--gold);border-radius:6px;padding:1.2rem 1.2rem .4rem;margin:1.6rem 0}
+.start-here h2{margin-top:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:.4rem 0 1rem}
+.chip{font-family:var(--kufi);font-size:.98rem;background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:.35rem .9rem;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.ch-ban{border-inline-start:4px solid var(--gold);font-family:var(--kufi)}
+.ch-res{font-family:var(--kufi);font-size:1.15rem;text-align:center;padding:.5rem;border-radius:6px}
+.ch-res.win{background:var(--ok-soft);color:var(--ok)}.ch-res.lose{background:var(--bad-soft);color:var(--bad)}.ch-res.tie{background:var(--gold-soft)}
+.ch-btn{margin-top:.5rem}
+/* ───── للمدرسين ───── */
+.lesson{border-top:2px solid var(--gold-soft);margin-top:2.4rem;padding-top:1rem}
+.lesson h3{font-size:1.1rem;margin:1.2rem 0 .3rem}
+.worksheet{background:#fff;color:#221C14;border:1px solid var(--rule);border-radius:4px;padding:1rem 1.2rem;margin:.8rem 0}
+.ws-head{font-family:var(--kufi);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;border-bottom:1px solid #CDBF9F;padding-bottom:.4rem}
+.worksheet .lines{height:4.5rem;background:repeating-linear-gradient(transparent 0 1.45rem,#CDBF9F 1.45rem 1.5rem)}
+@media print{
+  header.top,footer,.zina,.print-l,.report{display:none!important}
+  body[data-print] main .wrap>*:not(.lesson){display:none!important}
+  body[data-print] .lesson{display:none}
+  body[data-print="l1"] #l1,body[data-print="l2"] #l2,body[data-print="l3"] #l3,body[data-print="l4"] #l4,body[data-print="l5"] #l5,body[data-print="l6"] #l6{display:block;border:0;margin:0}
+  .worksheet{break-before:page;border:0}
+  body{background:#fff!important;color:#000!important}
+}

@@ -77,7 +77,7 @@
         Object.keys(btns).forEach(function (i) { btns[i].disabled = true; }); slots.forEach(function (s) { s.disabled = true; });
         check.remove();
         var go = el("div", "court-end"); go.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
-        go.appendChild(S.endBar({ k: lv, count: G.levels.length, map: map, play: function (k) { lv = k; level(); },
+        go.appendChild(S.endBar({ score: score, k: lv, count: G.levels.length, map: map, play: function (k) { lv = k; level(); },
           share: "بنيت حجة سليمة في «ابني الحجة» على ميزان ⚖️\nجرّب إنت: " + location.href.split("?")[0] }));
         box.appendChild(go);
       } else {

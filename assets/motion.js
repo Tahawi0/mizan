@@ -47,8 +47,8 @@
     img.src = root + "assets/zina/" + face + ".webp";
     Z.classList.remove("z-hop", "z-sad", "z-in"); void Z.offsetWidth;
     Z.classList.add(mood === "wrong" ? "z-sad" : "z-hop", "z-in");
-    var b = Z.querySelector(".z-say"); b.textContent = say || pickL(mood); b.classList.add("show");
-    clearTimeout(zt); zt = setTimeout(function () { b.classList.remove("show"); img.src = root + "assets/zina/think.webp"; }, 3200);
+    var b = Z.querySelector(".z-say"); b.textContent = say || pickL(mood); b.classList.add("show"); Z.classList.add("z-act");
+    clearTimeout(zt); zt = setTimeout(function () { b.classList.remove("show"); Z.classList.remove("z-act"); img.src = root + "assets/zina/think.webp"; }, 3200);
   }
   if (document.getElementById("game") || document.getElementById("q-play") || document.getElementById("dilemma") || document.querySelector(".today #opts, #opts")) {
     Z = document.createElement("div"); Z.className = "zina"; Z.setAttribute("aria-live", "polite");

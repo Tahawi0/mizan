@@ -34,15 +34,15 @@
     var lvl = function (v) { return v >= .8 ? "أستاذ" : v >= .45 ? "متمكن" : v > 0 ? "مبتدئ" : "لسه مبدأتش"; };
     var head = el("div", "map-head");
     head.appendChild(el("p", "lead", "كل مهارة بتنوّر على قد ما لعبت واتعلمت في الألعاب اللي ليها علاقة بيها. تقدمك محفوظ على جهازك، ولو عندك حساب بيتزامن معاه."));
-    head.appendChild(el("p", "map-stars", "شجرتك منوّرة " + Math.round(total / data.length * 100) + "%"));
+    var ms = el("p", "map-stars", "شجرتك منوّرة "), bd = el("bdi", null, Math.round(total / data.length * 100) + "%"); ms.appendChild(bd); head.appendChild(ms);
     box.appendChild(head);
 
     // الشجرة: جذع في النص، وفروع للمهارات
-    var W = 360, H = 330, cx = W / 2, svg = sv("svg", { viewBox: "0 0 " + W + " " + H, "class": "sk-tree", role: "img", "aria-label": "شجرة مهاراتك" });
+    var W = 420, H = 330, cx = W / 2, svg = sv("svg", { viewBox: "0 0 " + W + " " + H, "class": "sk-tree", role: "img", "aria-label": "شجرة مهاراتك" });
     svg.appendChild(sv("path", { d: "M" + cx + " " + H + " C " + (cx - 6) + " " + (H - 60) + " " + (cx + 6) + " " + (H - 120) + " " + cx + " 150", "class": "sk-trunk" }));
     var n = data.length;
     data.forEach(function (d, i) {
-      var a = Math.PI * (0.08 + 0.84 * i / (n - 1)), r = 125 + (i % 2) * 22;
+      var a = Math.PI * (0.1 + 0.8 * i / (n - 1)), r = 118 + (i % 2) * 34;
       var x = cx + Math.cos(Math.PI - a) * r, y = 165 - Math.sin(a) * r * .95;
       svg.appendChild(sv("path", { d: "M" + cx + " 160 Q " + ((cx + x) / 2) + " " + (y + 40) + " " + x + " " + y, "class": "sk-branch" + (d.v > 0 ? " on" : "") }));
       var g = sv("g", { "class": "sk-node", tabindex: 0 });
@@ -60,7 +60,7 @@
     var list = el("div", "grid sk-list");
     data.forEach(function (d) {
       var b = el("button", "tile atile"); b.type = "button";
-      b.appendChild(el("span", "meta", d.s.icon + " " + lvl(d.v) + " · " + Math.round(d.v * 100) + "%"));
+      var mt = el("span", "meta", d.s.icon + " " + lvl(d.v) + " · "); mt.appendChild(el("bdi", null, Math.round(d.v * 100) + "%")); b.appendChild(mt);
       b.appendChild(el("b", null, d.s.name)); b.appendChild(el("span", null, d.s.desc));
       b.onclick = function () { show(d); }; list.appendChild(b);
     });

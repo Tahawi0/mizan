@@ -23,6 +23,7 @@
   function post(base, hit, fp) { var tp = base * hit / 100, ff = (100 - base) * fp / 100; return { tp: tp, ff: ff, p: tp / (tp + ff) * 100 }; }
 
   function play(k) {
+    if (window.MizanTrack) MizanTrack("bayes", "start");
     var C = G.cases[k];
     box.innerHTML = "";
     var back = el("button", "btn ghost", "كل الأمثلة"); back.onclick = home; box.appendChild(back);
@@ -34,7 +35,7 @@
     f.appendChild(rg); f.appendChild(out); box.appendChild(f);
     var go = el("button", "btn", "شوف الحقيقة"); box.appendChild(go);
     go.onclick = function () {
-      var guess = +rg.value; rg.disabled = true; go.remove();
+      var guess = +rg.value; rg.disabled = true; go.remove(); if (window.MizanTrack) MizanTrack("bayes", "done");
       var d = load(); d[k] = guess; save(d);
       reveal(C, guess);
     };

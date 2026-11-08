@@ -51,7 +51,7 @@
       w.appendChild(el("p", "big-score", fmt(s)));
       w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
       w.appendChild(el("p", "lead", hints ? "خرجت بتلميح. جرّب تاني من غيره عشان 3 نجوم." : s <= 60 ? "سريع جداً!" : "خرجت! كل ما تبقى أسرع، نجومك تزيد."));
-      w.appendChild(S.endBar({ k: k, count: G.rooms.length, play: play, map: map,
+      w.appendChild(S.endBar({ score: score, k: k, count: G.rooms.length, play: play, map: map,
         share: "خرجت من «" + R.title + "» في غرفة الهروب على ميزان ⚖️ في " + fmt(s) + ".\nتقدر تكسر وقتي؟ " + location.href.split("?")[0] }));
       stage.appendChild(w);
     }

@@ -75,7 +75,7 @@
             if (rep.kind !== "smart") {
               var again = el("button", "btn ghost", "جرّب رد تاني"); again.onclick = function () { play(k); }; w.appendChild(again);
             }
-            w.appendChild(S.endBar({ k: k, count: G.rounds.length, play: play, map: map,
+            w.appendChild(S.endBar({ score: score, k: k, count: G.rounds.length, play: play, map: map,
               share: "عدّيت موقف «" + R.title + "» في جروب العيلة على ميزان ⚖️\nإنت هترد إزاي؟ " + location.href.split("?")[0] }));
             act.appendChild(w);
           });

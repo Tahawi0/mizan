@@ -335,6 +335,26 @@ async function debate(req, env) {
   return json(env, { error: "طلب غلط." }, 400);
 }
 
+// ───── عدّاد الألعاب المجهول: كام واحد بدأ وكام واحد خلّص، في اليوم ─────
+const EVT_GAMES = new Set(["court", "family", "escape", "argue", "spot", "calib", "fix", "charts", "verify", "rumor", "live", "debate", "quiz", "bayes", "duel"]);
+async function evtPost(req, env) {
+  let b; try { b = JSON.parse(await req.text()); } catch { return json(env, { ok: false }, 400); }
+  const g = String(b.g || ""), e = b.e === "done" ? "done" : b.e === "start" ? "start" : "";
+  if (!EVT_GAMES.has(g) || !e) return json(env, { ok: false }, 400);
+  const day = cairoDay();
+  const cur = await env.DB.prepare("SELECT n FROM events WHERE day=? AND game=? AND ev=?").bind(day, g, e).first();
+  if (cur && cur.n >= 20000) return json(env, { ok: true });
+  await env.DB.prepare("INSERT INTO events(day,game,ev,n) VALUES(?,?,?,1) ON CONFLICT(day,game,ev) DO UPDATE SET n=n+1").bind(day, g, e).run();
+  return json(env, { ok: true });
+}
+async function evtGet(env, url) {
+  const days = Math.min(90, Math.max(1, parseInt(url.searchParams.get("days") || "7", 10)));
+  const since = new Date(Date.now() - (days - 1) * 864e5).toLocaleDateString("en-CA", { timeZone: "Africa/Cairo" });
+  const rows = (await env.DB.prepare("SELECT game, ev, SUM(n) n FROM events WHERE day>=? GROUP BY game, ev").bind(since).all()).results;
+  const out = {}; rows.forEach(r => { (out[r.game] = out[r.game] || { start: 0, done: 0 })[r.ev] = r.n; });
+  return json(env, { days, since, games: out });
+}
+
 // مرآة الناس: كل النتايج المجمعة في طلب واحد، متخزنة في الكاش 5 دقايق.
 async function mirror(req, env, ctx) {
   const cache = caches.default, key = new Request("https://mizan-cache/mirror");
@@ -365,6 +385,8 @@ export default {
     }
     if (url.pathname === "/league" || url.pathname.startsWith("/league/")) return league(req, env, url);
     if (req.method === "POST" && url.pathname === "/debate") return debate(req, env);
+    if (req.method === "POST" && url.pathname === "/evt") return evtPost(req, env);
+    if (req.method === "GET" && url.pathname === "/evt") return evtGet(env, url);
     if (req.method === "GET" && url.pathname === "/mirror") return mirror(req, env, ctx);
     if (req.method === "GET" && url.pathname === "/votes") {
       const id = url.searchParams.get("id") || "";

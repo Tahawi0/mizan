@@ -14,11 +14,12 @@
     for (var i = 0; i < 70; i++) { var ang = r() * Math.PI * 2, d = Math.sqrt(r()) * 95; a.push({ x: 160 + Math.cos(ang) * d * 1.45, y: 105 + Math.sin(ang) * d, d: d + r() * 30 }); }
     a[0] = { x: 160, y: 105, d: -1 }; return a; })();
   var ORDER = NODES.map(function (n, i) { return i; }).sort(function (a, b) { return NODES[a].d - NODES[b].d; });
+  // كل واحد بيوصله البوست من أقرب حد وصله قبله
+  var PARENT = {}; ORDER.forEach(function (i, k) { if (!k) return; var best = ORDER[0], bd = 1e9; for (var j = 0; j < k; j++) { var q = NODES[ORDER[j]], dd = Math.pow(q.x - NODES[i].x, 2) + Math.pow(q.y - NODES[i].y, 2); if (dd < bd) { bd = dd; best = ORDER[j]; } } PARENT[i] = best; });
   function net(spread, done) {
     var svg = sv("svg", { viewBox: "0 0 320 210", "class": "rm-net", role: "img", "aria-label": "انتشار البوست بين الناس" });
     NODES.forEach(function (n, i) {
-      var near = ORDER.indexOf(i);
-      if (near > 0) { var p = NODES[ORDER[Math.max(0, Math.floor(near / 3))]]; svg.appendChild(sv("line", { x1: p.x, y1: p.y, x2: n.x, y2: n.y, "class": "rm-edge", "data-i": i })); }
+      if (PARENT[i] != null) { var p = NODES[PARENT[i]]; svg.appendChild(sv("line", { x1: p.x, y1: p.y, x2: n.x, y2: n.y, "class": "rm-edge", "data-i": i })); }
     });
     var dots = NODES.map(function (n, i) { var c = sv("circle", { cx: n.x, cy: n.y, r: i ? 4 : 7, "class": "rm-node" + (i ? "" : " src") }); svg.appendChild(c); return c; });
     var target = Math.round(spread / 100 * NODES.length), j = 0;
@@ -39,7 +40,7 @@
   function endBar(k, score, title) {
     var w = el("div", "court-end");
     w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
-    w.appendChild(S.endBar({ k: k, count: all, map: map, play: function (n) { if (n < levels.length) play(n); else boss(); },
+    w.appendChild(S.endBar({ score: score, k: k, count: all, map: map, play: function (n) { if (n < levels.length) play(n); else boss(); },
       share: "اتعلمت حيلة «" + title + "» من جوه في «مصنع الإشاعة» على ميزان ⚖️\nجرّب تبقى صاحب صفحة إشاعات (في لعبة بس 😄): " + location.href.split("?")[0] }));
     return w;
   }

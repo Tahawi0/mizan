@@ -8,22 +8,19 @@
   var links = [], deg = E.map(function () { return 0; });
   E.forEach(function (e, i) { if (e.c && idx[e.c] != null && idx[e.c] !== i) { var j = idx[e.c]; if (!links.some(function (l) { return (l[0] === j && l[1] === i); })) { links.push([i, j]); deg[i]++; deg[j]++; } } });
 
-  // ترتيب بسيط بالقوى: المغالطات يمين، والانحيازات شمال (الصفحة RTL)، والمترابطين بيقرّبوا
-  var W = 620, H = 440, s = 11, rnd = function () { s = (s * 9301 + 49297) % 233280; return s / 233280; };
-  var P = E.map(function (e) { return { x: (e.k === "fallacy" ? W * .66 : W * .3) + (rnd() - .5) * 200, y: H / 2 + (rnd() - .5) * 320, vx: 0, vy: 0 }; });
-  for (var it = 0; it < 400; it++) {
-    for (var a = 0; a < P.length; a++) for (var b = a + 1; b < P.length; b++) {
-      var dx = P[a].x - P[b].x, dy = P[a].y - P[b].y, d2 = dx * dx + dy * dy + 0.01, f = 900 / d2;
-      P[a].vx += dx * f; P[a].vy += dy * f; P[b].vx -= dx * f; P[b].vy -= dy * f;
-    }
-    links.forEach(function (l) { var p = P[l[0]], q = P[l[1]], dx = q.x - p.x, dy = q.y - p.y; p.vx += dx * .01; p.vy += dy * .01; q.vx -= dx * .01; q.vy -= dy * .01; });
-    P.forEach(function (p, i) {
-      var tx = E[i].k === "fallacy" ? W * .68 : W * .3;
-      p.vx += (tx - p.x) * .004; p.vy += (H / 2 - p.y) * .004;
-      p.x += Math.max(-6, Math.min(6, p.vx)); p.y += Math.max(-6, Math.min(6, p.vy)); p.vx *= .6; p.vy *= .6;
-      p.x = Math.max(30, Math.min(W - 30, p.x)); p.y = Math.max(26, Math.min(H - 26, p.y));
-    });
+  // ترتيب «زهرة عباد الشمس»: المغالطات في مجرة والانحيازات في مجرة. على الموبايل فوق بعض، وعلى الشاشة الكبيرة جنب بعض.
+  var tall = (box.clientWidth || 600) < 560, W = tall ? 400 : 640, H = tall ? 700 : 440, s = 11, rnd = function () { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  var C = { fallacy: tall ? [W / 2, 200] : [W * .7, H / 2], bias: tall ? [W / 2, 530] : [W * .28, H / 2] };
+  var cnt = { fallacy: 0, bias: 0 }, tot = { fallacy: 0, bias: 0 }; E.forEach(function (e) { tot[e.k]++; });
+  var P = E.map(function (e) {
+    var i = cnt[e.k]++, R = tall ? (e.k === "fallacy" ? 175 : 150) : (e.k === "fallacy" ? 190 : 165), r = R * Math.sqrt((i + .5) / tot[e.k]), a = i * 2.39996;
+    return { x: C[e.k][0] + Math.cos(a) * r * (tall ? 1 : .95), y: C[e.k][1] + Math.sin(a) * r * (tall ? .88 : 1) };
+  });
+  for (var it = 0; it < 80; it++) for (var a2 = 0; a2 < P.length; a2++) for (var b2 = a2 + 1; b2 < P.length; b2++) {
+    var dx = P[a2].x - P[b2].x, dy = P[a2].y - P[b2].y, d = Math.sqrt(dx * dx + dy * dy) || .1;
+    if (d < 40) { var m = (40 - d) / 2 / d; P[a2].x += dx * m; P[a2].y += dy * m; P[b2].x -= dx * m; P[b2].y -= dy * m; }
   }
+  P.forEach(function (p) { p.x = Math.max(24, Math.min(W - 24, p.x)); p.y = Math.max(24, Math.min(H - 16, p.y)); });
 
   box.innerHTML = "";
   var legend = el("p", "sky-legend");
@@ -34,7 +31,7 @@
   var lines = links.map(function (l) { var p = P[l[0]], q = P[l[1]], ln = sv("line", { x1: p.x, y1: p.y, x2: q.x, y2: q.y, "class": "sky-link" }); svg.appendChild(ln); return ln; });
   var stars = E.map(function (e, i) {
     var g = sv("g", { "class": "sky-star " + (e.k === "fallacy" ? "f" : "b"), tabindex: 0, role: "button", "aria-label": e.n });
-    var r = 4 + deg[i] * 1.6;
+    var r = 4 + deg[i] * 1.4;
     g.appendChild(sv("circle", { cx: P[i].x, cy: P[i].y, r: r * 2.6, "class": "sky-halo" }));
     g.appendChild(sv("circle", { cx: P[i].x, cy: P[i].y, r: r, "class": "sky-core" }));
     var t = sv("text", { x: P[i].x, y: P[i].y - r - 6, "text-anchor": "middle", "class": "sky-name" }); t.textContent = e.n; g.appendChild(t);

@@ -1,17 +1,47 @@
 // خريطة المراحل المشتركة: كل مرحلة بتفتح اللي بعدها، والنجوم بتتحفظ على الجهاز (وبتتزامن مع الحساب).
+// وفيها كمان «تحدّى صاحبك في نفس المرحلة»: لينك فيه رقم المرحلة ودرجتك.
 (function () {
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function load(k) { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch (e) { return {}; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function starsFor(sc) { return sc == null ? 0 : sc >= 9 ? 3 : sc >= 6 ? 2 : 1; }
   function stars(n) { return "★★★".slice(0, n) + "☆☆☆".slice(0, 3 - n); }
+  function gameOf(key) { return String(key).replace(/^mizan-/, "").replace(/-stages$/, ""); }
+  function track(key, ev) { if (window.MizanTrack) window.MizanTrack(gameOf(key), ev); }
+  function share(text, btn) {
+    if (navigator.share) navigator.share({ text: text }).catch(function () {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { btn.textContent = "اتنسخ ✓"; });
+  }
+  function myName() { try { return localStorage.getItem("mizan-duel-name") || ""; } catch (e) { return ""; } }
+
+  // تحدّي جاي من لينك: ?ch=رقم المرحلة&cs=الدرجة&cn=الاسم
+  var CH = (function () {
+    var q = new URLSearchParams(location.search), k = parseInt(q.get("ch"), 10), s = parseInt(q.get("cs"), 10);
+    if (!(k >= 0 && k < 50 && s >= 0 && s <= 10)) return null;
+    return { k: k, s: s, n: String(q.get("cn") || "صاحبك").replace(/[<>]/g, "").slice(0, 20) || "صاحبك", used: false };
+  })();
+
   window.MizanStages = {
     stars: stars, starsFor: starsFor,
     get: function (key) { return load(key); },
-    record: function (key, id, score) { var d = load(key); d[id] = Math.max(d[id] || 0, score); save(key, d); return d; },
+    challenge: function () { return CH; },
+    record: function (key, id, score) { var d = load(key); d[id] = Math.max(d[id] || 0, score); save(key, d); track(key, "done"); return d; },
     // opts: key, intro, items:[{id,title,sub,icon}], bossLabel, onPlay(k)
     render: function (box, o) {
       box.innerHTML = "";
+      function go(k) {
+        track(o.key, "start");
+        o.onPlay(k);
+        var r = box.getBoundingClientRect();
+        if (r.top < 0 || r.top > innerHeight * .35) box.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      }
+      // لو جاي من لينك تحدّي: نفتح المرحلة على طول، حتى لو لسه مقفولة عندك
+      if (CH && !CH.used && o.items[CH.k]) {
+        CH.used = true;
+        var ban = el("p", "note ch-ban", "⚔ تحدّي من " + CH.n + ": " + CH.s + " من 10 في مرحلة «" + o.items[CH.k].title + "». تقدر تعدّي الرقم ده؟");
+        box.parentNode.insertBefore(ban, box);
+        go(CH.k); return;
+      }
       var done = load(o.key), total = 0;
       o.items.forEach(function (it) { total += starsFor(done[it.id]); });
       var top = el("div", "map-head");
@@ -31,24 +61,36 @@
         info.appendChild(el("b", null, open ? it.title : "مرحلة مقفولة"));
         info.appendChild(el("small", null, open ? (st ? stars(st) + " · " + done[it.id] + " من 10" : (boss ? (o.bossLabel || "مرحلة الزعيم") : (it.sub || "مرحلة جديدة"))) : "خلّص اللي قبلها عشان تفتحها"));
         b.appendChild(info);
-        b.onclick = function () { o.onPlay(k); };
+        b.onclick = function () { go(k); };
         li.appendChild(b); map.appendChild(li);
       });
       box.appendChild(map);
     },
-    // أزرار آخر المرحلة: الجاية، والخريطة، والشير
+    // أزرار آخر المرحلة: الجاية، والخريطة، والشير، وتحدّى صاحبك
     endBar: function (o) {
-      var p = el("p"), last = o.k === o.count - 1;
+      var wrap = el("div", "end-bar"), last = o.k === o.count - 1;
+      if (CH && CH.k === o.k && o.score != null) {
+        var res = o.score > CH.s ? "كسبت! " : o.score < CH.s ? "المرة دي لصالح " + CH.n + ". " : "تعادل! ";
+        wrap.appendChild(el("p", "ch-res " + (o.score > CH.s ? "win" : o.score < CH.s ? "lose" : "tie"), res + "إنت " + o.score + " و" + CH.n + " " + CH.s + " من 10."));
+      }
+      var p = el("p");
       var nx = el("button", "btn", last ? "خريطة المراحل" : "المرحلة اللي بعدها"), mp = el("button", "btn ghost", "الخريطة"), sh = el("button", "btn ghost", "شارك");
       nx.onclick = function () { if (last) o.map(); else o.play(o.k + 1); };
       mp.onclick = o.map;
-      sh.onclick = function () {
-        var t = o.share;
-        if (navigator.share) navigator.share({ text: t }).catch(function () {});
-        else if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { sh.textContent = "اتنسخ ✓"; });
-      };
+      sh.onclick = function () { share(o.share, sh); };
       [mp, nx, sh].forEach(function (b) { p.appendChild(b); p.appendChild(document.createTextNode(" ")); });
-      return p;
+      if (o.score != null) {
+        var ch = el("button", "btn ghost ch-btn", "⚔ تحدّى صاحبك في المرحلة دي");
+        ch.onclick = function () {
+          var n = myName();
+          if (!n) { try { n = (prompt("اسمك اللي هيظهر لصاحبك؟") || "").replace(/[<>]/g, "").trim().slice(0, 20); } catch (e) {} if (n) try { localStorage.setItem("mizan-duel-name", n); } catch (e) {} }
+          var url = location.origin + location.pathname + "?ch=" + o.k + "&cs=" + o.score + (n ? "&cn=" + encodeURIComponent(n) : "");
+          share("ميزان — تحدّي ⚔\n" + (n || "أنا") + " جبت " + o.score + " من 10 في المرحلة دي. تقدر تغلبني؟\n" + url, ch);
+        };
+        p.appendChild(ch);
+      }
+      wrap.appendChild(p);
+      return wrap;
     }
   };
 })();

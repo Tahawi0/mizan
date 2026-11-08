@@ -140,7 +140,7 @@
       fb.appendChild(p); act.appendChild(fb);
       var w = el("div", "court-end");
       w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
-      w.appendChild(S.endBar({ k: k, count: G.stages.length, play: play, map: map,
+      w.appendChild(S.endBar({ score: score, k: k, count: G.stages.length, play: play, map: map,
         share: "كشفت الحيلة في رسم «" + st.title + "» على ميزان ⚖️📊\nتقدر تكشفها إنت؟ " + location.href.split("?")[0] }));
       act.appendChild(w);
     }

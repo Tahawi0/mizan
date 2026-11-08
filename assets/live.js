@@ -23,14 +23,14 @@
   function play(k) {
     var E = G.episodes[k], list = E.c, i = 0, hits = 0, falses = 0, missed = [], bad = list.filter(function (c) { return c.f; }).length;
     var speed = slow ? E.speed * 1.8 : E.speed, timer;
-    box.innerHTML = "";
+    box.innerHTML = ""; document.body.classList.add("zina-hide");
     var scr = el("div", "lv-screen");
     var top = el("div", "lv-top"); top.appendChild(el("b", null, "🔴 مباشر")); top.appendChild(el("span", null, E.title.replace(/^.*?: /, "")));
     var sc = el("span", "lv-score", "✓ 0"); top.appendChild(sc);
     scr.appendChild(top);
     var feed = el("ol", "lv-feed"); feed.setAttribute("aria-live", "polite"); scr.appendChild(feed);
     var bar = el("div", "bar"), bi = el("i"); bar.appendChild(bi); scr.appendChild(bar);
-    box.appendChild(scr);
+    box.appendChild(scr); scr.scrollIntoView({ block: "start" });
     function upd() { sc.textContent = "✓ " + hits + (falses ? "  ✗ " + falses : ""); bi.style.width = (i / list.length * 100) + "%"; }
     function push() {
       if (i >= list.length) { setTimeout(end, speed); return; }
@@ -52,7 +52,7 @@
     }
     function gone(li) { if (li._c.f && !li.classList.contains("hid")) missed.push(li._c); }
     function end() {
-      clearTimeout(timer);
+      clearTimeout(timer); document.body.classList.remove("zina-hide");
       Array.prototype.slice.call(feed.children).forEach(gone);
       var score = Math.max(0, Math.min(10, Math.round(10 * (hits - falses * 0.5) / bad)));
       S.record(KEY, "l" + k, score);
@@ -75,7 +75,7 @@
       });
       box.appendChild(ul);
       var p = el("p"), again = el("button", "btn ghost", "العب البث تاني"); again.onclick = function () { ready(k); }; p.appendChild(again); box.appendChild(p);
-      box.appendChild(S.endBar({ k: k, count: G.episodes.length, play: ready, map: map,
+      box.appendChild(S.endBar({ score: score, k: k, count: G.episodes.length, play: ready, map: map,
         share: "خبّيت " + hits + " من " + bad + " كومنتات فيها مغالطات في بث «على الهوا» على ميزان ⚖️🔴\nتقدر تبقى أسرع؟ " + location.href.split("?")[0] }));
     }
     push();

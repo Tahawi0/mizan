@@ -49,7 +49,7 @@
         act.appendChild(fb);
         var w = el("div", "court-end"); w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
         if (!ok) { var again = el("button", "btn ghost", "حقق تاني"); again.onclick = function () { play(k); }; w.appendChild(again); }
-        w.appendChild(S.endBar({ k: k, count: G.cases.length, play: play, map: map,
+        w.appendChild(S.endBar({ score: score, k: k, count: G.cases.length, play: play, map: map,
           share: "حققت في خبر «" + C.title + "» على ميزان ⚖️🔎\nإنت كنت هتصدقه؟ " + location.href.split("?")[0] }));
         act.appendChild(w);
       };

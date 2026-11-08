@@ -35,15 +35,20 @@ ORN = '<div class="orn" aria-hidden="true"><span></span></div>'
 
 
 def page(title, body, root, active="", desc="", img="cards/og/site.png", path="", ld=None):
+    # كارت مشاركة خاص بالصفحة لو اتعمل (tools/game_cards.py)
+    if img == "cards/og/site.png" and path:
+        gk = "g-" + path.strip("/").replace("/", "-")
+        if (ROOT / "cards" / "og" / f"{gk}.png").exists():
+            img = f"cards/og/{gk}.png"
     groups = [("اتعلّم", [("atlas/", "الأطلس", "مغالطات وانحيازات"), ("philosophy/", "الفلسفة", "فلاسفة ومدارس"), ("paths/", "مسارات", "7 أيام، 5 دقايق في اليوم"), ("trends/", "وزن التريند", "كلام منتشر بنوزنه")]),
-              ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("games/", "الساحة", "كل الألعاب في مكان واحد"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك")]),
+              ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("games/", "الساحة", "كل الألعاب في مكان واحد"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك"), ("teachers/", "للمدرسين", "6 حصص جاهزة للفصل")]),
               ("قول رأيك", [("weekly/", "سؤال الأسبوع", "سؤال فلسفي وتصويت"), ("dilemmas/", "معضلات", "مواقف مفيهاش إجابة سهلة"), ("send/", "ابعت مغالطة", "جملة سمعتها وفيها غلط")])]
     def grp(name, items):
         on = any(h == active for h, _, _ in items)
         li = "".join(f'<a href="{root}{h}"{" class=active" if h == active else ""}><b>{t}</b><span>{d}</span></a>' for h, t, d in items)
         return f'<details class="dd{" on" if on else ""}"><summary>{name}</summary><div class="menu">{li}</div></details>'
     links = "".join(grp(n, it) for n, it in groups) + f'<a class="cta{" active" if active == "analyze/" else ""}" href="{root}analyze/">حلّل الكلام</a>'
-    foot = [("about/", "عن ميزان"), ("privacy/", "الخصوصية"), ("search/", "بحث"), ("send/", "ابعت مغالطة")]
+    foot = [("about/", "عن ميزان"), ("teachers/", "للمدرسين"), ("privacy/", "الخصوصية"), ("search/", "بحث"), ("send/", "ابعت مغالطة")]
     flinks = "".join(f'<a href="{root}{h}">{t}</a>' for h, t in foot)
     ldj = f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>' if ld else ""
     beacon = f'<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token": "{ANALYTICS}"}}\'></script>' if ANALYTICS else ""
@@ -278,7 +283,15 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         return f'<a class="tile atile" href="../{h}"><span class="meta">{m}{badge}</span><b>{t}</b><span>{d}</span></a>'
     secs = "".join(f'<section class="arena-sec"><h2>{n}</h2><p class="lead">{l}</p><div class="grid">{"".join(atile(*g) for g in gs)}</div></section>' for n, l, gs in ARENA)
     count = sum(len(gs) for _, _, gs in ARENA)
-    body = f'''<div class="arena-hero"><p class="kicker">العب واتعلم</p><h1>الساحة</h1><p class="lead">{count} لعبة ولوحة في مكان واحد. كل واحدة بتاخد دقايق، وبتعلمك حاجة عن طريقة تفكيرك.</p></div>{secs}'''
+    START = [("أكشف الكلام الغلط", [("daily/", "مغالطة اليوم", "لغز واحد، دقيقة واحدة."), ("games/court/", "محكمة ميزان", "اعترض أول ما تسمع مغالطة.")]),
+             ("أفهم مخي بيفكر إزاي", [("games/profile/", "بصمتك المعرفية", "15 موقف، وكارت بأكتر انحيازاتك."), ("games/lab/", "معمل الانحيازات", "تجارب علم نفس حقيقية عليك.")]),
+             ("مصدّقش أي خبر أو رقم", [("games/verify/", "محقق الخبر", "حقق قبل ما تصدّق."), ("games/charts/", "الرسم الكداب", "الأرقام كمان بتكدب.")]),
+             ("أناقش وأرد أحسن", [("games/family/", "جروب العيلة", "رد ذكي من غير ما حد يزعل."), ("games/debate/", "ناظر زِنة", "ناظر بومة بتحب الجدال.")])]
+    chips = "".join(f'<button type="button" class="chip{" on" if i == 0 else ""}" data-i="{i}">{t}</button>' for i, (t, _) in enumerate(START))
+    picks = "".join(f'<div class="grid start-picks" data-i="{i}"{"" if i == 0 else " hidden"}>' + "".join(f'<a class="tile atile" href="../{h}"><b>{t}</b><span>{d}</span></a>' for h, t, d in gs) + '</div>' for i, (_, gs) in enumerate(START))
+    starter = f'''<section class="start-here"><h2>أول مرة هنا؟ ابدأ من هنا</h2><p class="lead">عايز تتعلم إيه؟</p><div class="chips">{chips}</div>{picks}</section>
+<script>document.querySelectorAll(".start-here .chip").forEach(function(b){{b.onclick=function(){{document.querySelectorAll(".start-here .chip").forEach(function(x){{x.classList.toggle("on",x===b)}});document.querySelectorAll(".start-picks").forEach(function(g){{g.hidden=g.dataset.i!==b.dataset.i}})}}}});</script>'''
+    body = f'''<div class="arena-hero"><p class="kicker">العب واتعلم</p><h1>الساحة</h1><p class="lead">{count} لعبة ولوحة في مكان واحد. كل واحدة بتاخد دقايق، وبتعلمك حاجة عن طريقة تفكيرك.</p></div>{starter}{secs}'''
     write("games/index.html", page("الساحة — ميزان", body, "../", "games/", "الساحة: كل ألعاب ميزان في مكان واحد. تجارب علم نفس، وكشف حيل، ومعضلات، وتحدي صحابك.", path="games/"))
     names_js = json.dumps({x["slug"]: x["name"] for x in entries}, ensure_ascii=False)
     pn = json.dumps({k: {"name": p_slug[k]["name"]} for k in games["phil"]["results"]}, ensure_ascii=False)
@@ -358,7 +371,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     lead = "لوحة حية بتجمع كل تصويت المعضلات وسؤال الأسبوع، ونتايج تجارب المعمل. شوف الناس بتفكر إزاي، ووقعت في أنهي فخ."
     body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>مرآة الناس</h1><p class="lead">{lead}</p>
 <div id="game"></div>
-<script>window.MIZAN_GAME={json.dumps({"lab": mlab, "items": mitems}, ensure_ascii=False)};</script><script src="{gx}assets/config.js?v={VER}"></script><script src="{gx}assets/mirror.js?v={VER}"></script>"""
+<script>window.MIZAN_GAME={json.dumps({"lab": mlab, "items": mitems, "gameNames": {"court": "محكمة ميزان", "family": "جروب العيلة", "escape": "غرفة الهروب", "argue": "ابني الحجة", "spot": "اكشف الحيلة", "calib": "ميزان الثقة", "fix": "صلّح الحجة", "charts": "الرسم الكداب", "verify": "محقق الخبر", "rumor": "مصنع الإشاعة", "live": "على الهوا", "debate": "ناظر زِنة", "quiz": "اختبر نفسك", "bayes": "شجرة الاحتمالات", "duel": "تحدّي صاحبك"}}, ensure_ascii=False)};</script><script src="{gx}assets/config.js?v={VER}"></script><script src="{gx}assets/mirror.js?v={VER}"></script>"""
     write("games/mirror/index.html", page("مرآة الناس — ميزان", body, gx, "games/", lead, path="games/mirror/"))
 
     # دوري ميزان
@@ -515,6 +528,32 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <script defer src="../assets/acct-page.js?v={VER}"></script>"""
     write("account/index.html", page("حسابي — ميزان", body, "../", "", "احفظ تقدمك في ميزان على أي جهاز.", path="account/"))
 
+    # للمدرسين: حصص جاهزة وأوراق نشاط للطباعة
+    T = json.loads((ROOT / "content" / "teachers.json").read_text(encoding="utf-8"))
+    nm = {x["slug"]: x["name"] for x in entries}
+    les = ""
+    for i, L in enumerate(T["lessons"], 1):
+        play = " ".join(f'<a class="btn ghost" href="../{h}">{t}</a>' for h, t in L["play"])
+        ents = "، ".join(f'<a href="../atlas/{e}/">{nm.get(e, e)}</a>' for e in L["entries"])
+        disc = "".join(f"<li>{q}</li>" for q in L["discuss"])
+        sheet = "".join(f'<li><p>{q}</p><div class="lines"></div></li>' for q in L["sheet"])
+        les += f'''<article class="lesson" id="l{i}"><p class="kicker">الحصة {i} · 45 دقيقة</p><h2>{L["title"]}</h2>
+<p><b>الهدف:</b> {L["goal"]}</p>
+<h3>1. تسخين (5 دقايق)</h3><p>{L["warm"]}</p>
+<h3>2. العب (20 دقيقة)</h3><p>{play}</p>
+<h3>3. نقاش (10 دقايق)</h3><ul>{disc}</ul>
+<h3>4. ورقة النشاط (10 دقايق)</h3><p class="sub">للمدرس: اقرا قبل الحصة مداخل {ents} في الأطلس.</p>
+<div class="worksheet"><p class="ws-head">ميزان · ورقة نشاط · {L["title"]} <span>الاسم: ................................</span></p><ol>{sheet}</ol></div>
+<p><button class="btn ghost print-l" type="button" data-l="l{i}">🖨 اطبع الحصة دي</button></p></article>'''
+    how = "".join(f"<li>{x}</li>" for x in T["how"])
+    toc = "".join(f'<li><a href="#l{i}">{L["title"]}</a></li>' for i, L in enumerate(T["lessons"], 1))
+    lead = T["intro"]
+    body = f'''<p class="kicker">للمدرسين وأولياء الأمور</p><h1>ميزان في الفصل</h1><p class="lead">{lead}</p>
+<section class="today"><h2>إزاي تستخدمها</h2><ul>{how}</ul><p class="note">الحصص مجانية. لو مدرستك عايزة ورشة، أو نسخة مخصوصة لمنهجها، <a href="../send/?err=teachers/">ابعتلنا</a>.</p></section>
+<h2>الحصص</h2><ol class="index">{toc}</ol>{les}
+<script>document.querySelectorAll(".print-l").forEach(function(b){{b.onclick=function(){{document.body.setAttribute("data-print",b.dataset.l);window.print();}};}});window.addEventListener("afterprint",function(){{document.body.removeAttribute("data-print");}});</script>'''
+    write("teachers/index.html", page("ميزان في الفصل — حصص تفكير نقدي جاهزة", body, "../", "", "6 حصص تفكير نقدي جاهزة للمدرسين، كل حصة 45 دقيقة، بألعاب تفاعلية وأوراق نشاط للطباعة.", path="teachers/"))
+
     # privacy
     body = """<h1>الخصوصية</h1><p class="lead">ميزان مش بيطلب منك اسم ولا إيميل ولا حساب. ودي كل البيانات اللي بتتعامل في الموقع، بالظبط.</p>
 <h2>اللي بيتحفظ على جهازك بس</h2><p>نتايج الألغاز، والسلسلة، وتقدمك في المسارات، وأحسن نتيجة في الاختبارات، واختياراتك في التصويت. دي بتتحفظ في متصفحك (localStorage) ومش بتتبعت لأي حد. لو مسحت بيانات المتصفح، هتتمسح.</p>
@@ -525,6 +564,9 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <li><b>ابعت مغالطة وبلاغات الأخطاء:</b> الجملة اللي بتبعتها بتتحفظ لحد 120 يوم عشان نراجعها بإيدينا. مش بنسجل مين بعتها.</li></ul>
 <h2>لو عملت حساب (اختياري)</h2><p>الحساب مش إجباري، والموقع كله شغال من غيره. لو سجّلت دخول بجوجل أو بالإيميل، بنحفظ: إيميلك، والاسم اللي تختاره، وتقدمك (نتايج الألغاز والمسارات والاختبارات)، عشان يفضل معاك على أي جهاز. تسجيل الدخول بيتم عن طريق Firebase من جوجل، والبيانات محفوظة على Cloudflare. مش بنحفظ كلمات سر خالص. تقدر تمسح حسابك وكل بياناته من صفحة <a href="../account/">حسابي</a> في أي وقت، وبيتمسح على طول.</p>
 <h2>دوري ميزان (اختياري)</h2><p>لو اشتركت في الدوري، بنحفظ اللقب اللي اخترته ونقطك في كل لعبة كل يوم. اللقب بس هو اللي بيظهر للناس في الترتيب، واسمك الحقيقي وإيميلك عمرهم ما بيظهروا. تقدر تخرج من الدوري من صفحته، ونقطك ولقبك بيتمسحوا على طول.</p>
+<h2>المناظرة الحرة مع زِنة (لأصحاب الحسابات)</h2><p>الردود اللي بتكتبها في المناظرة الحرة بتتبعت لخدمة Claude من شركة Anthropic عشان زِنة ترد عليك. المناظرة بتتحفظ على السيرفر 6 ساعات بس عشان تكمّلها، وبعدها بتتمسح. مش بتتنشر لحد.</p>
+<h2>تحدّي صاحبك</h2><p>نتيجتك واسمك اللي بتختاره بيتحطوا جوه اللينك نفسه، ومش بيتحفظوا على أي سيرفر. أي حد معاه اللينك يقدر يشوفهم.</p>
+<h2>عدّاد الألعاب</h2><p>لما تبدأ لعبة أو تخلّصها، بنزوّد عدّاد واحد للعبة دي في اليوم ده. مش بيتبعت معاه أي حاجة عنك: لا اسم، ولا جهاز، ولا عنوان. ده عشان نعرف أنهي لعبة الناس بتحبها ونطوّرها.</p>
 <h2>عدّاد الزيارات</h2><p>بنستخدم Cloudflare Web Analytics عشان نعرف عدد الزيارات والصفحات اللي الناس بتحبها. مش بيستخدم كوكيز، ومش بيتتبعك من موقع لموقع.</p>
 <h2>اللي مش بنعمله</h2><p>مش بنبيع بيانات، ومش بنعرض إعلانات، ومش بنستخدم كوكيز تتبع.</p>
 <h2>عايز تمسح حاجة؟</h2><p>بياناتك على جهازك تقدر تمسحها من إعدادات المتصفح. ولو بعتلنا جملة وعايزها تتمسح، <a href="../send/">ابعتلنا</a> نصها، وإحنا نمسحها.</p>

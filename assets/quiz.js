@@ -17,6 +17,7 @@
   function shuffle(a) { for (var k = a.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = a[k]; a[k] = a[j]; a[j] = t; } return a; }
 
   function start() {
+    if (window.MizanTrack) MizanTrack("quiz", "start");
     qs = ch ? ch.qs.slice() : shuffle(all.slice()).slice(0, N); i = 0; score = 0; wrong = [];
     $("q-intro").style.display = "none"; $("q-end").style.display = "none"; $("q-play").style.display = "";
     ask();
@@ -52,6 +53,7 @@
   }
 
   function end() {
+    if (window.MizanTrack) MizanTrack("quiz", "done");
     $("q-play").style.display = "none"; $("q-end").style.display = "";
     $("q-bar").style.width = "100%";
     $("q-score").textContent = score;

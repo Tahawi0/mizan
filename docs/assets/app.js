@@ -19,3 +19,14 @@
   btn.onclick = function () { if (!ev) return; ev.prompt(); ev.userChoice.finally(function () { ev = null; btn.hidden = true; }); };
   if (/iphone|ipad|ipod/i.test(navigator.userAgent)) { btn.hidden = false; btn.onclick = function () { hint.hidden = !hint.hidden; }; }
 })();
+// عدّاد مجهول للألعاب: «بدأ» و«خلّص» بس، من غير أي بيانات عن الشخص.
+window.MizanTrack = function (g, e) {
+  try {
+    if (!window.MIZAN_API || !/^[a-z]{2,12}$/.test(g) || (e !== "start" && e !== "done")) return;
+    var k = "mz-t-" + g + e, now = Date.now(), last = +(sessionStorage.getItem(k) || 0);
+    if (now - last < 20000) return; sessionStorage.setItem(k, now);
+    var body = JSON.stringify({ g: g, e: e });
+    if (navigator.sendBeacon) navigator.sendBeacon(window.MIZAN_API + "/evt", body);
+    else fetch(window.MIZAN_API + "/evt", { method: "POST", body: body, keepalive: true }).catch(function () {});
+  } catch (x) {}
+};

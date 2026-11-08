@@ -14,6 +14,13 @@
   // خريطة المراحل: كل قضية بتفتح اللي بعدها، والعاشرة قضية الزعيم
   function list() {
     box.innerHTML = "";
+    var CH = window.MizanStages && MizanStages.challenge();
+    if (CH && !CH.used && G.cases[CH.k]) {
+      CH.used = true;
+      box.parentNode.insertBefore(el("p", "note ch-ban", "⚔ تحدّي من " + CH.n + ": " + CH.s + " من 10 في قضية «" + G.cases[CH.k].title + "». تقدر تعدّي الرقم ده؟"), box);
+      if (window.MizanTrack) MizanTrack("court", "start");
+      return trial(G.cases[CH.k], CH.k);
+    }
     var done = load(), total = 0;
     G.cases.forEach(function (c) { total += starsFor(done[c.id]); });
     var top = el("div", "map-head");
@@ -30,7 +37,7 @@
       info.appendChild(el("b", null, open ? c.title : "قضية مقفولة"));
       info.appendChild(el("small", null, open ? (st ? stars(st) + " · " + done[c.id] + " من 10" : (boss ? "قضية الزعيم: 5 مغالطات مستخبية" : "قضية جديدة")) : "خلّص القضية اللي قبلها عشان تفتحها"));
       b.appendChild(info);
-      b.onclick = function () { trial(c, k); };
+      b.onclick = function () { if (window.MizanTrack) MizanTrack("court", "start"); trial(c, k); };
       li.appendChild(b); map.appendChild(li);
     });
     box.appendChild(map);
@@ -117,16 +124,10 @@
       r.appendChild(el("p", "lead", rank));
       var st = starsFor(score), last = k === G.cases.length - 1;
       r.appendChild(el("p", "big-stars", stars(st)));
-      var p = el("p"), again = el("button", "btn", last ? "خريطة القضايا" : "القضية اللي بعدها"), sh = el("button", "btn ghost", "شارك"), map = el("button", "btn ghost", "الخريطة");
-      again.onclick = function () { if (last) list(); else trial(G.cases[k + 1], k + 1); };
-      map.onclick = list; p.appendChild(map); p.appendChild(document.createTextNode(" "));
-      sh.onclick = function () {
-        var t = "حكمت في «" + c.title + "» في محكمة ميزان ⚖️ وجبت " + score + " من 10.\nتقدر تمسك المغالطات أحسن مني؟ " + location.href.split("?")[0];
-        if (navigator.share) navigator.share({ text: t }).catch(function () {});
-        else if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { sh.textContent = "اتنسخ ✓"; });
-      };
-      p.appendChild(again); p.appendChild(document.createTextNode(" ")); p.appendChild(sh);
-      r.appendChild(p); sec.appendChild(r);
+      r.appendChild(window.MizanStages.endBar({ score: score, k: k, count: G.cases.length, map: list, play: function (n) { trial(G.cases[n], n); },
+        share: "حكمت في «" + c.title + "» في محكمة ميزان ⚖️ وجبت " + score + " من 10.\nتقدر تمسك المغالطات أحسن مني؟ " + location.href.split("?")[0] }));
+      if (window.MizanTrack) MizanTrack("court", "done");
+      sec.appendChild(r);
     }
     line();
   }

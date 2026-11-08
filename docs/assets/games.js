@@ -122,7 +122,7 @@
         var h = el("h2", null, "لقيت " + found + " من " + n + (wrong ? "، وعلّمت " + wrong + " جملة سليمة" : ""));
         box.appendChild(h); box.appendChild(el("p", "lead small", "الأخضر لقيته، والأصفر فاتك، والأحمر جملة سليمة.")); box.appendChild(out);
         var nx = el("div", "court-end"); nx.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
-        nx.appendChild(S.endBar({ k: i, count: G.spot.length, map: map, play: function (k) { i = k; show(); },
+        nx.appendChild(S.endBar({ score: score, k: i, count: G.spot.length, map: map, play: function (k) { i = k; show(); },
           share: "لقيت " + found + " من " + n + " حيل في إعلان «" + ad.brand + "» على ميزان ⚖️\nجرّب إنت: " + location.href.split("?")[0] }));
         box.appendChild(nx);
         h.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -199,7 +199,7 @@
       var pair = el("div", "stats");
       [["إجابات صح", acc + "%"], ["متوسط ثقتك", avg + "%"]].forEach(function (x) { var d = el("div"); d.appendChild(el("b", null, x[1])); d.appendChild(document.createTextNode(x[0])); pair.appendChild(d); });
       w.appendChild(pair); w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score)))); w.appendChild(el("h2", null, verdict)); w.appendChild(el("p", "lead", tip));
-      w.appendChild(S.endBar({ k: st, count: G.calib.length, map: map, play: function (k) { st = k; i = 0; ans = []; q(); },
+      w.appendChild(S.endBar({ score: score, k: st, count: G.calib.length, map: map, play: function (k) { st = k; i = 0; ans = []; q(); },
         share: "ميزان الثقة ⚖️ مرحلة «" + G.calib[st].title + "»: جاوبت صح " + acc + "% وكنت واثق " + avg + "%.\n" + verdict + ". جرّب إنت: " + location.href.split("?")[0] }));
       box.appendChild(w);
       var p = el("p", "center"); var a = el("a", "btn ghost", "اقرا عن الثقة الزايدة"); a.href = root + "atlas/overconfidence/"; p.appendChild(a); box.appendChild(p);
@@ -249,7 +249,7 @@
       var big = el("p", "big"); big.textContent = score; big.appendChild(el("small", null, " من " + qs.length)); w.appendChild(big);
       w.appendChild(el("p", "big-stars", S.stars(S.starsFor(sc))));
       w.appendChild(el("h2", null, score === qs.length ? "إنت مش بس بتكشف الغلط، إنت بتصلّحه." : "تصليح الحجة أصعب من كشفها. جرّب المرحلة تاني."));
-      w.appendChild(S.endBar({ k: st, count: G.fix.length, map: map, play: play,
+      w.appendChild(S.endBar({ score: sc, k: st, count: G.fix.length, map: map, play: play,
         share: "صلّحت " + score + " من " + qs.length + " حجج في «صلّح الحجة» على ميزان ✍️⚖️\nجرّب إنت: " + location.href.split("?")[0] }));
       box.appendChild(w);
     }

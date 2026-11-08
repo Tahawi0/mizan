@@ -59,5 +59,14 @@
     items.sort(function (a, b) { return b.n - a.n; }).forEach(function (x) { g.appendChild(split(x.it, x.c)); });
     box.appendChild(g);
     box.appendChild(el("p", "note", "النتايج مجهولة تماماً، وبتتحدّث كل 5 دقايق. ده رأي زوار ميزان، مش عينة علمية من كل المصريين."));
+    // أكتر الألعاب لعباً الأسبوع ده
+    var gs = el("section"); box.appendChild(gs);
+    fetch(window.MIZAN_API + "/evt?days=7").then(function (r) { return r.json(); }).then(function (ev) {
+      var GN = G.gameNames || {}, list = Object.keys(ev.games || {}).map(function (k) { return { k: k, s: ev.games[k].start || 0, d: ev.games[k].done || 0 }; }).filter(function (x) { return x.s >= 3 && GN[x.k]; }).sort(function (a, b) { return b.s - a.s; }).slice(0, 8);
+      if (!list.length) return;
+      gs.appendChild(el("h2", null, "أكتر ألعاب اتلعبت الأسبوع ده"));
+      var mx = list[0].s;
+      list.forEach(function (x) { var row = hbar(GN[x.k], x.s / mx * 100, x.s + " مرة"); gs.appendChild(row); });
+    }).catch(function () {});
   }).catch(function () { box.innerHTML = ""; box.appendChild(el("p", "lead", "مش قادرين نجيب النتايج دلوقتي. جرب بعد شوية.")); });
 })();

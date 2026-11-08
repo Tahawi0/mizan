@@ -83,7 +83,7 @@
       w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
       w.appendChild(el("p", "lead", score >= 9 ? "كسبت المناظرة! رديت على الحجة نفسها في كل جولة." : score >= 6 ? "مناظرة كويسة، بس فيه جولة رديت فيها على الشخص أو هربت من النقطة." : "زِنة كسبت المرة دي. جرّب تاني، ودوّر على الرد اللي بيرد على الحجة نفسها."));
       if (score < 9) { var again = el("button", "btn ghost", "ناظرها تاني"); again.onclick = function () { play(k); }; w.appendChild(again); }
-      w.appendChild(S.endBar({ k: k, count: G.topics.length, play: play, map: map,
+      w.appendChild(S.endBar({ score: score, k: k, count: G.topics.length, play: play, map: map,
         share: "ناظرت زِنة في «" + T.title + "» على ميزان ⚖️🦉\nتقدر تكسبها؟ " + location.href.split("?")[0] }));
       act.appendChild(w);
     }

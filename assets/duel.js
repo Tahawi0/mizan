@@ -33,6 +33,7 @@
   }
 
   function quiz(qs, rival, done) {
+    if (window.MizanTrack) MizanTrack("duel", "start");
     var i = 0, ans = [];
     function ask() {
       box.innerHTML = "";
@@ -48,7 +49,7 @@
           o.querySelectorAll("button").forEach(function (x, j) { x.disabled = true; if (j === p.answer) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
           ans.push(k === p.answer ? 1 : 0);
           if (p.why) { why.textContent = p.why; box.appendChild(why); }
-          var nx = el("button", "btn", i < N - 1 ? "اللي بعده" : "النتيجة"); nx.onclick = function () { i++; if (i < N) ask(); else done(ans); };
+          var nx = el("button", "btn", i < N - 1 ? "اللي بعده" : "النتيجة"); nx.onclick = function () { i++; if (i < N) ask(); else { if (window.MizanTrack) MizanTrack("duel", "done"); done(ans); } };
           box.appendChild(nx);
         };
         o.appendChild(b);
