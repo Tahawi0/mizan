@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 FONTS = ROOT / "tools" / "fonts"
 SITE = "tahawi0.github.io/mizan"
-KIND = {"fallacy": "مغالطة", "bias": "انحياز", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
+KIND = {"fallacy": "مغالطة", "bias": "انحياز", "tool": "أداة تفكير", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
 PAPER, LEAF, INK, MUTED, GOLD, LAPIS = "#E9E1CC", "#F3EDDD", "#221C14", "#6B604E", "#A47E2E", "#1F3B73"
 
 
@@ -111,7 +111,7 @@ def card(e, W, H, out):
         tip = e.get("detect") or e.get("useIt")
         if tip:
             y += 40
-            rtl(d, right, y, "إزاي تكشفها؟" if e.get("detect") else "استخدمها النهارده", font("ElMessiri-Bold.ttf", 34), GOLD)
+            rtl(d, right, y, ("امتى تستخدمها؟" if e.get("kind") == "tool" else "إزاي تكشفها؟") if e.get("detect") else "استخدمها النهارده", font("ElMessiri-Bold.ttf", 34), GOLD)
             y += 62
             df = font("Amiri-Regular.ttf", 38)
             limit = H - pad - 120

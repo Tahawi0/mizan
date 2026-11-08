@@ -7,12 +7,20 @@ OUT = ROOT / "docs"
 entries = json.loads((ROOT / "content/entries.json").read_text(encoding="utf-8"))
 puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8"))
 by_slug = {e["slug"]: e for e in entries}
-KIND = {"fallacy": "مغالطة", "bias": "انحياز", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
+KIND = {"fallacy": "مغالطة", "bias": "انحياز", "tool": "أداة تفكير", "philosopher": "فيلسوف", "school": "مدرسة وفكرة"}
 e_ = html.escape
 VER = hashlib.md5(b"".join(f.read_bytes() for f in sorted((ROOT / "assets").glob("*.js")) + [ROOT / "assets" / "style.css"])).hexdigest()[:8]
 dilemmas = json.loads((ROOT / "content/dilemmas.json").read_text(encoding="utf-8"))
 weekly = json.loads((ROOT / "content/weekly.json").read_text(encoding="utf-8"))
 paths = json.loads((ROOT / "content/paths.json").read_text(encoding="utf-8"))
+thought = json.loads((ROOT / "content/thought.json").read_text(encoding="utf-8"))
+problems = json.loads((ROOT / "content/problems.json").read_text(encoding="utf-8"))
+# أماكن الأمثلة بتتجمع في مواقف، عشان فهرس «إنت فين دلوقتي؟»
+SITU = [("في البيت والعيلة", ["في البيت"]), ("في الشغل والدراسة", ["في الشغل", "في المدرسة", "في البيزنس"]),
+        ("على السوشيال وفي الأخبار", ["على السوشيال", "في الإعلام", "في المناقشات"]),
+        ("وإنت بتشتري أو بتصرف", ["في الإعلانات", "في الشراء", "في السوق", "في التقسيط", "في الفلوس", "في الاستثمار", "في العربيات", "في معرض العربيات", "في باقات النت", "في السحب"]),
+        ("في الكورة والشارع", ["في الكورة", "في الشارع", "في الطريق", "في السينما", "في المجتمع"]),
+        ("في الصحة والأكل", ["في الطب", "في الصحة", "في الأكل"])]
 games = json.loads((ROOT / "content/games.json").read_text(encoding="utf-8"))
 SITE = "https://tahawi0.github.io/mizan/"
 philo = json.loads((ROOT / "content/philosophy.json").read_text(encoding="utf-8"))
@@ -40,7 +48,7 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
         gk = "g-" + path.strip("/").replace("/", "-")
         if (ROOT / "cards" / "og" / f"{gk}.png").exists():
             img = f"cards/og/{gk}.png"
-    groups = [("اتعلّم", [("atlas/", "الأطلس", "مغالطات وانحيازات"), ("philosophy/", "الفلسفة", "فلاسفة ومدارس"), ("paths/", "مسارات", "7 أيام، 5 دقايق في اليوم"), ("trends/", "وزن التريند", "كلام منتشر بنوزنه")]),
+    groups = [("اتعلّم", [("atlas/", "الأطلس", "مغالطات وانحيازات"), ("tools/", "أدوات التفكير", "إزاي تفكر صح"), ("philosophy/", "الفلسفة", "فلاسفة ومدارس"), ("paths/", "مسارات", "7 أيام، 5 دقايق في اليوم"), ("trends/", "وزن التريند", "كلام منتشر بنوزنه")]),
               ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("games/", "الساحة", "كل الألعاب في مكان واحد"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك"), ("teachers/", "للمدرسين", "6 حصص جاهزة للفصل")]),
               ("قول رأيك", [("weekly/", "سؤال الأسبوع", "سؤال فلسفي وتصويت"), ("dilemmas/", "معضلات", "مواقف مفيهاش إجابة سهلة"), ("send/", "ابعت مغالطة", "جملة سمعتها وفيها غلط")])]
     def grp(name, items):
@@ -148,8 +156,8 @@ b.querySelectorAll(".opts button").forEach(function(x,i){{x.textContent=w.option
     ix = "".join(f'<section class="grp"><div class="letter">{L}</div><ul class="index">' + "".join(
         f'<li data-kind="{e["kind"]}"><a href="{e["slug"]}/"><b>{e_(e["name"])}</b><em>{KIND[e["kind"]]}</em><span>{e_(e["oneLine"])}</span></a></li>' for e in es) + '</ul></section>' for L, es in groups.items())
     body = f"""<h1>الأطلس</h1><p class="lead">فهرس المغالطات والانحيازات، مرتب بالحروف. كل مدخل فيه أمثلة من حياتنا، وإزاي تكشفها، وإزاي ترد.</p>
-<p><a class="btn ghost" href="sky/">✨ شوف الأطلس كسما نجوم</a></p>
-<div class="filters"><button class="on" data-f="all">الكل ({len(entries)})</button><button data-f="fallacy">مغالطات</button><button data-f="bias">انحيازات</button></div>
+<p><a class="btn ghost" href="sky/">✨ شوف الأطلس كسما نجوم</a> <a class="btn ghost" href="situations/">🧭 دوّر حسب الموقف</a> <a class="btn ghost" href="../tools/">🛠 أدوات التفكير</a></p>
+<div class="filters"><button class="on" data-f="all">الكل ({len(entries)})</button><button data-f="fallacy">مغالطات</button><button data-f="bias">انحيازات</button><button data-f="tool">أدوات تفكير</button></div>
 <div id="g">{ix}</div>
 <script>document.querySelectorAll('.filters button').forEach(function(b){{b.onclick=function(){{
 document.querySelectorAll('.filters button').forEach(function(x){{x.classList.remove('on')}});b.classList.add('on');
@@ -157,12 +165,25 @@ document.querySelectorAll('#g li').forEach(function(t){{t.style.display=(b.datas
 document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].some.call(g.querySelectorAll('li'),function(l){{return l.style.display!=='none'}})?'':'none'}});}}}});</script>"""
     write("atlas/index.html", page("الأطلس — ميزان", body, "../", "atlas/"))
     # سماء المغالطات
-    skyd = [{"s": e["slug"], "n": e["name"], "k": e["kind"], "o": e["oneLine"], "c": (e.get("notConfuse") or {}).get("slug")} for e in entries]
+    skyd = [{"s": e["slug"], "n": e["name"], "k": e["kind"], "o": e["oneLine"], "c": (e.get("notConfuse") or {}).get("slug")} for e in entries if e["kind"] != "tool"]
     lead = "الأطلس كله في سما واحدة: كل نجمة مغالطة أو انحياز، والخطوط بتوصل بين الحاجات اللي الناس بتتلخبط بينها. دوس على نجمة تنوّر قرايبها."
     body = f"""<p class="kicker"><a href="../">الأطلس</a></p><h1>سماء المغالطات</h1><p class="lead">{lead}</p>
 <div id="game"></div>
 <script>window.MIZAN_GAME={json.dumps({"entries": skyd}, ensure_ascii=False)};</script><script src="../../assets/sky.js?v={VER}"></script>"""
     write("atlas/sky/index.html", page("سماء المغالطات — ميزان", body, "../../", "atlas/", lead, path="atlas/sky/"))
+    # دوّر حسب الموقف
+    secs = ""
+    for i, (n, ws) in enumerate(SITU):
+        es = [e for e in entries if e["kind"] != "tool" and any(x["where"] in ws for x in e["examples"])]
+        items = "".join(f'<li data-kind="{e["kind"]}"><a href="../{e["slug"]}/"><b>{e_(e["name"])}</b><em>{KIND[e["kind"]]}</em><span>{e_(next(x["text"] for x in e["examples"] if x["where"] in ws))}</span></a></li>' for e in es)
+        secs += f'<section class="grp" id="s{i}"><h2>{n} <small>({len(es)})</small></h2><ul class="index">{items}</ul></section>'
+    chips = "".join(f'<a class="chip" href="#s{i}">{n}</a>' for i, (n, _) in enumerate(SITU))
+    lead = "إنت فين دلوقتي؟ اختار الموقف، وشوف أكتر الحيل والانحيازات اللي ممكن تقابلك فيه، مع مثال منه."
+    write("atlas/situations/index.html", page("دوّر حسب الموقف — ميزان", f'<p class="kicker"><a href="../">الأطلس</a></p><h1>دوّر حسب الموقف</h1><p class="lead">{lead}</p><div class="chips">{chips}</div>{secs}', "../../", "atlas/", lead, path="atlas/situations/"))
+    # أدوات التفكير
+    tl = "".join(f'<li><a href="../atlas/{e["slug"]}/"><b>{e_(e["name"])}</b><em>{e_(e["intl"])}</em><span>{e_(e["oneLine"])}</span></a></li>' for e in entries if e["kind"] == "tool")
+    lead = "الأطلس بيعلّمك تكشف الغلط. الأدوات دي بتعلّمك تفكر صح: أسئلة وقواعد صغيرة تستخدمها قبل ما تقرر أو تصدّق أو ترد."
+    write("tools/index.html", page("أدوات التفكير — ميزان", f'<p class="kicker">اتعلّم</p><h1>أدوات التفكير</h1><p class="lead">{lead}</p><ul class="index">{tl}</ul><p class="note">كل أداة ليها حدود، ومكتوبة في صفحتها. الأداة بتساعدك تفكر، مش بتفكر بدالك.</p>', "../", "tools/", lead, path="tools/"))
 
     # entries
     for e in entries:
@@ -171,17 +192,28 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         nc = e.get("notConfuse") or {}
         ev = f'<h2>قوة الدليل</h2><p>{e_(e["evidence"])}</p>' if e.get("evidence") else ""
         src = "".join(f"<li>{e_(s)}</li>" for s in e.get("sources", []))
+        tool = e["kind"] == "tool"
+        h_det, h_res = ("امتى تستخدمها", "إزاي تستخدمها") if tool else ("إزاي تكشفها", "إزاي ترد من غير خناق")
+        lim = f'<h2>حدودها</h2><p>{e_(e["limits"])}</p>' if e.get("limits") else ""
+        tags = sorted({n for n, ws in SITU for x in e["examples"] if x["where"] in ws})
+        tagh = ('<p class="where-tags">بتقابلها: ' + " ".join(f'<a class="chip" href="{r}atlas/situations/#s{[n for n, _ in SITU].index(t)}">{t}</a>' for t in tags) + "</p>") if tags else ""
+        pz = next((q for q in puzzles if q.get("entry") == e["slug"]), None)
+        quiz = ""
+        if pz:
+            qo = "".join(f'<button type="button" data-ok="{1 if i == pz["answer"] else 0}">{e_(o)}</button>' for i, o in enumerate(pz["options"]))
+            quiz = f'''<section class="today eq"><p class="kicker">جرّب نفسك</p><p class="scene">{e_(pz["scene"])}</p><p>إيه المغالطة هنا؟</p><div class="opts">{qo}</div><p class="eq-why" hidden>{e_(pz.get("why", ""))}</p></section>'''
         body = f"""<p class="kicker">{KIND[e['kind']]}{"" if e.get("reviewed") else " " + status(e)}</p>
 <h1>{e_(e['name'])}</h1><span class="intl">{e_(e['intl'])}</span>
 <p class="oneline">{e_(e['oneLine'])}</p>
-<h2>من حياتنا</h2>{exs}
-<h2>إزاي تكشفها</h2><p>{e_(e['detect'])}</p>
-<h2>إزاي ترد من غير خناق</h2><p>{e_(e['respond'])}</p>
+{tagh}<h2>من حياتنا</h2>{exs}
+<h2>{h_det}</h2><p>{e_(e['detect'])}</p>
+<h2>{h_res}</h2><p>{e_(e['respond'])}</p>{lim}
 {f"<h2>متتلخبطش بينها وبين: " + (f'<a href="{r}atlas/{nc["slug"]}/">{e_(nc["name"])}</a>' if nc.get("slug") else e_(nc["name"])) + f"</h2><p>{e_(nc['diff'])}</p>" if nc else ""}
-{ev}<h2>مصادر</h2><ul class="sources">{src}</ul>
+{ev}{quiz}<h2>مصادر</h2><ul class="sources">{src}</ul>
 <h2>شاركها</h2><p><a class="btn ghost" href="{r}cards/post/{e['slug']}.png" download>نزّل الكارت للبوست</a> <a class="btn ghost" href="{r}cards/og/{e['slug']}.png" download>كارت عريض</a></p>
 <p class="report"><a href="{r}send/?err=atlas/{e['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
-<p class="back"><a href="{r}atlas/">ارجع للفهرس</a></p>"""
+<p class="back"><a href="{r}{"tools" if tool else "atlas"}/">ارجع للفهرس</a></p>
+<script>document.querySelectorAll(".eq .opts button").forEach(function(b){{b.onclick=function(){{var bs=b.parentNode.querySelectorAll("button");bs.forEach(function(x){{x.disabled=true;if(x.dataset.ok==="1")x.classList.add("right");}});if(b.dataset.ok!=="1")b.classList.add("wrong");var w=document.querySelector(".eq-why");if(w&&w.textContent)w.hidden=false;}};}});</script>"""
         write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"], f"cards/og/{e['slug']}.png", f"atlas/{e['slug']}/",
               {"@context": "https://schema.org", "@type": "DefinedTerm", "name": e["name"], "alternateName": e["intl"], "description": e["oneLine"], "inLanguage": "ar-EG",
                "url": f"{SITE}atlas/{e['slug']}/", "inDefinedTermSet": {"@type": "DefinedTermSet", "name": "أطلس ميزان", "url": f"{SITE}atlas/"}}))
@@ -367,7 +399,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
            "linda": "الاختيار التاني مستحيل يكون أكتر احتمالاً من الأول. كل اللي اختاروه وقعوا في «مغالطة الاقتران».",
            "decoy": "لو النسبة أعلى عند اللي شافوا 3 اختيارات، يبقى الاختيار الطُعم اشتغل عليهم."}
     mlab = [{"id": x["id"], "title": x["title"], "groupNames": x["groupNames"], "num": bool(x["groups"][0].get("num")), "metric": x.get("metric", 0), "metricLabel": x.get("metricLabel", ""), "insight": ins.get(x["id"], "")} for x in games["lab"]]
-    mitems = [{"id": d["slug"], "title": d["title"], "opts": d["options"], "url": f"dilemmas/{d['slug']}/"} for d in dilemmas] + [{"id": "week-" + w["slug"], "title": w["title"], "opts": w["options"], "url": f"weekly/{w['slug']}/"} for w in weekly]
+    mitems = [{"id": d["slug"], "title": d["title"], "opts": d["options"], "url": f"dilemmas/{d['slug']}/"} for d in dilemmas] + [{"id": "week-" + w["slug"], "title": w["title"], "opts": w["options"], "url": f"weekly/{w['slug']}/"} for w in weekly] + [{"id": "thought-" + t["slug"], "title": t["title"], "opts": t["options"], "url": f"philosophy/thought/{t['slug']}/"} for t in thought]
     lead = "لوحة حية بتجمع كل تصويت المعضلات وسؤال الأسبوع، ونتايج تجارب المعمل. شوف الناس بتفكر إزاي، ووقعت في أنهي فخ."
     body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>مرآة الناس</h1><p class="lead">{lead}</p>
 <div id="game"></div>
@@ -418,19 +450,32 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
         write(f"weekly/{w['slug']}/index.html", page(f"{w['title']} — ميزان", body, r, "weekly/", w["scene"], path=f"weekly/{w['slug']}/"))
 
     # learning paths
-    tiles = "".join(f'<a class="tile" href="{p["slug"]}/"><span>{len(p["days"])} أيام</span><b>{e_(p["title"])}</b><span>{e_(p["intro"])}</span></a>' for p in paths)
-    write("paths/index.html", page("مسارات — ميزان", f'<h1>مسارات</h1><p class="lead">كورسات قصيرة: درس صغير ومهمة كل يوم، 5 دقايق بس. تقدمك بيتحفظ على جهازك.</p><div class="grid">{tiles}</div>', "../", "paths/", path="paths/"))
+    LV = [("مبتدئ", "ابدأ هنا"), ("متوسط", "الخطوة التانية"), ("متقدم", "لما تتمكّن")]
+    road = ""
+    for n, (lv, sub) in enumerate(LV, 1):
+        tiles = "".join(f'<a class="tile" href="{p["slug"]}/"><span>{len(p["days"])} أيام · {lv}</span><b>{e_(p["title"])}</b><span>{e_(p["intro"])}</span></a>' for p in paths if p.get("level", "مبتدئ") == lv)
+        road += f'<section class="road"><h2><span class="road-no">{n}</span> {lv} <small>· {sub}</small></h2><div class="grid">{tiles}</div></section>'
+    write("paths/index.html", page("مسارات — ميزان", f'<h1>مسارات</h1><p class="lead">{len(paths)} كورسات قصيرة: درس صغير ومهمة وسؤال كل يوم، 5 دقايق بس. ماشية بالترتيب من مبتدئ لمتقدم، وتقدمك بيتحفظ على جهازك.</p>{road}', "../", "paths/", path="paths/"))
+    def dlink(slug, r):
+        if slug in by_slug: return f'<a href="{r}atlas/{slug}/">{e_(by_slug[slug]["name"])}</a>'
+        return f'<a href="{r}philosophy/{slug}/">{e_(p_slug[slug]["name"])}</a>'
+    def dq(d):
+        q = d.get("q")
+        if not q: return ""
+        bs = "".join(f'<button type="button" data-ok="{1 if i == q["a"] else 0}">{e_(o)}</button>' for i, o in enumerate(q["opts"]))
+        return f'<div class="dq"><p><b>سؤال سريع:</b> {e_(q["q"])}</p><div class="opts">{bs}</div></div>'
     for p in paths:
         r = "../../"
-        days = "".join(f"""<div class="day"><h3><small>اليوم {k + 1}</small><a href="{r}atlas/{d['entry']}/">{e_(by_slug[d['entry']]['name'])}</a></h3>
-<p>{e_(d['lesson'])}</p><p class="task"><b>مهمة النهارده:</b> {e_(d['task'])}</p><button class="btn ghost mark">خلصت اليوم ده</button></div>""" for k, d in enumerate(p["days"]))
-        body = f"""<p class="kicker">مسار — {len(p['days'])} أيام</p><h1>{e_(p['title'])}</h1><p class="lead">{e_(p['intro'])}</p>
+        days = "".join(f"""<div class="day"><h3><small>اليوم {k + 1}</small>{dlink(d['entry'], r)}</h3>
+<p>{e_(d['lesson'])}</p><p class="task"><b>مهمة النهارده:</b> {e_(d['task'])}</p>{dq(d)}<button class="btn ghost mark">خلصت اليوم ده</button></div>""" for k, d in enumerate(p["days"]))
+        body = f"""<p class="kicker">مسار — {len(p['days'])} أيام · {p.get("level", "مبتدئ")}</p><h1>{e_(p['title'])}</h1><p class="lead">{e_(p['intro'])}</p>
 <div id="path" data-id="{p['slug']}" data-title="{e_(p['title'])}"><p class="kicker" id="p-count"></p><div class="bar"><i id="p-bar"></i></div>{days}</div>
 <div class="today" id="p-done" style="display:none"><h2>خلصت المسار!</h2><p>اعمل شهادتك وشاركها. اسمك بيتكتب على جهازك بس، ومش بيتبعت لأي حد.</p>
 <label for="cert-name">اسمك زي ما تحب يتكتب</label><input type="text" id="cert-name" maxlength="40" placeholder="اسمك">
 <p style="margin-top:.8rem"><button class="btn" id="cert-make">اعمل الشهادة</button> <a class="btn ghost" href="{r}quiz/">اختبر نفسك</a></p><div id="cert-out"></div></div>
 <p class="report"><a href="{r}send/?err=paths/{p['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
-<p class="back"><a href="{r}paths/">كل المسارات</a></p><script src="{r}assets/paths.js?v={VER}"></script>"""
+<p class="back"><a href="{r}paths/">كل المسارات</a></p><script src="{r}assets/paths.js?v={VER}"></script>
+<script>document.querySelectorAll(".dq .opts button").forEach(function(b){{b.onclick=function(){{b.parentNode.querySelectorAll("button").forEach(function(x){{x.disabled=true;if(x.dataset.ok==="1")x.classList.add("right");}});if(b.dataset.ok!=="1")b.classList.add("wrong");}};}});</script>"""
         write(f"paths/{p['slug']}/index.html", page(f"{p['title']} — ميزان", body, r, "paths/", p["intro"], path=f"paths/{p['slug']}/"))
 
     # philosophy
@@ -441,9 +486,42 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     def plist(kind):
         return "".join(f'<li><a href="{x["slug"]}/"><b>{e_(x["name"])}</b><em>{e_(x["era"])}</em><span>{e_(x["oneLine"])}</span></a></li>' for x in philo if x["kind"] == kind)
     body = f"""<p class="kicker">قسم جديد</p><h1>الفلسفة</h1><p class="lead">أكبر الأسئلة اللي سألها البشر، مشروحة بالبلدي. كل فيلسوف وكل مدرسة: الفكرة، ومثال من حياتنا، وتستخدمها إزاي النهارده، واتنقدت في إيه.</p>
+<div class="grid"><a class="tile" href="problems/"><span>جديد</span><b>الفلاسفة بيردوا على مشكلتك</b><span>قلقان، أو محتار، أو حاسس بظلم؟ شوف 3 مدارس هتقولك إيه.</span></a><a class="tile" href="thought/"><span>جديد</span><b>تجارب ذهنية</b><span>{len(thought)} تجربة غيّرت طريقة تفكيرنا. فكّر وصوّت.</span></a><a class="tile" href="../tools/"><span>جديد</span><b>أدوات التفكير</b><span>قواعد صغيرة تفكر بيها صح.</span></a></div>
 {ORN}<h2>فلاسفة</h2><ul class="index">{plist("philosopher")}</ul>
 {ORN}<h2>مدارس وأفكار</h2><ul class="index">{plist("school")}</ul>"""
     write("philosophy/index.html", page("الفلسفة — ميزان", body, "../", "philosophy/", "أشهر الفلاسفة والمدارس الفلسفية مشروحة بالعامية المصرية وبأمثلة من حياتنا.", path="philosophy/"))
+    # تجارب ذهنية
+    tiles = "".join(f'<a class="tile" href="{t["slug"]}/"><span>{e_(t["by"])}</span><b>{e_(t["title"])}</b><span>{e_(t["question"])}</span></a>' for t in thought)
+    lead = "تجارب بتتعمل في الدماغ بس، ومن غير معمل. كل واحدة فيها سؤال صعب: فكّر، وصوّت، وشوف الفلاسفة قالوا إيه."
+    write("philosophy/thought/index.html", page("تجارب ذهنية — ميزان", f'<p class="kicker"><a href="../">الفلسفة</a></p><h1>تجارب ذهنية</h1><p class="lead">{lead}</p><div class="grid">{tiles}</div>', "../../", "philosophy/", lead, path="philosophy/thought/"))
+    for t in thought:
+        r = "../../../"
+        opts = "".join(f"<button>{e_(o)}</button>" for o in t["options"])
+        views = "".join(f'<div class="ex"><small>{e_(v["who"])}</small><div>{e_(v["says"])}</div></div>' for v in t["views"])
+        rel = " · ".join(filter(None, (plink(s_, r) for s_ in t.get("related", []))))
+        src = "".join(f"<li>{e_(s_)}</li>" for s_ in t.get("sources", []))
+        body = f"""<p class="kicker"><a href="../">تجارب ذهنية</a></p><h1>{e_(t['title'])}</h1><p class="era">{e_(t['by'])}</p>
+<div class="sheet" id="dilemma" data-id="thought-{t['slug']}"><p class="scene">{e_(t['story'])}</p><h2 style="margin-top:4px">{e_(t['question'])}</h2>
+<div class="opts">{opts}</div><p class="lead" id="vote-note" style="font-size:14px;margin-top:10px"></p>
+<div class="reveal" id="views"><h2>الفلاسفة قالوا إيه؟</h2>{views}<h2>ليه ده مهم النهارده؟</h2><p>{e_(t['why'])}</p></div></div>
+{f'<p class="related">اقرا كمان: {rel}</p>' if rel else ''}<h2>مصادر</h2><ul class="sources">{src}</ul>
+<p class="report"><a href="{r}send/?err=philosophy/thought/{t['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
+<p class="back"><a href="../">كل التجارب</a></p>
+<script src="{r}assets/config.js?v={VER}"></script><script src="{r}assets/dilemma.js?v={VER}"></script>"""
+        write(f"philosophy/thought/{t['slug']}/index.html", page(f"{t['title']} — ميزان", body, r, "philosophy/", t["question"], path=f"philosophy/thought/{t['slug']}/"))
+    # الفلاسفة بيردوا على مشكلتك
+    chips = "".join(f'<button type="button" class="chip{" on" if i == 0 else ""}" data-i="{i}">{e_(q["title"])}</button>' for i, q in enumerate(problems))
+    cards = ""
+    for i, q in enumerate(problems):
+        ans = "".join(f'<div class="ex"><small>{plink(a["school"], "../../")}</small><div>{e_(a["says"])}</div><p class="task"><b>جرّب النهارده:</b> {e_(a["try"])}</p></div>' for a in q["answers"])
+        note = f'<p class="note">{e_(q["note"])}</p>' if q.get("note") else ""
+        cards += f'<section class="prob" data-i="{i}"{"" if i == 0 else " hidden"}><h2>{e_(q["title"])}</h2><p class="lead">{e_(q["feel"])}</p>{ans}{note}</section>'
+    lead = "اختار اللي حاسس بيه، وشوف 3 مدارس فلسفية هتقولك إيه، ومعاها حاجة صغيرة تجربها النهارده."
+    body = f'''<p class="kicker"><a href="../">الفلسفة</a></p><h1>الفلاسفة بيردوا على مشكلتك</h1><p class="lead">{lead}</p><div class="chips">{chips}</div>{cards}
+<p class="note">ده تفكير فلسفي يساعدك تشوف الموضوع من زوايا تانية، مش علاج ولا استشارة نفسية.</p>
+<script>document.querySelectorAll(".chips .chip").forEach(function(b){{b.onclick=function(){{document.querySelectorAll(".chips .chip").forEach(function(x){{x.classList.toggle("on",x===b)}});document.querySelectorAll(".prob").forEach(function(g){{g.hidden=g.dataset.i!==b.dataset.i}})}}}});</script>'''
+    write("philosophy/problems/index.html", page("الفلاسفة بيردوا على مشكلتك — ميزان", body, "../../", "philosophy/", lead, path="philosophy/problems/"))
+
     for x in philo:
         r = "../../"
         rel = " · ".join(filter(None, (plink(s_, r) for s_ in x.get("related", []))))

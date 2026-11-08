@@ -734,3 +734,12 @@ body.zina-hide .zina{display:none}
 .ops-table td:last-child{width:35%}.ops-bar{margin:0}
 .ops-game{margin:1rem 0}.ops-row{display:grid;grid-template-columns:2.4rem 1fr 3.4rem;gap:8px;align-items:center;margin:3px 0;font-family:var(--kufi);font-size:.9rem}
 .ops-bar.drop i{background:var(--bad)}
+/* ───── الأطلس والفلسفة والمسارات ───── */
+.where-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--kufi);font-size:.9rem;color:var(--muted)}
+.where-tags .chip{text-decoration:none;font-size:.85rem;padding:.2rem .7rem}
+.eq{margin-top:2rem}.eq .scene{margin-top:.3rem}
+.grp h2 small{color:var(--muted);font-size:.9rem}
+.prob{margin-top:1rem}.prob .ex .task{margin:.5rem 0 0;font-size:.98rem}
+.road{margin:1.6rem 0}.road h2 small{color:var(--muted);font-size:1rem}
+.road-no{display:inline-grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--gold);color:var(--paper);font-size:1.05rem;margin-inline-end:.3rem}
+.dq{background:var(--paper);border:1px dashed var(--rule);border-radius:6px;padding:.6rem .8rem;margin:.6rem 0}.dq .opts{margin-top:.4rem}.dq .opts button{font-size:1rem;padding:.4rem .8rem}
