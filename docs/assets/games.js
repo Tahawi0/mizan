@@ -164,13 +164,18 @@
 
   /* ───── ميزان الثقة ───── */
   function calib(box) {
-    var qs, i, ans;
-    function start() { qs = shuffle(G.calib).slice(0, 10); i = 0; ans = []; q(); }
+    var S = window.MizanStages, KEY = "mizan-calib-stages", st, i, ans;
+    function map() {
+      S.render(box, { key: KEY, bossLabel: "الزعيم: أرقام وخرافات",
+        intro: "10 مراحل، كل مرحلة 5 جمل. قول صح ولا غلط، وبعدين متأكد بنسبة قد إيه. النجوم مش بتيجي من الإجابة الصح بس: بتيجي لما ثقتك تبقى قد معلوماتك.",
+        items: G.calib.map(function (x, k) { return { id: "c" + k, title: x.title, sub: "5 جمل" }; }),
+        onPlay: function (k) { st = k; i = 0; ans = []; q(); } });
+    }
     function q() {
       box.innerHTML = "";
-      var c = qs[i], pick = null;
-      box.appendChild(el("p", "kicker", "سؤال " + (i + 1) + " من 10"));
-      var b = el("div", "bar"), bi = el("i"); bi.style.width = (i * 10) + "%"; b.appendChild(bi); box.appendChild(b);
+      var qs = G.calib[st].items, c = qs[i], pick = null;
+      box.appendChild(el("p", "kicker", G.calib[st].title + " · جملة " + (i + 1) + " من " + qs.length));
+      var b = el("div", "bar"), bi = el("i"); bi.style.width = (i / qs.length * 100) + "%"; b.appendChild(bi); box.appendChild(b);
       box.appendChild(el("p", "scene", c.s));
       var o = el("div", "tf"), conf = el("div", "conf"); conf.hidden = true;
       [["صح", true], ["غلط", false]].forEach(function (x) { var bt = el("button", "btn ghost", x[0]); bt.onclick = function () { pick = x[1]; o.querySelectorAll("button").forEach(function (y) { y.classList.remove("on"); }); bt.classList.add("on"); conf.hidden = false; }; o.appendChild(bt); });
@@ -181,32 +186,43 @@
       conf.appendChild(row); conf.appendChild(el("p", "lead small", "50% يعني «بخمّن»، و100% يعني «متأكد جداً».")); box.appendChild(conf);
     }
     function end() {
-      var right = ans.filter(function (a) { return a.ok; }).length, acc = right * 10;
-      var avg = Math.round(ans.reduce(function (s, a) { return s + a.p; }, 0) / ans.length), gap = avg - acc;
+      var n = ans.length, right = ans.filter(function (a) { return a.ok; }).length, acc = Math.round(right / n * 100);
+      var avg = Math.round(ans.reduce(function (s, a) { return s + a.p; }, 0) / n), gap = avg - acc;
+      // درجة المعايرة (Brier): الثقة العالية في إجابة غلط بتخصم كتير
+      var brier = ans.reduce(function (s, a) { var pr = a.ok ? a.p / 100 : 1 - a.p / 100; return s + (1 - pr) * (1 - pr); }, 0) / n;
+      var score = Math.max(0, Math.min(10, Math.round(10 * (1 - 2 * brier))));
+      S.record(KEY, "c" + st, score);
       var verdict = gap > 10 ? "ثقتك أعلى من معلوماتك" : gap < -10 ? "إنت بتعرف أكتر ما إنت فاكر" : "ميزانك مظبوط";
-      var tip = gap > 10 ? "ده طبيعي جداً، وأغلب الناس كده. ده اسمه «الثقة الزايدة». الحل مش إنك تبطل تثق في نفسك، الحل إنك تقول «مش متأكد» أكتر." : gap < -10 ? "إنت جاوبت صح أكتر من ثقتك. متخافش تقول رأيك." : "ثقتك قريبة جداً من دقتك. ده نادر، وده بالظبط معنى إن ميزانك مظبوط.";
+      var tip = gap > 10 ? "ده طبيعي جداً، وأغلب الناس كده. ده اسمه «الثقة الزايدة». الحل إنك تقول «مش متأكد» أكتر." : gap < -10 ? "إنت جاوبت صح أكتر من ثقتك. متخافش تقول رأيك." : "ثقتك قريبة من دقتك. ده بالظبط معنى إن ميزانك مظبوط.";
       box.innerHTML = "";
-      var w = el("div", "center"); w.appendChild(el("p", "kicker", "النتيجة"));
+      var w = el("div", "center court-end"); w.appendChild(el("p", "kicker", G.calib[st].title));
       var pair = el("div", "stats");
       [["إجابات صح", acc + "%"], ["متوسط ثقتك", avg + "%"]].forEach(function (x) { var d = el("div"); d.appendChild(el("b", null, x[1])); d.appendChild(document.createTextNode(x[0])); pair.appendChild(d); });
-      w.appendChild(pair); w.appendChild(el("h2", null, verdict)); w.appendChild(el("p", "lead", tip)); box.appendChild(w);
-      var p = el("p", "center"); var a = el("a", "btn ghost", "الثقة الزايدة"); a.href = root + "atlas/overconfidence/"; p.appendChild(a); p.appendChild(document.createTextNode(" "));
-      p.appendChild(shareBtn(function () { return "ميزان — ميزان الثقة\nجاوبت صح " + acc + "% وكنت واثق " + avg + "%\n" + verdict + " ⚖️\nجرب إنت: " + location.href; }));
-      var r = el("button", "btn", "العب تاني"); r.onclick = start; p.appendChild(document.createTextNode(" ")); p.appendChild(r); box.appendChild(p);
+      w.appendChild(pair); w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score)))); w.appendChild(el("h2", null, verdict)); w.appendChild(el("p", "lead", tip));
+      w.appendChild(S.endBar({ k: st, count: G.calib.length, map: map, play: function (k) { st = k; i = 0; ans = []; q(); },
+        share: "ميزان الثقة ⚖️ مرحلة «" + G.calib[st].title + "»: جاوبت صح " + acc + "% وكنت واثق " + avg + "%.\n" + verdict + ". جرّب إنت: " + location.href.split("?")[0] }));
+      box.appendChild(w);
+      var p = el("p", "center"); var a = el("a", "btn ghost", "اقرا عن الثقة الزايدة"); a.href = root + "atlas/overconfidence/"; p.appendChild(a); box.appendChild(p);
       box.appendChild(el("h2", null, "الإجابات"));
       ans.forEach(function (x) { var d = el("div", "ex"); d.appendChild(el("small", null, (x.ok ? "✅ " : "❌ ") + (x.c.a ? "صح" : "غلط") + " · ثقتك " + x.p + "%")); d.appendChild(el("div", null, x.c.s + " " + x.c.n)); box.appendChild(d); });
     }
-    start();
+    map();
   }
 
   /* ───── صلّح الحجة ───── */
   function fix(box) {
-    var qs, i, score;
-    function start() { qs = shuffle(G.fix); i = 0; score = 0; q(); }
+    var S = window.MizanStages, KEY = "mizan-fix-stages", st, qs, i, score;
+    function map() {
+      S.render(box, { key: KEY, bossLabel: "الزعيم: 3 حجج",
+        intro: "10 مراحل. كل جملة فيها غلط، واختار الصياغة اللي بتقول نفس الفكرة من غير الغلط. خلي بالك: الصياغات الغلط فيها مغالطات تانية مستخبية.",
+        items: G.fix.map(function (x, k) { return { id: "x" + k, title: x.title, sub: x.items.length + " جمل" }; }),
+        onPlay: play });
+    }
+    function play(k) { st = k; qs = shuffle(G.fix[k].items); i = 0; score = 0; q(); }
     function q() {
       box.innerHTML = "";
       var c = qs[i];
-      box.appendChild(el("p", "kicker", "جملة " + (i + 1) + " من " + qs.length));
+      box.appendChild(el("p", "kicker", G.fix[st].title + " · جملة " + (i + 1) + " من " + qs.length));
       var b = el("div", "bar"), bi = el("i"); bi.style.width = (i / qs.length * 100) + "%"; b.appendChild(bi); box.appendChild(b);
       box.appendChild(el("p", "claim", c.bad));
       var hint = el("p", "lead small"); hint.appendChild(document.createTextNode("الجملة دي فيها: ")); hint.appendChild(link(c.e)); hint.appendChild(document.createTextNode(". أنهي صياغة هي الأحسن؟")); box.appendChild(hint);
@@ -226,15 +242,18 @@
       box.appendChild(o);
     }
     function end() {
+      var sc = Math.round(10 * score / qs.length);
+      S.record(KEY, "x" + st, sc);
       box.innerHTML = "";
-      var w = el("div", "center"); w.appendChild(el("p", "kicker", "النتيجة"));
+      var w = el("div", "center court-end"); w.appendChild(el("p", "kicker", G.fix[st].title));
       var big = el("p", "big"); big.textContent = score; big.appendChild(el("small", null, " من " + qs.length)); w.appendChild(big);
-      w.appendChild(el("h2", null, score === qs.length ? "إنت مش بس بتكشف الغلط، إنت بتصلّحه." : score >= qs.length * 0.6 ? "حلو! كام صياغة بس خدعتك." : "تصليح الحجة أصعب من كشفها. جرب تاني."));
-      var p = el("p"); p.appendChild(shareBtn(function () { return "ميزان — صلّح الحجة\nصلّحت " + score + " من " + qs.length + " حجج ✍️\nجرب إنت: " + location.href; }));
-      var r = el("button", "btn", "العب تاني"); r.onclick = start; p.appendChild(document.createTextNode(" ")); p.appendChild(r); w.appendChild(p);
+      w.appendChild(el("p", "big-stars", S.stars(S.starsFor(sc))));
+      w.appendChild(el("h2", null, score === qs.length ? "إنت مش بس بتكشف الغلط، إنت بتصلّحه." : "تصليح الحجة أصعب من كشفها. جرّب المرحلة تاني."));
+      w.appendChild(S.endBar({ k: st, count: G.fix.length, map: map, play: play,
+        share: "صلّحت " + score + " من " + qs.length + " حجج في «صلّح الحجة» على ميزان ✍️⚖️\nجرّب إنت: " + location.href.split("?")[0] }));
       box.appendChild(w);
     }
-    start();
+    map();
   }
 
   var box = $("game");
