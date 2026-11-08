@@ -602,3 +602,103 @@ main .lead{animation:rise .7s .25s ease both}
 .stage.won .stage-no.has-icon{background:var(--gold-soft)}
 .esc-art{width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
 .ava{border-radius:50%;object-fit:cover;object-position:top;background:var(--gold-soft)}
+
+/* ───── الرسم الكداب ───── */
+.ch-card{background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:1rem 1rem .6rem;margin:.6rem 0 1rem;transition:border-color .4s}
+.ch-card.ch-honest{border-color:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)}
+.ch-head{font-size:1.25rem;margin:0 0 .4rem;line-height:1.6}
+.ch-svg{width:100%;height:auto;display:block;direction:ltr;transition:opacity .25s}
+.ch-svg.ch-fade{opacity:0}
+.ch-grid{stroke:var(--rule);stroke-width:1}
+.ch-ax,.ch-lab{fill:var(--muted);font:12px var(--naskh)}
+.ch-val{fill:var(--ink);font:bold 12px var(--naskh)}
+.ch-cut{fill:var(--bad);font-size:16px}
+.ch-legend{display:flex;flex-wrap:wrap;gap:.4rem 1rem;font-size:.92rem;color:var(--muted);margin:.3rem 0 0}
+.ch-legend span::before{content:"";display:inline-block;width:.8em;height:.8em;border-radius:2px;background:var(--c);margin-inline-end:.35em;vertical-align:middle}
+.ch-fix{margin:1rem 0 .4rem}
+/* ───── مصنع الإشاعة ───── */
+.rm-hud{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.4rem;background:var(--ink);color:var(--paper);border-radius:6px;padding:.45rem .9rem;font-family:var(--kufi)}
+.rm-net{width:100%;max-width:440px;display:block;margin:1rem auto .4rem;background:var(--paper);border:1px solid var(--rule);border-radius:8px}
+.rm-edge{stroke:var(--rule);stroke-width:1;transition:stroke .3s}.rm-edge.hit{stroke:var(--bad);stroke-width:1.4}
+.rm-node{fill:var(--leaf);stroke:var(--muted);stroke-width:1;transition:fill .3s,r .3s}
+.rm-node.hit{fill:var(--bad);stroke:var(--bad)}.rm-node.src{fill:var(--ink)}
+.rm-react{font-family:var(--kufi);text-align:center;color:var(--bad)}
+.rm-post{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:.7rem 1rem;margin:.6rem 0}
+.rm-post b{font-family:var(--kufi);font-size:.95rem}.rm-post p{margin:.3rem 0 0;font-size:1.12rem}
+/* ───── محقق الخبر ───── */
+.vf-post{background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0}
+.vf-post small{color:var(--muted);font-family:var(--kufi)}.vf-post b{display:block;font-size:1.2rem;line-height:1.6;margin:.3rem 0}
+.vf-img{background:var(--leaf);border:1px dashed var(--rule);border-radius:6px;padding:.6rem;margin:.5rem 0 0;font-size:.98rem;color:var(--muted)}
+.vf-hud{font-family:var(--kufi);color:var(--muted);font-size:.95rem;margin:.4rem 0}
+.vf-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(7.5rem,1fr));gap:8px}
+.vf-tool{font-family:var(--kufi);font-size:1rem;background:var(--leaf);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:.55rem .4rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.vf-tool span{font-size:1.3rem}.vf-tool:hover:not(:disabled){border-color:var(--gold)}.vf-tool.used{background:var(--gold-soft);border-color:var(--gold);cursor:default}
+.vf-notes{margin:.8rem 0;padding-inline-start:1.3rem}.vf-notes li{margin:.35rem 0;line-height:1.8;animation:lv-in .35s ease}
+.vf-verdicts{grid-template-columns:1fr 1fr}
+/* ───── على الهوا ───── */
+.lv-screen{background:#141021;color:#F3EDDD;border-radius:14px;overflow:hidden;border:1px solid #2c2440}
+.lv-top{display:flex;align-items:center;gap:.6rem;padding:.5rem .9rem;background:#211a33;font-family:var(--kufi)}
+.lv-top b{color:#ff6b6b}.lv-top span{flex:1;opacity:.85;font-size:.92rem}.lv-score{flex:0!important;white-space:nowrap;opacity:1!important}
+.lv-feed{list-style:none;margin:0;padding:.6rem;min-height:22rem;display:flex;flex-direction:column;gap:6px}
+.lv-c{animation:lv-in .35s ease}
+.lv-c button{width:100%;text-align:start;font:inherit;font-family:var(--naskh);font-size:1.05rem;line-height:1.6;background:#231d36;color:#F3EDDD;border:1px solid #3a3157;border-radius:10px;padding:.4rem .8rem;cursor:pointer}
+.lv-c button b{font-family:var(--kufi);font-size:.85rem;color:#C9B8FF;margin-inline-end:.5rem}
+.lv-c button:hover:not(:disabled){border-color:#ff6b6b}
+.lv-c.hid button{text-decoration:line-through;opacity:.55}.lv-c.good button{border-color:#86C7AE;background:#1C3530}.lv-c.oops button{border-color:#E59A8E;background:#3E2424}
+.lv-screen .bar{margin:0;border-radius:0}
+.lv-review li{line-height:1.9}.lv-miss,.lv-got{font-family:var(--kufi);font-size:.8rem;padding:0 .4rem;border-radius:3px}
+.lv-miss{background:var(--bad-soft);color:var(--bad)}.lv-got{background:var(--ok-soft);color:var(--ok)}
+@keyframes lv-in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+/* ───── ناظر زِنة ───── */
+.db-tabs{flex-wrap:wrap}
+.db-tag{font-family:var(--kufi);font-size:.85rem;margin:.3rem 0 0;padding:.15rem .5rem;border-radius:4px;display:inline-block}
+.db-strong{background:var(--ok-soft);color:var(--ok)}.db-fallacy{background:var(--bad-soft);color:var(--bad)}.db-weak{background:var(--gold-soft);color:var(--ink)}
+.db-form{display:grid;gap:.6rem;margin-top:1rem}.db-form label{font-family:var(--kufi)}
+.db-form select,.db-form input,.db-input textarea{font:inherit;font-family:var(--naskh);font-size:1.05rem;background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:.5rem .7rem;width:100%;box-sizing:border-box}
+.db-input{display:grid;gap:.5rem;margin-top:.8rem}.db-input .btn{justify-self:start}
+.db-meter{font-family:var(--kufi);color:var(--muted);font-size:.92rem;margin:.5rem 0 0}
+/* ───── شجرة الاحتمالات ───── */
+.by-guess{display:flex;align-items:center;gap:1rem;margin:.6rem 0 1rem}.by-guess input{flex:1}.by-guess b{font-family:var(--kufi);font-size:1.4rem;min-width:3.5rem}
+.by-res{margin-top:1rem;animation:lv-in .4s ease}
+.by-grid{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;max-width:420px;margin:.6rem auto;direction:ltr}
+.by-grid i{aspect-ratio:1;border-radius:50%;background:var(--rule);transition:background .3s}.by-grid i.t{background:var(--bad)}
+.by-cap{text-align:center;font-size:.98rem;color:var(--muted)}
+.by-tree{display:flex;flex-direction:column;align-items:center;gap:10px;margin:1rem 0}
+.by-lvl{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:460px}
+.by-col{display:flex;flex-direction:column;gap:8px;align-items:center;border-top:2px solid var(--rule);padding-top:8px}
+.by-node{background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:.3rem .7rem;text-align:center;font-family:var(--kufi);font-size:.95rem}
+.by-root{background:var(--ink);color:var(--paper)}.by-pos.by-t{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}.by-pos.by-f{background:var(--gold-soft);border-color:var(--gold)}
+.by-ctl{display:grid;gap:.7rem}.by-row{display:grid;grid-template-columns:1fr;gap:2px}.by-row span{font-size:.98rem}.by-row b{font-family:var(--kufi)}
+/* ───── تحدّي صاحبك ───── */
+.duel-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:1rem}
+.duel-table th,.duel-table td{border-bottom:1px solid var(--rule);padding:.45rem .5rem;text-align:center}
+.duel-table td:first-child{text-align:start}.duel-table th{font-family:var(--kufi)}
+.duel-table .ok{color:var(--ok);font-weight:bold}.duel-table .no{color:var(--bad)}
+.duel-sum td{font-family:var(--kufi);font-weight:bold;border-bottom:0}
+/* ───── شجرة مهاراتك ───── */
+.sk-tree{width:100%;max-width:520px;display:block;margin:0 auto;overflow:visible}
+.sk-trunk{fill:none;stroke:var(--gold);stroke-width:14;stroke-linecap:round;opacity:.7}
+.sk-branch{fill:none;stroke:var(--rule);stroke-width:4;stroke-linecap:round}.sk-branch.on{stroke:var(--gold)}
+.sk-node{cursor:pointer;outline:none}.sk-node:focus .sk-bg,.sk-node:hover .sk-bg{stroke:var(--lapis);stroke-width:2}
+.sk-bg{fill:var(--leaf);stroke:var(--rule);stroke-width:1}
+.sk-ring{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round}
+.sk-glow{fill:none;stroke:var(--gold);stroke-width:2;animation:sk-pulse 2.6s ease-in-out infinite}
+.sk-ico{font-size:18px}.sk-lab{fill:var(--ink);font:bold 11.5px var(--kufi)}
+.sk-panel:not(:empty){background:var(--leaf);border:1px solid var(--gold);border-radius:6px;padding:1rem 1.2rem;margin:1rem 0;animation:lv-in .35s ease}
+@keyframes sk-pulse{50%{stroke-width:5;opacity:.3}}
+/* ───── سماء المغالطات ───── */
+.sky-wrap{background:radial-gradient(ellipse at 50% 30%,#1d2a4a,#0b1020 70%);border-radius:14px;overflow:hidden;border:1px solid #2a3554}
+.sky{width:100%;height:auto;display:block}
+.sky-dust{fill:#fff;opacity:.35}
+.sky-link{stroke:#8fa6d8;stroke-width:1;opacity:.25;transition:opacity .3s,stroke .3s}.sky-link.on{opacity:1;stroke:#F2D58A;stroke-width:2}
+.sky-star{cursor:pointer;outline:none;transition:opacity .3s;animation:sky-tw 3.2s ease-in-out infinite}
+.sky-core{fill:#F2D58A}.sky-star.b .sky-core{fill:#9DC4FF}
+.sky-halo{fill:#F2D58A;opacity:.12}.sky-star.b .sky-halo{fill:#9DC4FF}
+.sky-name{fill:#EDE4CF;font:11px var(--kufi);opacity:0;transition:opacity .3s;pointer-events:none}
+.sky-star:hover .sky-name,.sky-star:focus .sky-name,.sky-star.sel .sky-name,.sky-wrap:has(.sel) .sky-star:not(.dim) .sky-name{opacity:1}
+.sky-star.dim{opacity:.18;animation:none}.sky-star.sel .sky-halo{opacity:.4}
+.sky-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;align-items:center;font-size:.92rem}
+.sky-legend span::before{content:"●";margin-inline-end:.3em}.sky-f::before{color:#C9A23F}.sky-b::before{color:#5C86C9}.sky-legend small{color:var(--muted)}
+.sky-card{background:var(--leaf);border:1px solid var(--rule);border-radius:6px;padding:1rem 1.2rem;margin-top:1rem}
+@keyframes sky-tw{50%{opacity:.75}}
+@media (prefers-reduced-motion:reduce){.sky-star,.sk-glow,.lv-c{animation:none}}

@@ -143,6 +143,7 @@ b.querySelectorAll(".opts button").forEach(function(x,i){{x.textContent=w.option
     ix = "".join(f'<section class="grp"><div class="letter">{L}</div><ul class="index">' + "".join(
         f'<li data-kind="{e["kind"]}"><a href="{e["slug"]}/"><b>{e_(e["name"])}</b><em>{KIND[e["kind"]]}</em><span>{e_(e["oneLine"])}</span></a></li>' for e in es) + '</ul></section>' for L, es in groups.items())
     body = f"""<h1>الأطلس</h1><p class="lead">فهرس المغالطات والانحيازات، مرتب بالحروف. كل مدخل فيه أمثلة من حياتنا، وإزاي تكشفها، وإزاي ترد.</p>
+<p><a class="btn ghost" href="sky/">✨ شوف الأطلس كسما نجوم</a></p>
 <div class="filters"><button class="on" data-f="all">الكل ({len(entries)})</button><button data-f="fallacy">مغالطات</button><button data-f="bias">انحيازات</button></div>
 <div id="g">{ix}</div>
 <script>document.querySelectorAll('.filters button').forEach(function(b){{b.onclick=function(){{
@@ -150,6 +151,13 @@ document.querySelectorAll('.filters button').forEach(function(x){{x.classList.re
 document.querySelectorAll('#g li').forEach(function(t){{t.style.display=(b.dataset.f==='all'||t.dataset.kind===b.dataset.f)?'':'none'}});
 document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].some.call(g.querySelectorAll('li'),function(l){{return l.style.display!=='none'}})?'':'none'}});}}}});</script>"""
     write("atlas/index.html", page("الأطلس — ميزان", body, "../", "atlas/"))
+    # سماء المغالطات
+    skyd = [{"s": e["slug"], "n": e["name"], "k": e["kind"], "o": e["oneLine"], "c": (e.get("notConfuse") or {}).get("slug")} for e in entries]
+    lead = "الأطلس كله في سما واحدة: كل نجمة مغالطة أو انحياز، والخطوط بتوصل بين الحاجات اللي الناس بتتلخبط بينها. دوس على نجمة تنوّر قرايبها."
+    body = f"""<p class="kicker"><a href="../">الأطلس</a></p><h1>سماء المغالطات</h1><p class="lead">{lead}</p>
+<div id="game"></div>
+<script>window.MIZAN_GAME={json.dumps({"entries": skyd}, ensure_ascii=False)};</script><script src="../../assets/sky.js?v={VER}"></script>"""
+    write("atlas/sky/index.html", page("سماء المغالطات — ميزان", body, "../../", "atlas/", lead, path="atlas/sky/"))
 
     # entries
     for e in entries:
@@ -236,10 +244,17 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
             ("daily/", "مغالطة اليوم", "لغز جديد كل يوم، وسلسلة أيام ورا بعض.", "دقيقة", False),
             ("weekly/", "سؤال الأسبوع", "سؤال فلسفي كبير، صوّت وشوف الناس قالت إيه.", "دقيقتين", False)]),
         ("اكشف الغلط", "دوّر على الحيلة قبل ما تعدّي عليك.", [
+            ("games/duel/", "تحدّي صاحبك", "5 أسئلة ولينك فيه نتيجتك. صاحبك يلعب نفسهم، وتتقارنوا سؤال سؤال.", "3 دقايق", True),
             ("quiz/", "اختبر نفسك", "10 أسئلة، وتحدّى صاحبك في نفس الأسئلة.", "5 دقايق", False),
             ("games/court/", "محكمة ميزان", "10 قضايا ومراحل بتتفتح ورا بعض. اعترض أول ما تسمع مغالطة.", "5 دقايق", True),
             ("games/family/", "جروب العيلة", "10 مواقف في جروب العيلة بمراحل. هترد إزاي من غير ما حد يزعل؟", "4 دقايق", True),
-            ("games/spot/", "اكشف الحيلة", "10 إعلانات بمراحل، كل واحد حيله مستخبية أكتر من اللي قبله.", "5 دقايق", True)]),
+            ("games/spot/", "اكشف الحيلة", "10 إعلانات بمراحل، كل واحد حيله مستخبية أكتر من اللي قبله.", "5 دقايق", True),
+            ("games/live/", "على الهوا", "إنت مشرف كومنتات في بث مباشر. خبّي المغالطات قبل ما تعدّي.", "3 دقايق", True)]),
+        ("الأخبار والأرقام", "الأرقام والأخبار ممكن تكدب من غير ما تقول كلمة كدب.", [
+            ("games/charts/", "الرسم الكداب", "10 رسوم بيانية مضللة. اكشف الحيلة، وصلّح الرسم بإيدك.", "5 دقايق", True),
+            ("games/verify/", "محقق الخبر", "8 أخبار و5 أدوات تحقق. حقيقي ولا مفبرك ولا ناقص سياق؟", "6 دقايق", True),
+            ("games/rumor/", "مصنع الإشاعة", "العب دور صاحب صفحة إشاعات، واتعلم الحيل من جوه عشان تكشفها.", "6 دقايق", True),
+            ("games/bayes/", "شجرة الاحتمالات", "تحليل دقيق طلع إيجابي: إنت فعلاً عيان؟ خمّن، وشوف الحقيقة.", "4 دقايق", True)]),
         ("اعرف نفسك", "مخك بيتأثر بإيه من غير ما تاخد بالك؟", [
             ("games/lab/", "معمل الانحيازات", "4 تجارب علم نفس حقيقية تتعمل عليك.", "4 دقايق", False),
             ("games/philosopher/", "أنهي فيلسوف إنت؟", "8 أسئلة خفيفة… وفي الآخر مفاجأة.", "3 دقايق", False),
@@ -248,12 +263,15 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         ("ابني صح", "مش بس تكشف الغلط، اتعلم تقول الكلام صح.", [
             ("games/escape/", "غرفة الهروب", "10 أوض بمراحل، وكل باب قفله بيتفتح بالتفكير بس.", "8 دقايق", True),
             ("games/argue/", "ابني الحجة", "10 مستويات بتعلّمك المنطق نفسه: اختار المقدمات اللي تثبت النتيجة.", "5 دقايق", True),
-            ("games/fix/", "صلّح الحجة", "10 مراحل: اختار إزاي الجملة تتقال من غير الغلط.", "4 دقايق", True)]),
+            ("games/fix/", "صلّح الحجة", "10 مراحل: اختار إزاي الجملة تتقال من غير الغلط.", "4 دقايق", True),
+            ("games/debate/", "ناظر زِنة", "6 مناظرات جاهزة بمراحل، ومناظرة حرة بالذكاء الاصطناعي.", "5 دقايق", True)]),
         ("قول رأيك", "مواقف مفيهاش إجابة سهلة.", [
             ("dilemmas/", "معضلات", "24 موقف صعب، صوّت وشوف الفلاسفة قالوا إيه.", "دقيقتين", False)]),
         ("لوحات", "شوف الناس بتفكر إزاي، وإنت فين منهم.", [
             ("games/league/", "دوري ميزان", "ترتيب أسبوعي بلقب تختاره. العب كل يوم، واجمع نقط، واطلع الأول.", "كل يوم", True),
-            ("games/mirror/", "مرآة الناس", "لوحة حية بنتايج كل التصويت والتجارب: الناس اختارت إيه، ووقعت في إيه.", "دقيقتين", True)]),
+            ("games/mirror/", "مرآة الناس", "لوحة حية بنتايج كل التصويت والتجارب: الناس اختارت إيه، ووقعت في إيه.", "دقيقتين", True),
+            ("games/skills/", "شجرة مهاراتك", "خريطة بتنوّر كل ما تتعلم: شوف إنت قوي في إيه ومحتاج تكبّر إيه.", "دقيقة", True),
+            ("atlas/sky/", "سماء المغالطات", "الأطلس كله نجوم، والخطوط بتوصل بين الحاجات اللي بتتلخبط مع بعض.", "دقيقتين", True)]),
     ]
     def atile(h, t, d, m, new):
         badge = '<em class="new">جديد</em>' if new else ''
@@ -282,8 +300,14 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     NEW_GAMES = {
         "court": ("محكمة ميزان", "إنت القاضي في 10 قضايا، كل واحدة أصعب من اللي قبلها، وآخرهم قضية الزعيم. اعترض أول ما تسمع مغالطة، واحكم على الأدلة السليمة بس.", "court"),
         "family": ("جروب العيلة", "الرسايل بدأت تنزل في جروب العيلة، وفيها كلام غلط. اختار ردك: هتهاجم، ولا تسكت، ولا ترد بهدوء وذكاء؟", "family"),
-        "escape": ("غرفة الهروب", "5 أوض ورا بعض، وكل باب عليه قفل بيتفتح بالمنطق. اخرج في أقل وقت، وتحدّى صحابك.", "escape"),
+        "escape": ("غرفة الهروب", "10 أوض ورا بعض، وكل باب عليه قفل بيتفتح بالمنطق. اخرج في أقل وقت، وتحدّى صحابك.", "escape"),
         "argue": ("ابني الحجة", "قدامك نتيجة، وكروت مقدمات. اختار المقدمتين اللي لو صح، النتيجة لازم تبقى صح. وخلي بالك من الكروت اللي شكلها مقنع.", "argue"),
+        "charts": ("الرسم الكداب", "الرسوم البيانية ممكن تكدب من غير ما رقم واحد يبقى غلط. اكشف الحيلة، وصلّح الرسم بإيدك، وبعدين احكم على العنوان.", "charts"),
+        "rumor": ("مصنع الإشاعة", "العب دور صاحب صفحة بتنشر إشاعات، واتعلم 6 حيل تضليل من جوه. وفي الآخر، هتبقى إنت المحقق.", "rumor"),
+        "verify": ("محقق الخبر", "خبر وصلك على الموبايل. استخدم أدوات التحقق اللي محتاجها بس، واحكم: حقيقي، ولا مفبرك، ولا ناقص سياق، ولا قديم واتعاد نشره؟", "verify"),
+        "live": ("على الهوا", "إنت مشرف الكومنتات في بث مباشر. خبّي الكومنت اللي فيه مغالطة قبل ما يعدّي، وسيب الرأي المختلف في حاله.", "live"),
+        "debate": ("ناظر زِنة", "زِنة هتاخد الرأي العكسي وتناظرك. في المراحل الجاهزة بتختار ردك، وفي المناظرة الحرة بتكتب بإيدك والذكاء الاصطناعي بيرد ويقولك لو وقعت في مغالطة.", "debate"),
+        "bayes": ("شجرة الاحتمالات", "من أشهر الأسئلة اللي بيغلط فيها الناس وحتى الأطبا: لو التحليل طلع إيجابي، احتمال إنك عيان قد إيه؟", "bayes"),
         "profile": ("بصمتك المعرفية", "15 موقف من حياتنا. جاوب بصراحة، وفي الآخر هتشوف أكتر الانحيازات اللي بتأثر على قراراتك، في كارت تقدر تشاركه.", "profile"),
     }
     for slug, (title, lead, src) in NEW_GAMES.items():
@@ -293,6 +317,36 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <p class="report"><a href="{gx}send/?err=games/{slug}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <script>window.MIZAN_GAME={json.dumps(data, ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script><script src="{gx}assets/stages.js?v={VER}"></script><script src="{gx}assets/{slug}.js?v={VER}"></script>"""
         write(f"games/{slug}/index.html", page(f"{title} — ميزان", body, gx, "games/", lead, path=f"games/{slug}/"))
+
+    # تحدّي صاحبك
+    lead = "تحدّي صاحبك في 5 أسئلة مغالطات. كل البيانات جوه اللينك نفسه، ومش بنحفظ أي حاجة على السيرفر."
+    body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>تحدّي صاحبك</h1><p class="lead">{lead}</p>
+<div id="game" class="sheet"></div>
+<script>window.MIZAN_PUZZLES={json.dumps([{k: p[k] for k in ("id", "scene", "options", "answer", "why", "entry")} for p in puzzles], ensure_ascii=False)};window.MIZAN_NAMES={names_js};</script><script src="{gx}assets/duel.js?v={VER}"></script>"""
+    write("games/duel/index.html", page("تحدّي صاحبك — ميزان", body, gx, "games/", lead, path="games/duel/"))
+
+    # شجرة مهاراتك
+    def cnt(src, k):
+        return len(json.loads((ROOT / "content" / f"{src}.json").read_text(encoding="utf-8"))[k])
+    skg = {"court": {"key": "mizan-court", "n": 10}, "family": {"key": "mizan-family-stages", "n": 10}, "spot": {"key": "mizan-spot-stages", "n": len(games["spot"])},
+           "calib": {"key": "mizan-calib-stages", "n": len(games["calibStages"])}, "fix": {"key": "mizan-fix-stages", "n": len(games["fixStages"])},
+           "escape": {"key": "mizan-escape-stages", "n": cnt("escape", "rooms")}, "argue": {"key": "mizan-argue-stages", "n": cnt("argue", "levels")},
+           "charts": {"key": "mizan-charts-stages", "n": cnt("charts", "stages")}, "verify": {"key": "mizan-verify-stages", "n": cnt("verify", "cases")},
+           "rumor": {"key": "mizan-rumor-stages", "n": cnt("rumor", "levels") + 1}, "live": {"key": "mizan-live-stages", "n": cnt("live", "episodes")},
+           "debate": {"key": "mizan-debate-stages", "n": cnt("debate", "topics")}}
+    skills = [
+        {"name": "كشف المغالطات", "icon": "🔍", "desc": "إنك تمسك الغلط في الكلام أول ما تسمعه.", "src": ["daily", "quiz", "court", "live"], "go": [["daily/", "مغالطة اليوم"], ["games/court/", "محكمة ميزان"], ["games/live/", "على الهوا"]]},
+        {"name": "معرفة النفس", "icon": "🧠", "desc": "إنك تعرف مخك بيتأثر بإيه من غير ما تاخد بالك.", "src": ["lab", "profile", "calib"], "go": [["games/lab/", "معمل الانحيازات"], ["games/profile/", "بصمتك المعرفية"], ["games/calibration/", "ميزان الثقة"]]},
+        {"name": "المنطق", "icon": "🧩", "desc": "إنك تبني حجة سليمة وتحل الألغاز بالتفكير.", "src": ["argue", "escape", "fix"], "go": [["games/argue/", "ابني الحجة"], ["games/escape/", "غرفة الهروب"], ["games/fix/", "صلّح الحجة"]]},
+        {"name": "الإعلام", "icon": "📰", "desc": "إنك تكشف الخبر المضلل والإعلان الملعوب فيه.", "src": ["verify", "rumor", "spot"], "go": [["games/verify/", "محقق الخبر"], ["games/rumor/", "مصنع الإشاعة"], ["games/spot/", "اكشف الحيلة"]]},
+        {"name": "الأرقام", "icon": "📊", "desc": "إنك تقرا الرسوم والاحتمالات من غير ما تتضحك عليك.", "src": ["charts", "bayes"], "go": [["games/charts/", "الرسم الكداب"], ["games/bayes/", "شجرة الاحتمالات"]]},
+        {"name": "الحوار", "icon": "💬", "desc": "إنك ترد بهدوء وذكاء، وتناظر من غير ما تهاجم.", "src": ["family", "debate", "debateAi", "duel"], "go": [["games/family/", "جروب العيلة"], ["games/debate/", "ناظر زِنة"], ["games/duel/", "تحدّي صاحبك"]]},
+        {"name": "الفلسفة", "icon": "🏛", "desc": "إنك تفكر في الأسئلة الكبيرة اللي مفيهاش إجابة سهلة.", "src": ["dilemmas", "paths"], "go": [["dilemmas/", "معضلات"], ["paths/", "المسارات"], ["weekly/", "سؤال الأسبوع"]]}]
+    lead = "خريطة لمهاراتك في التفكير، بتنوّر كل ما تلعب وتتعلم. دوس على أي مهارة تعرف تكبّرها إزاي."
+    body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>شجرة مهاراتك</h1><p class="lead">{lead}</p>
+<div id="game"></div>
+<script>window.MIZAN_GAME={json.dumps({"games": skg, "skills": skills}, ensure_ascii=False)};</script><script src="{gx}assets/skills.js?v={VER}"></script>"""
+    write("games/skills/index.html", page("شجرة مهاراتك — ميزان", body, gx, "games/", lead, path="games/skills/"))
 
     # مرآة الناس
     ins = {"anchor": "لو متوسط اللي شافوا رقم 75 أعلى من اللي شافوا 15، يبقى رقم ملوش علاقة غيّر تقديرهم. الإجابة الصح 54.",
@@ -313,7 +367,13 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
           {"id": "court", "name": "محكمة ميزان", "url": "games/court/", "rule": "درجتك في القضية من 10."},
           {"id": "escape", "name": "غرفة الهروب", "url": "games/escape/", "rule": "10 لو خرجت في 3 دقايق، والنقط بتقل كل ما الوقت يزيد."},
           {"id": "argue", "name": "ابني الحجة", "url": "games/argue/", "rule": "على حسب الحجج اللي بنيتها صح من أول محاولة."},
-          {"id": "family", "name": "جروب العيلة", "url": "games/family/", "rule": "متوسط الود والإقناع في آخر الجروب."}]
+          {"id": "family", "name": "جروب العيلة", "url": "games/family/", "rule": "درجة ردك في المرحلة من 10."},
+          {"id": "charts", "name": "الرسم الكداب", "url": "games/charts/", "rule": "درجتك في الرسم من 10."},
+          {"id": "verify", "name": "محقق الخبر", "url": "games/verify/", "rule": "10 لو حكمت صح بأدوات قليلة."},
+          {"id": "live", "name": "على الهوا", "url": "games/live/", "rule": "على حسب المغالطات اللي خبيتها."},
+          {"id": "rumor", "name": "مصنع الإشاعة", "url": "games/rumor/", "rule": "درجتك في المرحلة من 10."},
+          {"id": "debate", "name": "ناظر زِنة", "url": "games/debate/", "rule": "متوسط قوة ردودك في المناظرة."},
+          {"id": "duel", "name": "تحدّي صاحبك", "url": "games/duel/", "rule": "نقطتين لكل إجابة صح لما تقبل تحدّي."}]
     lead = "ترتيب أسبوعي لأصحاب الحسابات. اختار لقب، والعب كل يوم، واجمع نقط. الترتيب بيتصفّر كل سبت."
     body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>دوري ميزان</h1><p class="lead">{lead}</p>
 <div id="game"></div>
