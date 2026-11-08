@@ -55,6 +55,15 @@ PAGE_DESC = {
     "عن ميزان": "ميزان مشروع مصري مفتوح ومجاني عن التفكير النقدي: ليه بدأ، وبيقدّم إيه، وإزاي تساعد فيه.",
 }
 
+def atlas_desc(e):
+    """وصف صفحة الأطلس في جوجل: التعريف، ولو قصير نزوّد مثال من حياتنا."""
+    d = e["oneLine"].strip()
+    if len(d) < 100 and e.get("examples"):
+        ex = e["examples"][0]["text"].split("—")[0].strip()
+        tail = {"tool": "اعرف إمتى تستخدمها وإيه حدودها.", "bias": "اعرف ليه مخنا بيعمل كده وإزاي تاخد بالك."}.get(e.get("kind"), "اعرف إزاي تكشفها وترد عليها.")
+        d = f"{d} مثال: {ex} {tail}"
+    return d
+
 def page(title, body, root, active="", desc="", img="cards/og/site.png", path="", ld=None):
     # كارت مشاركة خاص بالصفحة لو اتعمل (tools/game_cards.py)
     if img == "cards/og/site.png" and path:
@@ -231,7 +240,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <p class="report"><a href="{r}send/?err=atlas/{e['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}{"tools" if tool else "atlas"}/">ارجع للفهرس</a></p>
 <script>document.querySelectorAll(".eq .opts button").forEach(function(b){{b.onclick=function(){{var bs=b.parentNode.querySelectorAll("button");bs.forEach(function(x){{x.disabled=true;if(x.dataset.ok==="1")x.classList.add("right");}});if(b.dataset.ok!=="1")b.classList.add("wrong");var w=document.querySelector(".eq-why");if(w&&w.textContent)w.hidden=false;}};}});</script>"""
-        write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", e["oneLine"], f"cards/og/{e['slug']}.png", f"atlas/{e['slug']}/",
+        write(f"atlas/{e['slug']}/index.html", page(f"{e['name']} — ميزان", body, r, "atlas/", atlas_desc(e), f"cards/og/{e['slug']}.png", f"atlas/{e['slug']}/",
               {"@context": "https://schema.org", "@type": "DefinedTerm", "name": e["name"], "alternateName": e["intl"], "description": e["oneLine"], "inLanguage": "ar-EG",
                "url": f"{SITE}atlas/{e['slug']}/", "inDefinedTermSet": {"@type": "DefinedTermSet", "name": "أطلس ميزان", "url": f"{SITE}atlas/"}}))
 
@@ -288,7 +297,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
 <div id="q-review-h"><h2 style="justify-content:center">راجع دول</h2><ul class="index" id="q-review" style="text-align:start"></ul></div></div></div>
 <p class="note">كل مرة هتطلعلك أسئلة مختلفة من {len(puzzles)} لغز.</p>
 <script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};window.MIZAN_NAMES={json.dumps({x["slug"]: x["name"] for x in entries}, ensure_ascii=False)};</script><script src="../assets/quiz.js?v={VER}"></script>"""
-    write("quiz/index.html", page("اختبر نفسك — ميزان", body, "../", "quiz/", "10 أسئلة سريعة: بتكشف كام مغالطة من 10؟", path="quiz/"))
+    write("quiz/index.html", page("اختبر نفسك — ميزان", body, "../", "quiz/", "10 أسئلة سريعة في المغالطات المنتشرة حوالينا. بتكشف كام مغالطة من 10؟ اعرف نتيجتك في دقيقتين، وابعت الاختبار لصاحبك وشوف مين يكسب.", path="quiz/"))
 
     # games
     gx = "../../"
@@ -347,7 +356,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     spec = {
         "lab": ("معمل الانحيازات", "التجارب دي اتعملت قبل كده على آلاف الناس في دراسات مشهورة. جاوب بسرعة وبصراحة، وبعدين شوف مخك اتأثر إزاي. الإجابات مجهولة، ومش بنسجل أي حاجة عنك.", {"lab": games["lab"]}, True),
         "spot": ("اكشف الحيلة", "الإعلانات دي متألفة لماركات مش موجودة. دوس على أي جملة شايف فيها حيلة، وبعدين دوس «خلصت».", {"spot": games["spot"]}, False),
-        "philosopher": ("أنهي فيلسوف إنت؟", "8 أسئلة، اختار الأقرب ليك من غير ما تفكر كتير.", {"phil": games["phil"]}, False),
+        "philosopher": ("أنهي فيلسوف إنت؟", "8 أسئلة خفيفة عن مواقف من حياتك، اختار الأقرب ليك من غير ما تفكر كتير. وفي الآخر هتعرف أنهي فيلسوف بيفكر زيك، وليه.", {"phil": games["phil"]}, False),
         "calibration": ("ميزان الثقة", "10 مراحل، كل مرحلة 5 جمل: قول صح ولا غلط، وبعدين قول إنت متأكد بنسبة قد إيه. النجوم بتتحسب على قد ما ثقتك قريبة من معلوماتك.", {"calib": games["calibStages"]}, False),
         "fix": ("صلّح الحجة", "10 مراحل، كل جملة فيها غلط. اختار الصياغة اللي بتقول نفس الفكرة من غير الغلط، وخلي بالك: الصياغات الغلط فيها مغالطات تانية مستخبية.", {"fix": games["fixStages"]}, False)}
     gid = {"lab": "lab", "spot": "spot", "philosopher": "phil", "calibration": "calib", "fix": "fix"}
@@ -621,7 +630,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <div class="note" id="ac-del-confirm" hidden><p>متأكد؟ حسابك وكل تقدمك المحفوظ ونقطك في الدوري هيتمسحوا نهائي، ومش هينفع يرجعوا.</p><p><button class="btn danger-fill" id="ac-del-yes">أيوه، امسح</button> <button class="btn ghost" id="ac-del-no">لأ</button></p></div>
 </section>
 <script defer src="../assets/acct-page.js?v={VER}"></script>"""
-    write("account/index.html", page("حسابي — ميزان", body, "../", "", "احفظ تقدمك في ميزان على أي جهاز.", path="account/"))
+    write("account/index.html", page("حسابي — ميزان", body, "../", "", "سجّل دخول مجاناً بجوجل أو بالإيميل، واحفظ تقدمك في ميزان على أي جهاز: سلسلة أيامك، ونتايج الألعاب، والمسارات، وشهاداتك.", path="account/"))
 
     # للمدرسين: حصص جاهزة وأوراق نشاط للطباعة
     T = json.loads((ROOT / "content" / "teachers.json").read_text(encoding="utf-8"))
@@ -673,7 +682,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <h2>اللي مش بنعمله</h2><p>مش بنبيع بيانات، ومش بنعرض إعلانات، ومش بنستخدم كوكيز تتبع.</p>
 <h2>عايز تمسح حاجة؟</h2><p>بياناتك على جهازك تقدر تمسحها من إعدادات المتصفح. ولو بعتلنا جملة وعايزها تتمسح، <a href="../send/">ابعتلنا</a> نصها، وإحنا نمسحها.</p>
 <p class="note">ميزان ماشي حسب قانون حماية البيانات الشخصية المصري رقم 151 لسنة 2020. الصفحة دي اتحدّثت نوفمبر 2026.</p>"""
-    write("privacy/index.html", page("الخصوصية — ميزان", body, "../", "", "ميزان بيتعامل مع بياناتك إزاي.", path="privacy/"))
+    write("privacy/index.html", page("الخصوصية — ميزان", body, "../", "", "ميزان بيتعامل مع بياناتك إزاي: من غير إعلانات ولا تتبّع شخصي، وإيه اللي بنحفظه لو عملت حساب، وإزاي تمسح حسابك وكل بياناتك في أي وقت.", path="privacy/"))
 
     # about
     body = """<h1>عن ميزان</h1>
