@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from cards import ROOT, PAPER, INK, MUTED, GOLD, LAPIS, SITE, font, frame, rtl, wrap, scale_icon, fit_title
 
-A = ROOT / "assets"
+A = ROOT / "tools" / "art"
 # key: (العنوان، السؤال، الصورة، النوع)
 GAMES = {
     "games": ("الساحة", "25 لعبة ولوحة بتعلّمك تفكر صح. كل واحدة دقايق.", "zina/happy", "ألعاب ميزان"),

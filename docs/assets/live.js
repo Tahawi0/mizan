@@ -3,6 +3,7 @@
   var G = window.MIZAN_GAME || {}, root = document.body.getAttribute("data-root") || "./";
   var NAMES = window.MIZAN_NAMES || {}, S = window.MizanStages;
   var box = document.getElementById("game"), KEY = "mizan-live-stages", MAXV = 6;
+  var slowPick = false; try { slowPick = localStorage.getItem("mizan-live-slow") === "1"; } catch (e) {}
   var slow = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
 
@@ -17,12 +18,15 @@
     box.appendChild(el("p", "kicker", "البث " + (k + 1) + " من " + G.episodes.length));
     box.appendChild(el("h2", null, E.title));
     box.appendChild(el("p", "lead", "دوس على الكومنت اللي فيه مغالطة عشان تخفيه. كل كومنت بيعدّي بعد شوية، ولو عدّى وفيه مغالطة تبقى فاتتك. ولو خبّيت كومنت سليم، بتخسر نص نقطة."));
+    var calm = el("label", "lv-calm"), cb = el("input"); cb.type = "checkbox"; cb.checked = slowPick;
+    cb.onchange = function () { slowPick = cb.checked; try { localStorage.setItem("mizan-live-slow", slowPick ? "1" : ""); } catch (e) {} };
+    calm.appendChild(cb); calm.appendChild(document.createTextNode(" وضع هادي: الكومنتات تنزل أبطأ مرتين")); box.appendChild(calm);
     var go = el("button", "btn", "🔴 ابدأ البث"); go.onclick = function () { play(k); }; box.appendChild(go);
   }
 
   function play(k) {
     var E = G.episodes[k], list = E.c, i = 0, hits = 0, falses = 0, missed = [], bad = list.filter(function (c) { return c.f; }).length;
-    var speed = slow ? E.speed * 1.8 : E.speed, timer;
+    var speed = E.speed * (slow ? 1.8 : 1) * (slowPick ? 2 : 1), timer;
     box.innerHTML = ""; document.body.classList.add("zina-hide");
     var scr = el("div", "lv-screen");
     var top = el("div", "lv-top"); top.appendChild(el("b", null, "🔴 مباشر")); top.appendChild(el("span", null, E.title.replace(/^.*?: /, "")));
@@ -35,6 +39,7 @@
     function push() {
       if (i >= list.length) { setTimeout(end, speed); return; }
       var c = list[i++], li = el("li", "lv-c");
+      
       var b = el("button"); b.type = "button";
       b.appendChild(el("b", null, c.w)); b.appendChild(el("span", null, c.t));
       b.onclick = function () {

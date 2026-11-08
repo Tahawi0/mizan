@@ -7,7 +7,7 @@
   function starsFor(sc) { return sc == null ? 0 : sc >= 9 ? 3 : sc >= 6 ? 2 : 1; }
   function stars(n) { return "★★★".slice(0, n) + "☆☆☆".slice(0, 3 - n); }
   function gameOf(key) { return String(key).replace(/^mizan-/, "").replace(/-stages$/, ""); }
-  function track(key, ev) { if (window.MizanTrack) window.MizanTrack(gameOf(key), ev); }
+  function track(key, ev, st) { if (window.MizanTrack) window.MizanTrack(gameOf(key), ev, st); }
   function share(text, btn) {
     if (navigator.share) navigator.share({ text: text }).catch(function () {});
     else if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { btn.textContent = "اتنسخ ✓"; });
@@ -30,7 +30,7 @@
     render: function (box, o) {
       box.innerHTML = "";
       function go(k) {
-        track(o.key, "start");
+        track(o.key, "start"); track(o.key, "stage", k);
         o.onPlay(k);
         var r = box.getBoundingClientRect();
         if (r.top < 0 || r.top > innerHeight * .35) box.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });

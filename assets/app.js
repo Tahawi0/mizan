@@ -20,12 +20,12 @@
   if (/iphone|ipad|ipod/i.test(navigator.userAgent)) { btn.hidden = false; btn.onclick = function () { hint.hidden = !hint.hidden; }; }
 })();
 // عدّاد مجهول للألعاب: «بدأ» و«خلّص» بس، من غير أي بيانات عن الشخص.
-window.MizanTrack = function (g, e) {
+window.MizanTrack = function (g, e, st) {
   try {
-    if (!window.MIZAN_API || !/^[a-z]{2,12}$/.test(g) || (e !== "start" && e !== "done")) return;
-    var k = "mz-t-" + g + e, now = Date.now(), last = +(sessionStorage.getItem(k) || 0);
+    if (!window.MIZAN_API || !/^[a-z]{2,12}$/.test(g) || (e !== "start" && e !== "done" && e !== "stage")) return;
+    var k = "mz-t-" + g + e + (st >= 0 ? st : ""), now = Date.now(), last = +(sessionStorage.getItem(k) || 0);
     if (now - last < 20000) return; sessionStorage.setItem(k, now);
-    var body = JSON.stringify({ g: g, e: e });
+    var body = JSON.stringify(st >= 0 && st < 50 ? { g: g, e: e, s: st } : { g: g, e: e });
     if (navigator.sendBeacon) navigator.sendBeacon(window.MIZAN_API + "/evt", body);
     else fetch(window.MIZAN_API + "/evt", { method: "POST", body: body, keepalive: true }).catch(function () {});
   } catch (x) {}

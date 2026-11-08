@@ -53,6 +53,10 @@
     // خط الصفر لو المحور مش بادئ منه: علامة كسر صغيرة
     if (mn > 0) { var z = sv("text", { x: L - 6, y: T + ph + 16, "text-anchor": "end", "class": "ch-ax ch-cut" }); z.textContent = "≈"; svg.appendChild(z); }
   }
+  function describe(svg, title, v) {
+    var t = v.series.map(function (s) { return (s.name ? s.name + ": " : "") + v.labels.map(function (l, i) { return l + " " + fmt(s.vals[i]); }).join("، "); }).join(". ");
+    svg.setAttribute("aria-label", title + ". " + (v.unit ? "الوحدة " + v.unit + ". " : "") + t + (v.min > 0 ? ". المحور بادئ من " + fmt(v.min) : ""));
+  }
   function legend(v) {
     var p = el("p", "ch-legend");
     if (v.series.length > 1) v.series.forEach(function (s, i) { var sp = el("span", null, s.name); sp.style.setProperty("--c", COLORS[i % 3]); p.appendChild(sp); });
@@ -85,7 +89,7 @@
     var card = el("div", "ch-card");
     card.appendChild(el("h2", "ch-head", st.headline));
     var svg = sv("svg", { viewBox: "0 0 " + W + " " + H, "class": "ch-svg", role: "img", "aria-label": "رسم بياني: " + st.headline });
-    card.appendChild(svg); draw(svg, st.fake);
+    card.appendChild(svg); draw(svg, st.fake); describe(svg, st.headline, st.fake);
     var lg = legend(st.fake); card.appendChild(lg);
     box.appendChild(card);
     var act = el("div", "ch-act"); box.appendChild(act);
@@ -111,7 +115,7 @@
       var f = el("button", "btn ch-fix", "🛠 " + st.fix);
       f.onclick = function () {
         f.disabled = true;
-        tween(svg, st.fake, st.honest, function () { card.classList.add("ch-honest"); var nl = legend(st.honest); lg.replaceWith(nl); lg = nl; askStep(); });
+        tween(svg, st.fake, st.honest, function () { card.classList.add("ch-honest"); describe(svg, "الرسم بعد التصليح", st.honest); var nl = legend(st.honest); lg.replaceWith(nl); lg = nl; askStep(); });
       };
       act.appendChild(f);
     }
@@ -134,7 +138,7 @@
       score = Math.min(10, score);
       S.record(KEY, "c" + k, score);
       if (window.MizanAuth && MizanAuth.score) MizanAuth.score("charts", score);
-      var fb = el("div", "court-fb");
+      var fb = el("div", "court-fb"); fb.setAttribute("role", "status");
       var p = el("p", null, st.why + " ");
       if (st.entry) { var a = el("a", null, "اقرا عن «" + (NAMES[st.entry] || st.entry) + "»"); a.href = root + "atlas/" + st.entry + "/"; p.appendChild(a); }
       fb.appendChild(p); act.appendChild(fb);

@@ -554,6 +554,13 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <script>document.querySelectorAll(".print-l").forEach(function(b){{b.onclick=function(){{document.body.setAttribute("data-print",b.dataset.l);window.print();}};}});window.addEventListener("afterprint",function(){{document.body.removeAttribute("data-print");}});</script>'''
     write("teachers/index.html", page("ميزان في الفصل — حصص تفكير نقدي جاهزة", body, "../", "", "6 حصص تفكير نقدي جاهزة للمدرسين، كل حصة 45 دقيقة، بألعاب تفاعلية وأوراق نشاط للطباعة.", path="teachers/"))
 
+    # لوحة الأرقام: مش في القايمة ولا في خريطة الموقع، ومقفولة على محركات البحث
+    gn = {"court": "محكمة ميزان", "family": "جروب العيلة", "escape": "غرفة الهروب", "argue": "ابني الحجة", "spot": "اكشف الحيلة", "calib": "ميزان الثقة", "fix": "صلّح الحجة", "charts": "الرسم الكداب", "verify": "محقق الخبر", "rumor": "مصنع الإشاعة", "live": "على الهوا", "debate": "ناظر زِنة", "quiz": "اختبر نفسك", "bayes": "شجرة الاحتمالات", "duel": "تحدّي صاحبك"}
+    body = f"""<h1>لوحة الأرقام</h1><p class="lead">أرقام مجمّعة ومجهولة: مين بيلعب إيه، وبيكمّل ولا لأ، وبيقف فين. الصفحة دي مش ظاهرة في الموقع.</p><div id="game"></div>
+<script>window.MIZAN_GAME={json.dumps({"names": gn}, ensure_ascii=False)};</script><script src="../assets/config.js?v={VER}"></script><script src="../assets/ops.js?v={VER}"></script>"""
+    html = page("لوحة الأرقام — ميزان", body, "../", "", "لوحة داخلية.").replace("<head>", '<head><meta name="robots" content="noindex,nofollow">', 1)
+    (OUT / "ops").mkdir(parents=True, exist_ok=True); (OUT / "ops" / "index.html").write_text(html, encoding="utf-8")
+
     # privacy
     body = """<h1>الخصوصية</h1><p class="lead">ميزان مش بيطلب منك اسم ولا إيميل ولا حساب. ودي كل البيانات اللي بتتعامل في الموقع، بالظبط.</p>
 <h2>اللي بيتحفظ على جهازك بس</h2><p>نتايج الألغاز، والسلسلة، وتقدمك في المسارات، وأحسن نتيجة في الاختبارات، واختياراتك في التصويت. دي بتتحفظ في متصفحك (localStorage) ومش بتتبعت لأي حد. لو مسحت بيانات المتصفح، هتتمسح.</p>

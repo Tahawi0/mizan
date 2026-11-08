@@ -45,7 +45,7 @@
       var a = Math.PI * (0.1 + 0.8 * i / (n - 1)), r = 118 + (i % 2) * 34;
       var x = cx + Math.cos(Math.PI - a) * r, y = 165 - Math.sin(a) * r * .95;
       svg.appendChild(sv("path", { d: "M" + cx + " 160 Q " + ((cx + x) / 2) + " " + (y + 40) + " " + x + " " + y, "class": "sk-branch" + (d.v > 0 ? " on" : "") }));
-      var g = sv("g", { "class": "sk-node", tabindex: 0 });
+      var g = sv("g", { "class": "sk-node", tabindex: 0, role: "button", "aria-label": d.s.name + ": " + Math.round(d.v * 100) + "%" });
       g.appendChild(sv("circle", { cx: x, cy: y, r: 23, "class": "sk-bg" }));
       var C = 2 * Math.PI * 23;
       g.appendChild(sv("circle", { cx: x, cy: y, r: 23, "class": "sk-ring", "stroke-dasharray": (C * d.v).toFixed(1) + " " + C.toFixed(1), transform: "rotate(-90 " + x + " " + y + ")" }));

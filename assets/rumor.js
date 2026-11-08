@@ -61,7 +61,7 @@
         act.appendChild(net(op.spread, function () {
           fol.textContent = "المتابعين: " + (1200 + k * 3400 + gain).toLocaleString("en-US") + "  (+" + gain.toLocaleString("en-US") + ")";
           act.appendChild(el("p", "rm-react", op.r));
-          var fb = el("div", "court-fb");
+          var fb = el("div", "court-fb"); fb.setAttribute("role", "status");
           fb.appendChild(el("b", null, op.k === "tactic" ? "دي الحيلة: " + L.tactic : op.k === "honest" ? "اخترت الصدق، والصدق مش بيولّع" : "محاولة ضعيفة"));
           var p = el("p", null, L.lesson + " ");
           var a = el("a", null, "اقرا عن «" + (NAMES[L.entry] || L.entry) + "»"); a.href = root + "atlas/" + L.entry + "/"; p.appendChild(a);

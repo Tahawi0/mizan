@@ -339,7 +339,8 @@ async function debate(req, env) {
 const EVT_GAMES = new Set(["court", "family", "escape", "argue", "spot", "calib", "fix", "charts", "verify", "rumor", "live", "debate", "quiz", "bayes", "duel"]);
 async function evtPost(req, env) {
   let b; try { b = JSON.parse(await req.text()); } catch { return json(env, { ok: false }, 400); }
-  const g = String(b.g || ""), e = b.e === "done" ? "done" : b.e === "start" ? "start" : "";
+  const g = String(b.g || ""), st = Number.isInteger(b.s) && b.s >= 0 && b.s < 50 ? b.s : -1;
+  const e = b.e === "done" ? "done" : b.e === "start" ? "start" : b.e === "stage" && st >= 0 ? "s" + st : "";
   if (!EVT_GAMES.has(g) || !e) return json(env, { ok: false }, 400);
   const day = cairoDay();
   const cur = await env.DB.prepare("SELECT n FROM events WHERE day=? AND game=? AND ev=?").bind(day, g, e).first();
@@ -351,8 +352,20 @@ async function evtGet(env, url) {
   const days = Math.min(90, Math.max(1, parseInt(url.searchParams.get("days") || "7", 10)));
   const since = new Date(Date.now() - (days - 1) * 864e5).toLocaleDateString("en-CA", { timeZone: "Africa/Cairo" });
   const rows = (await env.DB.prepare("SELECT game, ev, SUM(n) n FROM events WHERE day>=? GROUP BY game, ev").bind(since).all()).results;
-  const out = {}; rows.forEach(r => { (out[r.game] = out[r.game] || { start: 0, done: 0 })[r.ev] = r.n; });
-  return json(env, { days, since, games: out });
+  const out = {}; rows.forEach(r => {
+    const o = (out[r.game] = out[r.game] || { start: 0, done: 0, stages: [] });
+    if (r.ev[0] === "s" && r.ev !== "start") o.stages[parseInt(r.ev.slice(1), 10)] = r.n; else o[r.ev] = r.n;
+  });
+  Object.values(out).forEach(o => { for (let i = 0; i < o.stages.length; i++) o.stages[i] = o.stages[i] || 0; });
+  // أرقام مجمّعة لليوم (من غير أي بيانات شخصية)
+  const t = today(), num = async k => parseInt((await env.KV.get(k)) || "0", 10);
+  const ops = {
+    analyze: { used: await num("g:" + t), limit: parseInt(env.DAILY_GLOBAL_LIMIT, 10) },
+    debate: { used: await num("gd:" + t), limit: parseInt(env.DEBATE_GLOBAL_LIMIT || "600", 10) },
+    users: (await env.DB.prepare("SELECT COUNT(*) n FROM users").first()).n,
+    league: (await env.DB.prepare("SELECT COUNT(*) n FROM league_members").first()).n
+  };
+  return json(env, { days, since, games: out, ops });
 }
 
 // مرآة الناس: كل النتايج المجمعة في طلب واحد، متخزنة في الكاش 5 دقايق.

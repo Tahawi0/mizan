@@ -37,7 +37,7 @@
       info.appendChild(el("b", null, open ? c.title : "قضية مقفولة"));
       info.appendChild(el("small", null, open ? (st ? stars(st) + " · " + done[c.id] + " من 10" : (boss ? "قضية الزعيم: 5 مغالطات مستخبية" : "قضية جديدة")) : "خلّص القضية اللي قبلها عشان تفتحها"));
       b.appendChild(info);
-      b.onclick = function () { if (window.MizanTrack) MizanTrack("court", "start"); trial(c, k); };
+      b.onclick = function () { if (window.MizanTrack) { MizanTrack("court", "start"); MizanTrack("court", "stage", k); } trial(c, k); };
       li.appendChild(b); map.appendChild(li);
     });
     box.appendChild(map);

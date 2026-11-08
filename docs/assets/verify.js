@@ -44,7 +44,7 @@
         var score = ok ? (used === 0 ? 6 : 10 - Math.max(0, used - 3)) : 2;
         S.record(KEY, "v" + k, score);
         if (window.MizanAuth && MizanAuth.score) MizanAuth.score("verify", score);
-        var fb = el("div", "court-fb"); fb.appendChild(el("b", null, ok ? "حكم صح: " + G.verdicts[C.a] : "الحكم الصح: " + G.verdicts[C.a])); fb.appendChild(el("p", null, C.why));
+        var fb = el("div", "court-fb"); fb.setAttribute("role", "status"); fb.appendChild(el("b", null, ok ? "حكم صح: " + G.verdicts[C.a] : "الحكم الصح: " + G.verdicts[C.a])); fb.appendChild(el("p", null, C.why));
         if (used === 0 && ok) fb.appendChild(el("p", "note", "جبتها صح، بس من غير ما تتحقق. في الحقيقة التخمين بيوقّعك."));
         act.appendChild(fb);
         var w = el("div", "court-end"); w.appendChild(el("p", "big-stars", S.stars(S.starsFor(score))));
