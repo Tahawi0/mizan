@@ -42,6 +42,19 @@ SCALE = """<svg class="scale" viewBox="0 0 200 150" fill="none" stroke="currentC
 ORN = '<div class="orn" aria-hidden="true"><span></span></div>'
 
 
+# وصف خاص لكل صفحة رئيسية، بدل ما كلها تاخد نفس الوصف (جوجل بيعتبرها مكررة)
+PAGE_DESC = {
+    "ميزان — زِن كلامك": "ميزان: موقع مصري مجاني بيعلّمك تفكر صح. أطلس للمغالطات والانحيازات، وألعاب تفاعلية، ولغز كل يوم، وأداة بتحلل أي كلام.",
+    "الأطلس — ميزان": "أطلس المغالطات والانحيازات المعرفية بالمصري: أكتر من 70 مغالطة وانحياز وأداة تفكير، لكل واحدة أمثلة من حياتنا وإزاي ترد عليها.",
+    "مغالطة اليوم — ميزان": "لغز جديد كل يوم: جملة فيها مغالطة، اكشفها في دقيقة. حافظ على سلسلة أيامك، وشارك نتيجتك مع صحابك.",
+    "معضلات — ميزان": "مواقف أخلاقية مفيهاش إجابة سهلة. اختار رأيك، وشوف الناس اختارت إيه، وإزاي الفلاسفة شايفين كل موقف.",
+    "حلّل الكلام — ميزان": "الصق أي كلام، بوست أو خبر أو رسالة، وميزان يطلعلك المغالطات اللي فيه ويشرحها بالبلدي. مجاني.",
+    "مسارات — ميزان": "كورسات قصيرة في التفكير النقدي: درس صغير ومهمة وسؤال كل يوم، 5 دقايق بس، من مبتدئ لمتقدم.",
+    "وزن التريند — ميزان": "كلام منتشر على السوشيال وفي القعدات، بنوزن الحجة اللي فيه: إيه الصح، وإيه المغالطة، وإيه اللي محتاج دليل.",
+    "بحث — ميزان": "دوّر في كل محتوى ميزان: المغالطات والانحيازات، والفلاسفة، والمسارات، والألعاب.",
+    "عن ميزان": "ميزان مشروع مصري مفتوح ومجاني عن التفكير النقدي: ليه بدأ، وبيقدّم إيه، وإزاي تساعد فيه.",
+}
+
 def page(title, body, root, active="", desc="", img="cards/og/site.png", path="", ld=None):
     # كارت مشاركة خاص بالصفحة لو اتعمل (tools/game_cards.py)
     if img == "cards/og/site.png" and path:
@@ -60,7 +73,11 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
     flinks = "".join(f'<a href="{root}{h}">{t}</a>' for h, t in foot)
     ldj = f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>' if ld else ""
     beacon = f'<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{{"token": "{ANALYTICS}"}}\'></script>' if ANALYTICS else ""
-    d = e_(desc or "ميزان: مرجع مصري مفتوح عن التفكير الصح، المغالطات والانحيازات بأمثلة من حياتنا.")
+    desc = desc or PAGE_DESC.get(title, "ميزان: مرجع مصري مفتوح عن التفكير الصح، المغالطات والانحيازات بأمثلة من حياتنا.")
+    desc = " ".join(str(desc).split())
+    if len(desc) > 160:  # جوجل بيقص بعد ~160 حرف، فنقص إحنا عند آخر كلمة
+        desc = desc[:157].rsplit(" ", 1)[0] + "…"
+    d = e_(desc)
     return f"""<!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -476,7 +493,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <p class="report"><a href="{r}send/?err=paths/{p['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="{r}paths/">كل المسارات</a></p><script src="{r}assets/paths.js?v={VER}"></script>
 <script>document.querySelectorAll(".dq .opts button").forEach(function(b){{b.onclick=function(){{b.parentNode.querySelectorAll("button").forEach(function(x){{x.disabled=true;if(x.dataset.ok==="1")x.classList.add("right");}});if(b.dataset.ok!=="1")b.classList.add("wrong");}};}});</script>"""
-        write(f"paths/{p['slug']}/index.html", page(f"{p['title']} — ميزان", body, r, "paths/", p["intro"], path=f"paths/{p['slug']}/"))
+        write(f"paths/{p['slug']}/index.html", page(f"مسار {p['title']} — ميزان", body, r, "paths/", p["intro"], path=f"paths/{p['slug']}/"))
 
     # philosophy
     def plink(slug, r):
@@ -508,7 +525,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <p class="report"><a href="{r}send/?err=philosophy/thought/{t['slug']}/">فيه غلط في الصفحة دي؟ قولّنا</a></p>
 <p class="back"><a href="../">كل التجارب</a></p>
 <script src="{r}assets/config.js?v={VER}"></script><script src="{r}assets/dilemma.js?v={VER}"></script>"""
-        write(f"philosophy/thought/{t['slug']}/index.html", page(f"{t['title']} — ميزان", body, r, "philosophy/", t["question"], path=f"philosophy/thought/{t['slug']}/"))
+        write(f"philosophy/thought/{t['slug']}/index.html", page(f"{t['title']} — ميزان", body, r, "philosophy/", t["question"] + " " + t["story"], path=f"philosophy/thought/{t['slug']}/"))
     # الفلاسفة بيردوا على مشكلتك
     chips = "".join(f'<button type="button" class="chip{" on" if i == 0 else ""}" data-i="{i}">{e_(q["title"])}</button>' for i, q in enumerate(problems))
     cards = ""
@@ -665,6 +682,13 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <h2>الأمانة العلمية</h2><p>بنكتب مصادر كل مدخل، وبنوضح قوة الدليل على كل انحياز. أي معلومة الدليل عليها ضعيف أو مختلف عليه، بنقول كده صراحة.</p>
 <p class="note">ميزان تمرين على التفكير، مش تشخيص نفسي ولا استشارة متخصصة.</p>"""
     write("about/index.html", page("عن ميزان", body, "../", "about/"))
+    # صفحة 404 بالعربي (GitHub Pages بيعرضها لأي لينك غلط تحت /mizan/)، فاللينكات كلها مطلقة
+    r404 = "/" + SITE.split("/", 3)[3]
+    nf = f'''<section class="today" style="text-align:center"><p class="kicker">404</p><h1>الصفحة دي مش موجودة</h1>
+<p class="lead">يمكن اللينك اتكتب غلط، أو الصفحة اتنقلت. بس متقلقش، فيه حاجات كتير تانية تستاهل.</p>
+<p><a class="btn" href="{r404}">الرئيسية</a> <a class="btn ghost" href="{r404}daily/">مغالطة اليوم</a> <a class="btn ghost" href="{r404}search/">دوّر على حاجة</a></p></section>'''
+    html404 = page("الصفحة مش موجودة — ميزان", nf, r404, "", "الصفحة دي مش موجودة على ميزان.")
+    (OUT / "404.html").write_text(html404.replace("<head>", '<head><meta name="robots" content="noindex">', 1), encoding="utf-8")
 
     write("manifest.webmanifest", json.dumps({"name": "ميزان", "short_name": "ميزان", "lang": "ar", "dir": "rtl",
         "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#E9E1CC", "theme_color": "#A47E2E",
