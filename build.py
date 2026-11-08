@@ -196,7 +196,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
         h_det, h_res = ("امتى تستخدمها", "إزاي تستخدمها") if tool else ("إزاي تكشفها", "إزاي ترد من غير خناق")
         lim = f'<h2>حدودها</h2><p>{e_(e["limits"])}</p>' if e.get("limits") else ""
         tags = sorted({n for n, ws in SITU for x in e["examples"] if x["where"] in ws})
-        tagh = ('<p class="where-tags">بتقابلها: ' + " ".join(f'<a class="chip" href="{r}atlas/situations/#s{[n for n, _ in SITU].index(t)}">{t}</a>' for t in tags) + "</p>") if tags else ""
+        tagh = ('<p class="where-tags">' + ('بتنفعك: ' if tool else 'بتقابلها: ') + " ".join(f'<a class="chip" href="{r}atlas/situations/#s{[n for n, _ in SITU].index(t)}">{t}</a>' for t in tags) + "</p>") if tags else ""
         pz = next((q for q in puzzles if q.get("entry") == e["slug"]), None)
         quiz = ""
         if pz:
