@@ -1,6 +1,6 @@
 // ميزان: يشتغل من غير نت. HTML بيتجاب من الشبكة الأول، والملفات الثابتة من الكاش.
-const CACHE = "mizan-8dbd0362";
-const PRE = ["./", "offline.html", "daily/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest", "assets/style.css?v=8dbd0362", "assets/app.js?v=8dbd0362", "assets/motion.js?v=8dbd0362", "assets/daily.js?v=8dbd0362", "assets/quiz.js?v=8dbd0362", "assets/search.js?v=8dbd0362"];
+const CACHE = "mizan-db4f5a54";
+const PRE = ["./", "offline.html", "daily/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest", "assets/style.css?v=db4f5a54", "assets/app.js?v=db4f5a54", "assets/motion.js?v=db4f5a54", "assets/daily.js?v=db4f5a54", "assets/quiz.js?v=db4f5a54", "assets/search.js?v=db4f5a54"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRE)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith("mizan-") && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", e => {

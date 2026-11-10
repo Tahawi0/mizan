@@ -23,8 +23,11 @@
 window.MizanTrack = function (g, e, st) {
   try {
     if (!window.MIZAN_API || !/^[a-z]{2,12}$/.test(g) || (e !== "start" && e !== "done" && e !== "stage")) return;
-    var k = "mz-t-" + g + e + (st >= 0 ? st : ""), now = Date.now(), last = +(sessionStorage.getItem(k) || 0);
-    if (now - last < 20000) return; sessionStorage.setItem(k, now);
+    // «بدأ» و«خلّص» بيتعدّوا مرة واحدة بس لكل لعبة في الزيارة، و«خلّص» بيسجّل «بدأ» لو ماتسجلش.
+    // كده عدد اللي خلّصوا عمره ما يزيد عن عدد اللي بدأوا. المراحل ليها حد 20 ثانية.
+    if (e === "done" && !sessionStorage.getItem("mz-t-" + g + "start")) window.MizanTrack(g, "start");
+    var k = "mz-t-" + g + e + (e === "stage" && st >= 0 ? st : ""), now = Date.now(), last = +(sessionStorage.getItem(k) || 0);
+    if (e === "stage" ? now - last < 20000 : last) return; sessionStorage.setItem(k, now);
     var body = JSON.stringify(st >= 0 && st < 50 ? { g: g, e: e, s: st } : { g: g, e: e });
     if (navigator.sendBeacon) navigator.sendBeacon(window.MIZAN_API + "/evt", body);
     else fetch(window.MIZAN_API + "/evt", { method: "POST", body: body, keepalive: true }).catch(function () {});
