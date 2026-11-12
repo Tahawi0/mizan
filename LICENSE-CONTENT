@@ -1,0 +1,18 @@
+Mizan content license
+
+Copyright (c) 2026 Mohammed Tahawi
+
+The written content of Mizan (content/, cards/, social/, and the text of the
+generated site in docs/) and the original artwork in tools/art/ are licensed
+under the Creative Commons Attribution-ShareAlike 4.0 International License
+(CC BY-SA 4.0).
+
+You are free to share and adapt this material, including commercially, as long as you:
+  - Attribution: credit "Mizan by Mohammed Tahawi" and link to
+    https://github.com/Tahawi0/mizan, and indicate if changes were made.
+  - ShareAlike: distribute your contributions under the same license.
+
+Full license text: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+Summary: https://creativecommons.org/licenses/by-sa/4.0/
+
+The source code is licensed separately under the MIT License. See LICENSE.
