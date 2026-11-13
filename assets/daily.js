@@ -88,5 +88,37 @@
     else if (navigator.clipboard) { navigator.clipboard.writeText(txt).then(done2, function () {}); }
   };
 
-  if (done !== null) show(done); else renderStats();
+  // مراجعة اليوم: كل إجابة هنا بتتحسب، وإجابات الأيام اللي فاتت بتتسجل مرة واحدة أول مرة
+  var SRS = window.MizanSRS, SL = window.MIZAN_SLUGS || {};
+  function chosenSlug(pz, i) { return i !== p.answer && i != null ? SL[pz.options[i]] : null; }
+  function backfill() {
+    if (!SRS) return;
+    try {
+      if (localStorage.getItem("mizan-srs-fill") === "1") return;
+      for (var d = 0; d < dayNo; d++) {
+        var a = load("mizan-day-" + d, null), pz = data[((d % data.length) + data.length) % data.length];
+        if (a == null || !pz) continue;
+        SRS.record(localStorage, pz.entry, a === pz.answer, a !== pz.answer ? SL[pz.options[a]] : null, SRS.today() - (dayNo - d));
+      }
+      localStorage.setItem("mizan-srs-fill", "1");
+    } catch (e) {}
+  }
+  function reviewLink() {
+    var l = document.getElementById("rv-link");
+    if (!SRS || !l) return;
+    var n = 0, st = SRS.parse((function () { try { return localStorage.getItem(SRS.KEY); } catch (e) { return null; } })()), t = SRS.today();
+    for (var k in st) if (st[k].due <= t) n++;
+    l.querySelector("span").textContent = n ? "عندك " + SRS.cards(n) + " للمراجعة." : "شوف نقط ضعفك.";
+    l.hidden = false;
+  }
+  var pick0 = pick;
+  pick = function (i) {
+    var first = done === null;
+    pick0(i);
+    if (first && SRS) SRS.record(localStorage, p.entry, i === p.answer, chosenSlug(p, i));
+    reviewLink();
+  };
+  backfill();
+
+  if (done !== null) { show(done); reviewLink(); } else renderStats();
 })();

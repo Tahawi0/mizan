@@ -186,6 +186,12 @@ describe("votes, ops and CORS", () => {
     assert.ok(!("ops" in r.body));
   });
 
+  test("the review page is counted, unknown games are not", async () => {
+    const env = makeEnv();
+    assert.equal((await call(env, req("/evt", { method: "POST", body: { g: "review", e: "start" } }))).status, 200);
+    assert.equal((await call(env, req("/evt", { method: "POST", body: { g: "nope", e: "start" } }))).status, 400);
+  });
+
   test("responses allow only the site's origin", async () => {
     const r = await call(makeEnv(), req("/"));
     assert.equal(r.headers.get("Access-Control-Allow-Origin"), "https://tahawi0.github.io");

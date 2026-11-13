@@ -40,6 +40,11 @@
     var p = qs[i], btns = $("q-opts").querySelectorAll("button");
     btns.forEach(function (b, j) { b.disabled = true; if (j === p.answer) b.classList.add("right"); else if (j === k) b.classList.add("wrong"); });
     if (k === p.answer) score++; else wrong.push(p);
+    if (window.MizanSRS) {
+      var bySlug = window.MIZAN_NAMES || {}, chosen = null;
+      for (var sl in bySlug) if (bySlug[sl] === p.options[k]) chosen = sl;
+      MizanSRS.record(localStorage, p.entry, k === p.answer, k === p.answer ? null : chosen);
+    }
     $("q-why").textContent = p.why;
     $("q-next").textContent = i === N - 1 ? "شوف نتيجتك" : "اللي بعده";
     $("q-next").style.display = "";

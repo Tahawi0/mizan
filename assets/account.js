@@ -40,6 +40,8 @@
       if (!(k in out)) { out[k] = local[k]; continue; }
       if (k === "mizan-stats") { try { var a = JSON.parse(local[k]), b = JSON.parse(out[k]); if ((a.played || 0) > (b.played || 0)) out[k] = local[k]; } catch (e) {} }
       else if (k.indexOf("mizan-path-") === 0) { try { var x = JSON.parse(local[k]), y = JSON.parse(out[k]); out[k] = JSON.stringify(Array.from(new Set(x.concat(y))).sort()); } catch (e) {} }
+      else if (k === "mizan-srs" && window.MizanSRS) { out[k] = MizanSRS.merge(local[k], out[k]); }
+      else if (k === "mizan-srs-mix" && window.MizanSRS) { out[k] = MizanSRS.mergeMix(local[k], out[k]); }
       else if (k === "mizan-quiz-best") { out[k] = String(Math.max(+local[k] || 0, +out[k] || 0)); }
       else out[k] = local[k];
     }

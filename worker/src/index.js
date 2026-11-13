@@ -409,7 +409,7 @@ async function debate(req, env) {
 }
 
 // ───── عدّاد الألعاب المجهول: كام واحد بدأ وكام واحد خلّص، في اليوم ─────
-const EVT_GAMES = new Set(["court", "family", "escape", "argue", "spot", "calib", "fix", "charts", "verify", "rumor", "live", "debate", "quiz", "bayes", "duel"]);
+const EVT_GAMES = new Set(["review", "court", "family", "escape", "argue", "spot", "calib", "fix", "charts", "verify", "rumor", "live", "debate", "quiz", "bayes", "duel"]);
 async function evtPost(req, env) {
   let b; try { b = JSON.parse(await req.text()); } catch { return json(env, { ok: false }, 400); }
   const g = String(b.g || ""), st = Number.isInteger(b.s) && b.s >= 0 && b.s < 50 ? b.s : -1;

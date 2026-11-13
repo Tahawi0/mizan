@@ -46,6 +46,15 @@
         var n = document.createElement("p"); n.className = "note"; n.textContent = "التحليل ده بالذكاء الاصطناعي وممكن يغلط. استخدمه كبداية تفكير، مش كحكم نهائي."; out.appendChild(n);
       }, function () { form.querySelector("button").disabled = false; st.textContent = "مقدرتش أوصل للسيرفر، جرب تاني."; });
   };
-  var pre = new URLSearchParams(location.search).get("t");
+  var qs = new URLSearchParams(location.search), pre = qs.get("t");
+  // جاي من «مشاركة» في تطبيق تاني: النص بيتحط جاهز، والتحليل مبيبدأش غير لما المستخدم يدوس، عشان الحد اليومي
+  if (!pre && (qs.has("text") || qs.has("title") || qs.has("url")) && window.MizanSRS) {
+    var sh = MizanSRS.shareText({ title: qs.get("title"), text: qs.get("text"), url: qs.get("url") });
+    history.replaceState(null, "", location.pathname);
+    var stt = document.getElementById("an-status"), ta = document.getElementById("an-text");
+    if (sh.onlyUrl) stt.textContent = "ميزان مبيفتحش اللينكات. انسخ الكلام نفسه من البوست والصقه هنا.";
+    else if (sh.text) { ta.value = sh.text; stt.textContent = "الكلام وصل. راجعه ودوس «وزّن الكلام»."; form.querySelector("button").focus(); }
+    return;
+  }
   if (pre) { document.getElementById("an-text").value = pre.slice(0, 1000); history.replaceState(null, "", location.pathname); var go = false; try { go = sessionStorage.getItem("mizan-an-go") === "1"; sessionStorage.removeItem("mizan-an-go"); } catch (e) {} if (go && pre.trim().length >= 15) form.requestSubmit ? form.requestSubmit() : form.onsubmit(new Event("submit")); }
 })();

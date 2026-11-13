@@ -150,6 +150,20 @@ def check(root):
         opts, ans = x.get("options"), x.get("answer")
         if isinstance(opts, list) and isinstance(ans, int) and not 0 <= ans < len(opts):
             rep.add("puzzles.json", where, f"answer {ans} is outside the {len(opts)} options")
+        if isinstance(opts, list) and len(set(map(str, opts))) != len(opts):
+            rep.add("puzzles.json", where, "two options are the same, so the review card can't tell them apart")
+    # Review cards («مراجعة اليوم») are built from examples, with notConfuse as the hard wrong option.
+    names = [x.get("name") for x in entries]
+    for n in {n for n in names if names.count(n) > 1}:
+        rep.add("entries.json", f"name={n}", "two entries share this name, so review answers would be ambiguous")
+    for x in entries:
+        nc = x.get("notConfuse") if isinstance(x.get("notConfuse"), dict) else {}
+        if nc.get("slug") and nc["slug"] not in e_slugs:
+            rep.add("entries.json", f"slug={x.get('slug')}", f"notConfuse «{nc['slug']}» does not exist")
+        if nc.get("slug") == x.get("slug"):
+            rep.add("entries.json", f"slug={x.get('slug')}", "notConfuse points to the entry itself")
+        if x.get("kind") != "tool" and not x.get("examples"):
+            rep.add("entries.json", f"slug={x.get('slug')}", "needs at least one example for its review card")
     for x in data.get("paths.json", []):
         for di, day in enumerate(x.get("days", []) if isinstance(x, dict) else []):
             if isinstance(day, dict) and "entry" in day and day["entry"] not in known:

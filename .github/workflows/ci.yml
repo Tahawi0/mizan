@@ -19,6 +19,11 @@ jobs:
           python-version: "3.12"
       - name: Check content
         run: python tools/validate.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test the shared site logic
+        run: node --test "tools/test/*.test.mjs"
       - name: Build the site
         run: python build.py
       - name: docs/ must match the sources

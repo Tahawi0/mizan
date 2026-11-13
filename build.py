@@ -80,7 +80,7 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
         if (ROOT / "cards" / "og" / f"{gk}.png").exists():
             img = f"cards/og/{gk}.png"
     groups = [("اتعلّم", [("atlas/", "الأطلس", "مغالطات وانحيازات"), ("tools/", "أدوات التفكير", "إزاي تفكر صح"), ("philosophy/", "الفلسفة", "فلاسفة ومدارس"), ("paths/", "مسارات", "7 أيام، 5 دقايق في اليوم"), ("trends/", "وزن التريند", "كلام منتشر بنوزنه")]),
-              ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("games/", "الساحة", "كل الألعاب في مكان واحد"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك"), ("teachers/", "للمدرسين", "6 حصص جاهزة للفصل")]),
+              ("العب", [("daily/", "مغالطة اليوم", "لغز جديد كل يوم"), ("review/", "مراجعة اليوم", "دقيقتين على نقط ضعفك"), ("games/", "الساحة", "كل الألعاب في مكان واحد"), ("quiz/", "اختبر نفسك", "10 أسئلة وتحدّى صاحبك"), ("teachers/", "للمدرسين", "6 حصص جاهزة للفصل")]),
               ("قول رأيك", [("weekly/", "سؤال الأسبوع", "سؤال فلسفي وتصويت"), ("dilemmas/", "معضلات", "مواقف مفيهاش إجابة سهلة"), ("send/", "ابعت مغالطة", "جملة سمعتها وفيها غلط")])]
     def grp(name, items):
         on = any(h == active for h, _, _ in items)
@@ -118,13 +118,18 @@ def page(title, body, root, active="", desc="", img="cards/og/site.png", path=""
 <main><div class="wrap">{body}</div></main>
 <footer><div class="wrap"><a class="logo" href="{root}">{LOGO}ميزان</a><nav class="foot-links" aria-label="روابط تانية">{flinks}</nav><p>زِن كلامك. مرجع مفتوح، اتكتب بإيد إنسان مع الذكاء الاصطناعي، وكل مدخل اتراجع قبل النشر.</p>
 <button class="btn ghost" id="install" hidden>نزّل ميزان على موبايلك</button><p class="note" id="install-hint" hidden>على الآيفون: دوس زرار المشاركة في سفاري، وبعدين «إضافة إلى الشاشة الرئيسية».</p></div></footer>
-<script src="{root}assets/app.js?v={VER}"></script><script src="{root}assets/motion.js?v={VER}"></script><script src="{root}assets/config.js?v={VER}"></script><script src="{root}assets/account.js?v={VER}"></script>{beacon}
+<script src="{root}assets/app.js?v={VER}"></script><script src="{root}assets/motion.js?v={VER}"></script><script src="{root}assets/config.js?v={VER}"></script><script src="{root}assets/srs-core.js?v={VER}"></script><script src="{root}assets/account.js?v={VER}"></script>{beacon}
 </body></html>"""
 
 
 def write(rel, content):
     if rel.endswith("index.html"):
         URLS.append(rel[: -len("index.html")])
+        # صفحة اتعملت من غير path كانت بتقول لجوجل إن نسختها الأصلية هي الرئيسية، فمكانتش بتتأرشف
+        here = rel[: -len("index.html")]
+        if here:
+            content = content.replace(f'<link rel="canonical" href="{SITE}">', f'<link rel="canonical" href="{SITE}{here}">', 1)
+            content = content.replace(f'<meta property="og:url" content="{SITE}">', f'<meta property="og:url" content="{SITE}{here}">', 1)
     p = OUT / rel
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(content, encoding="utf-8", newline="\n")
@@ -257,12 +262,18 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     body = """<p class="kicker">لغز رقم <span id="dayno"></span></p>
 <h1 style="font-size:2rem">مغالطة اليوم</h1><div class="sheet"><p class="scene" id="scene"></p><div class="opts" id="opts"></div>
 <div class="reveal" id="reveal"><h2 id="verdict" style="margin-top:8px"></h2><p id="why"></p>
-<a class="btn ghost" id="more" href="#">اقرأ عنها في الأطلس</a> <button class="btn" id="share">شارك نتيجتك</button></div></div>
+<a class="btn ghost" id="more" href="#">اقرأ عنها في الأطلس</a> <button class="btn" id="share">شارك نتيجتك</button>
+<p id="rv-link" hidden><a href="../review/">مراجعة اليوم</a> <span></span></p></div></div>
 <div class="stats"><div><b id="s-streak">0</b>أيام ورا بعض</div><div><b id="s-best">0</b>أحسن سلسلة</div><div><b id="s-played">0</b>لعبت</div></div>
 <p class="note">لغز جديد كل يوم.</p>
 <h2 id="past-h">ألغاز فاتت</h2><p class="lead" style="font-size:15px">العبها تمرين، مش هتأثر على عدد الأيام.</p><div class="grid" id="past"></div>"""
-    body += f"<script>window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};</script><script src=\"../assets/daily.js?v={VER}\"></script>"
+    slugs_js = json.dumps({x["name"]: x["slug"] for x in entries}, ensure_ascii=False)
+    body += f"<script>window.MIZAN_SLUGS={slugs_js};window.MIZAN_PUZZLES={json.dumps(puzzles, ensure_ascii=False)};</script><script src=\"../assets/daily.js?v={VER}\"></script>"
     write("daily/index.html", page("مغالطة اليوم — ميزان", body, "../", "daily/"))
+
+    # مراجعة اليوم: كروت من أمثلة الأطلس وألغاز اليوم، بصناديق Leitner (assets/srs-core.js)
+    write("review/index.html", page("مراجعة اليوم — ميزان", review_body(entries, puzzles), "../", "review/",
+          "دقيقتين في اليوم على المغالطات اللي بتغلط فيها، بترجعلك في الوقت الصح عشان تثبت.", path="review/"))
 
 
     # dilemmas
@@ -438,7 +449,7 @@ document.querySelectorAll('#g .grp').forEach(function(g){{g.style.display=[].som
     lead = "لوحة حية بتجمع كل تصويت المعضلات وسؤال الأسبوع، ونتايج تجارب المعمل. شوف الناس بتفكر إزاي، ووقعت في أنهي فخ."
     body = f"""<p class="kicker"><a href="{gx}games/">الساحة</a></p><h1>مرآة الناس</h1><p class="lead">{lead}</p>
 <div id="game"></div>
-<script>window.MIZAN_GAME={json.dumps({"lab": mlab, "items": mitems, "gameNames": {"court": "محكمة ميزان", "family": "جروب العيلة", "escape": "غرفة الهروب", "argue": "ابني الحجة", "spot": "اكشف الحيلة", "calib": "ميزان الثقة", "fix": "صلّح الحجة", "charts": "الرسم الكداب", "verify": "محقق الخبر", "rumor": "مصنع الإشاعة", "live": "على الهوا", "debate": "ناظر زِنة", "quiz": "اختبر نفسك", "bayes": "شجرة الاحتمالات", "duel": "تحدّي صاحبك"}}, ensure_ascii=False)};</script><script src="{gx}assets/config.js?v={VER}"></script><script src="{gx}assets/mirror.js?v={VER}"></script>"""
+<script>window.MIZAN_GAME={json.dumps({"lab": mlab, "items": mitems, "gameNames": {"court": "محكمة ميزان", "family": "جروب العيلة", "escape": "غرفة الهروب", "argue": "ابني الحجة", "spot": "اكشف الحيلة", "calib": "ميزان الثقة", "fix": "صلّح الحجة", "charts": "الرسم الكداب", "verify": "محقق الخبر", "rumor": "مصنع الإشاعة", "live": "على الهوا", "debate": "ناظر زِنة", "quiz": "اختبر نفسك", "bayes": "شجرة الاحتمالات", "duel": "تحدّي صاحبك", "review": "مراجعة اليوم"}}, ensure_ascii=False)};</script><script src="{gx}assets/config.js?v={VER}"></script><script src="{gx}assets/mirror.js?v={VER}"></script>"""
     write("games/mirror/index.html", page("مرآة الناس — ميزان", body, gx, "games/", lead, path="games/mirror/"))
 
     # دوري ميزان
@@ -668,7 +679,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     write("teachers/index.html", page("ميزان في الفصل — حصص تفكير نقدي جاهزة", body, "../", "", "6 حصص تفكير نقدي جاهزة للمدرسين، كل حصة 45 دقيقة، بألعاب تفاعلية وأوراق نشاط للطباعة.", path="teachers/"))
 
     # لوحة الأرقام: مش في القايمة ولا في خريطة الموقع، ومقفولة على محركات البحث
-    gn = {"court": "محكمة ميزان", "family": "جروب العيلة", "escape": "غرفة الهروب", "argue": "ابني الحجة", "spot": "اكشف الحيلة", "calib": "ميزان الثقة", "fix": "صلّح الحجة", "charts": "الرسم الكداب", "verify": "محقق الخبر", "rumor": "مصنع الإشاعة", "live": "على الهوا", "debate": "ناظر زِنة", "quiz": "اختبر نفسك", "bayes": "شجرة الاحتمالات", "duel": "تحدّي صاحبك"}
+    gn = {"court": "محكمة ميزان", "family": "جروب العيلة", "escape": "غرفة الهروب", "argue": "ابني الحجة", "spot": "اكشف الحيلة", "calib": "ميزان الثقة", "fix": "صلّح الحجة", "charts": "الرسم الكداب", "verify": "محقق الخبر", "rumor": "مصنع الإشاعة", "live": "على الهوا", "debate": "ناظر زِنة", "quiz": "اختبر نفسك", "bayes": "شجرة الاحتمالات", "duel": "تحدّي صاحبك", "review": "مراجعة اليوم"}
     body = f"""<h1>لوحة الأرقام</h1><p class="lead">أرقام مجمّعة ومجهولة: مين بيلعب إيه، وبيكمّل ولا لأ، وبيقف فين. الصفحة دي مش ظاهرة في الموقع.</p><div id="game"></div>
 <script>window.MIZAN_GAME={json.dumps({"names": gn}, ensure_ascii=False)};</script><script src="../assets/config.js?v={VER}"></script><script src="../assets/ops.js?v={VER}"></script>"""
     html = page("لوحة الأرقام — ميزان", body, "../", "", "لوحة داخلية.").replace("<head>", '<head><meta name="robots" content="noindex,nofollow">', 1)
@@ -711,6 +722,8 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     write("manifest.webmanifest", json.dumps({"name": "ميزان", "short_name": "ميزان", "lang": "ar", "dir": "rtl",
         "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#E9E1CC", "theme_color": "#A47E2E",
         "description": "مرجع مصري مفتوح عن المغالطات والانحيازات والفلسفة.",
+        # «شارك لميزان»: من أي تطبيق على أندرويد (لما ميزان يبقى متسطّب)، والنص بيروح لصفحة التحليل
+        "share_target": {"action": "analyze/", "method": "GET", "params": {"title": "title", "text": "text", "url": "url"}},
         "icons": [{"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
                   {"src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}, ensure_ascii=False))
     # sitemap + robots
@@ -718,11 +731,47 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>', encoding="utf-8", newline="\n")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8", newline="\n")
     # service worker
-    pre = ["./", "offline.html", "daily/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "motion.js", "daily.js", "quiz.js", "search.js"]]
+    pre = ["./", "offline.html", "daily/", "review/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "motion.js", "srs-core.js", "daily.js", "quiz.js", "search.js", "review.js"]]
     sw = (ROOT / "tools/sw.template.js").read_text(encoding="utf-8").replace("__VER__", VER).replace("__PRE__", json.dumps(pre))
     (OUT / "sw.js").write_text(sw, encoding="utf-8", newline="\n")
     api_files = build_api()
     print("built", len(entries), "entries,", len(philo), "philosophy,", len(URLS), "pages,", api_files, "API files")
+
+
+# ───── مراجعة اليوم ─────
+def review_cards(entries, puzzles):
+    """الكروت لكل مدخل يتعرف من مثال (مغالطة أو انحياز، مش أداة): [المكان، النص، اختيارات غلط جاهزة أو None]."""
+    slug_of = {x["name"]: x["slug"] for x in entries}
+    meta, cards = {}, {}
+    for x in entries:
+        if x["kind"] == "tool":
+            continue
+        nc = (x.get("notConfuse") or {}).get("slug") or ""
+        meta[x["slug"]] = [x["name"], x["kind"], nc]
+        cards[x["slug"]] = [[ex.get("where", ""), ex["text"], None] for ex in x["examples"]]
+    for p in puzzles:
+        if p["entry"] not in cards:
+            continue
+        wrong = [slug_of.get(o) for i, o in enumerate(p["options"]) if i != p["answer"]]
+        if all(wrong):  # ألغاز اختياراتها جمل مش أسامي مدخلات بتتساب
+            cards[p["entry"]].append(["", p["scene"], wrong])
+    return meta, cards
+
+
+def review_body(entries, puzzles):
+    meta, cards = review_cards(entries, puzzles)
+    for k, (_, _, nc) in meta.items():
+        if nc not in meta:
+            meta[k][2] = ""
+    data = json.dumps({"e": meta, "c": cards}, ensure_ascii=False, separators=(",", ":"))
+    return f"""<p class="kicker">دقيقتين في اليوم</p><h1>مراجعة اليوم</h1>
+<p class="lead">المغالطات اللي بتغلط فيها بترجعلك بدري، واللي بتعرفها بتبعد. كل ما تجاوب صح، الكارت بيرجعلك بعد مدة أطول: يوم، 3، أسبوع، أسبوعين، شهر.</p>
+<div class="sheet" id="rv-play"><p class="kicker" id="rv-count"></p><p class="note" id="rv-where" hidden></p><p class="scene" id="rv-scene"></p><div class="opts" id="rv-opts"></div>
+<div class="reveal" id="rv-reveal"><h2 id="rv-verdict" style="margin-top:8px"></h2><p id="rv-when"></p><a class="btn ghost" id="rv-more" href="#">اقرأ عنها في الأطلس</a> <button class="btn" id="rv-next" type="button">اللي بعده</button></div></div>
+<div class="sheet" id="rv-done" hidden><h2 id="rv-done-h"></h2><p id="rv-done-p" class="lead"></p><p><button class="btn ghost" id="rv-more-new" type="button">كمان 3 جداد</button> <a class="btn ghost" href="../daily/">مغالطة اليوم</a></p></div>
+<h2>نقط ضعفك</h2><div id="rv-weak"></div>
+<p class="note">ده تمرين على إنك تعرف المغالطة لما تشوفها، مش تشخيص لطريقة تفكيرك. تقدمك محفوظ على جهازك، ولو عندك حساب بيتزامن معاه.</p>
+<script>window.MIZAN_REVIEW={data};</script><script src="../assets/review.js?v={VER}"></script>"""
 
 
 # ───── Content API: نفس المحتوى كـ JSON ثابت، عشان التطبيق والموقع يقروا من مصدر واحد ─────
