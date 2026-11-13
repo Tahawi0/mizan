@@ -90,6 +90,11 @@ async function sha(s) {
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
+// بيرجّع زيادة واحدة لعدّاد اتزوّد قبل طلب فشل
+async function unbump(env, key, ttl = 90000) {
+  const n = parseInt((await env.KV.get(key)) || "1", 10);
+  await env.KV.put(key, String(Math.max(0, n - 1)), { expirationTtl: ttl });
+}
 async function bump(env, key, ttl) {
   const n = parseInt((await env.KV.get(key)) || "0", 10) + 1;
   await env.KV.put(key, String(n), { expirationTtl: ttl });
@@ -139,7 +144,7 @@ async function analyze(req, env) {
   const data = await r.json();
   const raw = (data.content || []).map(c => c.text || "").join("");
   let out;
-  try { out = JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1)); } catch { return json(env, { error: "التحليل مطلعش مظبوط، جرب تاني." }, 502); }
+  try { out = JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1)); } catch { await refund(); return json(env, { error: "التحليل مطلعش مظبوط، جرب تاني." }, 502); }
   const findings = (Array.isArray(out.findings) ? out.findings : []).filter(f => SLUGS.includes(f.slug)).slice(0, 3)
     .map(f => ({ slug: f.slug, quote: String(f.quote || "").slice(0, 300), why: String(f.why || "").slice(0, 500), reply: String(f.reply || "").slice(0, 400) }));
   const clean = { summary: String(out.summary || "").slice(0, 300), findings };
@@ -370,7 +375,7 @@ async function debate(req, env) {
       : "<topic>" + topic + "</topic>\nالمستخدم " + (side === "pro" ? "مع" : "ضد") + " الفكرة دي، وإنتي " + zside + ". ابدئي المناظرة بأقوى حجة عندك. لسه مفيش رسالة من المستخدم، فرجّعي fallacies فاضية وscore بـ 0.";
     const DS = isEn(env) ? DEBATE_SYSTEM_EN : DEBATE_SYSTEM;
     const out = await claude(env, DS, [{ role: "user", content: opening }]);
-    if (!out || !out.reply) { const n = parseInt((await env.KV.get(qKey)) || "1", 10); await env.KV.put(qKey, String(Math.max(0, n - 1)), { expirationTtl: 90000 }); return json(env, { error: "زِنة مش قادرة ترد دلوقتي، جرب بعد شوية." }, 502); }
+    if (!out || !out.reply) { await unbump(env, qKey); await unbump(env, gKey); return json(env, { error: "زِنة مش قادرة ترد دلوقتي، جرب بعد شوية." }, 502); }
     const id = crypto.randomUUID(), reply = String(out.reply).slice(0, 700);
     const h = [{ role: "user", content: opening }, { role: "assistant", content: JSON.stringify({ reply, fallacies: [], score: 0 }) }];
     await env.KV.put(K(env, "deb:" + id), JSON.stringify({ uid: a.uid, topic, side, h, turns: 0 }), { expirationTtl: 6 * 3600 });
@@ -388,7 +393,7 @@ async function debate(req, env) {
     const last = d.turns + 1 >= DEBATE_MAX_TURNS;
     const msg = { role: "user", content: "<msg>" + text + "</msg>" + (last ? (isEn(env) ? "\nThis is the last message. Add final with your verdict on the whole debate." : "\nدي آخر رسالة. ضيفي final بالحكم على المناظرة كلها.") : "") };
     const out = await claude(env, isEn(env) ? DEBATE_SYSTEM_EN : DEBATE_SYSTEM, [...d.h, msg], last ? 800 : 600);
-    if (!out || !out.reply) return json(env, { error: "زِنة مش قادرة ترد دلوقتي، جرب تاني." }, 502);
+    if (!out || !out.reply) { await unbump(env, gKey); return json(env, { error: "زِنة مش قادرة ترد دلوقتي، جرب تاني." }, 502); }
     const clean = {
       reply: String(out.reply).slice(0, 700),
       fallacies: (Array.isArray(out.fallacies) ? out.fallacies : []).filter(f => f && SLUGS.includes(f.slug)).slice(0, 2).map(f => ({ slug: f.slug, why: String(f.why || "").slice(0, 300) })),
