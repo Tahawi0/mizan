@@ -79,7 +79,7 @@ const K = (env, k) => (isEn(env) ? "en:" + k : k);   // KV keys
 const U = (env, uid) => (isEn(env) ? "en:" + uid : uid); // user rows in D1
 
 function cors(env) {
-  return { "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN, "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS", "Access-Control-Allow-Headers": "Content-Type,Authorization", "Vary": "Origin" };
+  return { "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN, "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS", "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Ops-Key", "Vary": "Origin" };
 }
 function json(env, obj, status = 200) {
   if (isEn(env) && obj && typeof obj.error === "string") obj = { ...obj, error: enErr(obj.error) };
@@ -421,7 +421,13 @@ async function evtPost(req, env) {
   await env.DB.prepare("INSERT INTO events(day,game,ev,n) VALUES(?,?,?,1) ON CONFLICT(day,game,ev) DO UPDATE SET n=n+1").bind(day, gk, e).run();
   return json(env, { ok: true });
 }
-async function evtGet(env, url) {
+// أرقام التشغيل (استهلاك الحدود وعدد الحسابات) لصاحب الموقع بس: لازم X-Ops-Key يطابق الـ secret اسمه OPS_KEY
+async function isOps(req, env) {
+  const k = req.headers.get("X-Ops-Key") || "";
+  if (!env.OPS_KEY || !k) return false;
+  return (await sha(k)) === (await sha(env.OPS_KEY));
+}
+async function evtGet(req, env, url) {
   const days = Math.min(90, Math.max(1, parseInt(url.searchParams.get("days") || "7", 10)));
   const since = new Date(Date.now() - (days - 1) * 864e5).toLocaleDateString("en-CA", { timeZone: "Africa/Cairo" });
   const rows = (await env.DB.prepare("SELECT game, ev, SUM(n) n FROM events WHERE day>=? AND " + (isEn(env) ? "game LIKE 'en:%'" : "game NOT LIKE 'en:%'") + " GROUP BY game, ev").bind(since).all()).results.map(r => ({ ...r, game: r.game.replace(/^en:/, "") }));
@@ -430,6 +436,7 @@ async function evtGet(env, url) {
     if (r.ev[0] === "s" && r.ev !== "start") o.stages[parseInt(r.ev.slice(1), 10)] = r.n; else o[r.ev] = r.n;
   });
   Object.values(out).forEach(o => { for (let i = 0; i < o.stages.length; i++) o.stages[i] = o.stages[i] || 0; });
+  if (!(await isOps(req, env))) return json(env, { days, since, games: out });
   // أرقام مجمّعة لليوم (من غير أي بيانات شخصية)
   const t = today(), num = async k => parseInt((await env.KV.get(k)) || "0", 10);
   const ops = {
@@ -477,7 +484,7 @@ export default {
     if (url.pathname === "/league" || url.pathname.startsWith("/league/")) return league(req, env, url);
     if (req.method === "POST" && url.pathname === "/debate") return debate(req, env);
     if (req.method === "POST" && url.pathname === "/evt") return evtPost(req, env);
-    if (req.method === "GET" && url.pathname === "/evt") return evtGet(env, url);
+    if (req.method === "GET" && url.pathname === "/evt") return evtGet(req, env, url);
     if (req.method === "GET" && url.pathname === "/mirror") return mirror(req, env, ctx);
     if (req.method === "GET" && url.pathname === "/votes") {
       const id = url.searchParams.get("id") || "";
