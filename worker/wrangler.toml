@@ -3,9 +3,11 @@ main = "src/index.js"
 compatibility_date = "2026-10-01"
 
 [vars]
+# ميزانية Claude: 50 دولار في الشهر كحد أقصى. أسوأ حالة بالحدود دي حوالي 40 دولار في الشهر
+# (150 تحليل × 0.0053 + 80 رد مناظرة × 0.0066 في اليوم). اتأكد إن حد الصرف على console.anthropic.com متظبط برضه.
 ALLOWED_ORIGIN = "https://tahawi0.github.io"
 MODEL = "claude-haiku-4-5"
-DAILY_GLOBAL_LIMIT = "300"
+DAILY_GLOBAL_LIMIT = "150"
 DAILY_PER_IP_LIMIT = "5"
 FIREBASE_PROJECT = "mizan-ef957"
 # حدود التحليل لأصحاب الحسابات حسب الخطة
@@ -13,7 +15,7 @@ LIMIT_FREE = "10"
 LIMIT_PRO = "50"
 # المناظرة الحرة: لكل حساب في اليوم، وحد كل الموقع (عدد الردود)
 DEBATE_LIMIT = "3"
-DEBATE_GLOBAL_LIMIT = "600"
+DEBATE_GLOBAL_LIMIT = "80"
 
 # بيتملى بعد أمر: npx wrangler kv namespace create MIZAN_KV
 [[kv_namespaces]]
