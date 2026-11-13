@@ -255,7 +255,7 @@ Anonymous start and finish counters for the games. No user data is stored.
   "ops": { "analyze": { "used": 40, "limit": 300 }, "debate": { "used": 12, "limit": 600 }, "users": 350, "league": 120 }
 }
 ```
-This endpoint is public, and `ops` exposes today's quota use and the number of users and league members.
+`games` is public: the site's «مرآة الناس» page shows it. `ops` (today's quota use and the number of users and league members) is only included when the request sends an `X-Ops-Key` header that matches the `OPS_KEY` secret. Without the secret set on the Worker, `ops` is never returned. The owner's dashboard at `/ops/` asks for the key once and keeps it in that browser.
 
 ---
 
@@ -275,5 +275,6 @@ The response is cached at the edge for 5 minutes, with a separate cache for each
 | KV `KV` | quotas, vote counts, analysis cache, debate state, submissions, lab results |
 | D1 `mizan-db` | `users`, `league_members`, `league_points`, `events` (see `schema.sql`, `league.sql`, `events.sql`) |
 | Secret `ANTHROPIC_API_KEY` | Claude calls; never sent to the browser |
+| Secret `OPS_KEY` | unlocks the `ops` numbers in `GET /evt` |
 
 KV counters are not atomic, so a burst of parallel requests can pass a limit slightly (#2).
