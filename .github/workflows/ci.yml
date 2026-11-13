@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    name: Content and site build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check content
+        run: python tools/validate.py
+      - name: Build the site
+        run: python build.py
+      - name: docs/ must match the sources
+        run: |
+          if [ -n "$(git status --porcelain -- docs)" ]; then
+            echo "::error::docs/ is out of date. Run 'python build.py' and commit docs/ with your change."
+            git status --short -- docs | head -30
+            exit 1
+          fi
+
+  worker:
+    name: Worker tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax check
+        run: node --check src/index.js
+      - name: Tests
+        run: npm test

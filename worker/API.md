@@ -278,3 +278,21 @@ The response is cached at the edge for 5 minutes, with a separate cache for each
 | Secret `OPS_KEY` | unlocks the `ops` numbers in `GET /evt` |
 
 KV counters are not atomic, so a burst of parallel requests can pass a limit slightly (#2).
+
+## Content API (static)
+
+The site build also publishes the content as plain JSON on GitHub Pages, so the site, a mobile app or anyone else can read it without calling the Worker. GitHub Pages serves it with `Access-Control-Allow-Origin: *`.
+
+Base URL: `https://tahawi0.github.io/mizan/api/v1/`
+
+| File | What it holds |
+|---|---|
+| `index.json` | `version` (changes only when content changes), the license, and for each file its `url`, `count` and `hash` |
+| `entries.json` | fallacies, biases and thinking tools |
+| `philosophy.json` | philosophers and schools |
+| `puzzles.json` | the daily puzzles |
+| `paths.json` | the short courses |
+| `dilemmas.json`, `weekly.json`, `thought.json` | dilemmas, weekly questions, thought experiments |
+| `problems.json`, `trends.json` | problems and trend analyses |
+
+A client should fetch `index.json` first and download a file again only when its `hash` changed. The shape of `v1` will not change in a way that breaks clients; a breaking change goes to a new `v2`. The content is CC BY-SA 4.0: credit "Mizan by Mohammed Tahawi".

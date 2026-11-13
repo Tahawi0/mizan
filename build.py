@@ -4,6 +4,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "docs"
+# المحتوى بيتراجع الأول: لو فيه غلطة، البناء بيقف ويقول الملف والحقل
+import sys
+sys.path.insert(0, str(ROOT / "tools"))
+import validate as _validate
+_errors = _validate.check(ROOT)
+if _errors:
+    print(f"content check failed ({len(_errors)}):", file=sys.stderr)
+    for _e in _errors: print("  - " + _e, file=sys.stderr)
+    sys.exit(1)
 entries = json.loads((ROOT / "content/entries.json").read_text(encoding="utf-8"))
 puzzles = json.loads((ROOT / "content/puzzles.json").read_text(encoding="utf-8"))
 by_slug = {e["slug"]: e for e in entries}
@@ -118,7 +127,7 @@ def write(rel, content):
         URLS.append(rel[: -len("index.html")])
     p = OUT / rel
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(content, encoding="utf-8")
+    p.write_text(content, encoding="utf-8", newline="\n")
 
 
 def status(e):
@@ -608,7 +617,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     write("send/index.html", page("ابعت مغالطة — ميزان", body, "../", "", "ابعت جملة سمعتها وفيها مغالطة، وممكن تبقى لغز في ميزان.", path="send/"))
 
     # offline
-    (OUT / "offline.html").write_text(page("مفيش نت — ميزان", '<section class="hero">' + SCALE + '<h1 style="font-size:2.4rem">مفيش نت دلوقتي</h1><p class="lead">الصفحات اللي فتحتها قبل كده لسه شغالة. ارجع لما النت يرجع.</p><p><a class="btn" href="./">الرئيسية</a></p></section>', "./"), encoding="utf-8")
+    (OUT / "offline.html").write_text(page("مفيش نت — ميزان", '<section class="hero">' + SCALE + '<h1 style="font-size:2.4rem">مفيش نت دلوقتي</h1><p class="lead">الصفحات اللي فتحتها قبل كده لسه شغالة. ارجع لما النت يرجع.</p><p><a class="btn" href="./">الرئيسية</a></p></section>', "./"), encoding="utf-8", newline="\n")
 
     # account
     body = f"""<h1>حسابي</h1><p class="lead">الحساب اختياري. بيحفظ تقدمك على أي جهاز، ويديك تحليلات أكتر في «حلّل الكلام». مش محتاج كلمة سر.</p>
@@ -663,7 +672,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     body = f"""<h1>لوحة الأرقام</h1><p class="lead">أرقام مجمّعة ومجهولة: مين بيلعب إيه، وبيكمّل ولا لأ، وبيقف فين. الصفحة دي مش ظاهرة في الموقع.</p><div id="game"></div>
 <script>window.MIZAN_GAME={json.dumps({"names": gn}, ensure_ascii=False)};</script><script src="../assets/config.js?v={VER}"></script><script src="../assets/ops.js?v={VER}"></script>"""
     html = page("لوحة الأرقام — ميزان", body, "../", "", "لوحة داخلية.").replace("<head>", '<head><meta name="robots" content="noindex,nofollow">', 1)
-    (OUT / "ops").mkdir(parents=True, exist_ok=True); (OUT / "ops" / "index.html").write_text(html, encoding="utf-8")
+    (OUT / "ops").mkdir(parents=True, exist_ok=True); (OUT / "ops" / "index.html").write_text(html, encoding="utf-8", newline="\n")
 
     # privacy
     body = """<h1>الخصوصية</h1><p class="lead">ميزان مش بيطلب منك اسم ولا إيميل ولا حساب. ودي كل البيانات اللي بتتعامل في الموقع، بالظبط.</p>
@@ -697,7 +706,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
 <p class="lead">يمكن اللينك اتكتب غلط، أو الصفحة اتنقلت. بس متقلقش، فيه حاجات كتير تانية تستاهل.</p>
 <p><a class="btn" href="{r404}">الرئيسية</a> <a class="btn ghost" href="{r404}daily/">مغالطة اليوم</a> <a class="btn ghost" href="{r404}search/">دوّر على حاجة</a></p></section>'''
     html404 = page("الصفحة مش موجودة — ميزان", nf, r404, "", "الصفحة دي مش موجودة على ميزان.")
-    (OUT / "404.html").write_text(html404.replace("<head>", '<head><meta name="robots" content="noindex">', 1), encoding="utf-8")
+    (OUT / "404.html").write_text(html404.replace("<head>", '<head><meta name="robots" content="noindex">', 1), encoding="utf-8", newline="\n")
 
     write("manifest.webmanifest", json.dumps({"name": "ميزان", "short_name": "ميزان", "lang": "ar", "dir": "rtl",
         "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#E9E1CC", "theme_color": "#A47E2E",
@@ -706,13 +715,40 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
                   {"src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}, ensure_ascii=False))
     # sitemap + robots
     sm = "".join(f"<url><loc>{SITE}{u}</loc></url>" for u in URLS)
-    (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>', encoding="utf-8")
-    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8")
+    (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>', encoding="utf-8", newline="\n")
+    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8", newline="\n")
     # service worker
     pre = ["./", "offline.html", "daily/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "motion.js", "daily.js", "quiz.js", "search.js"]]
     sw = (ROOT / "tools/sw.template.js").read_text(encoding="utf-8").replace("__VER__", VER).replace("__PRE__", json.dumps(pre))
-    (OUT / "sw.js").write_text(sw, encoding="utf-8")
-    print("built", len(entries), "entries,", len(philo), "philosophy,", len(URLS), "pages")
+    (OUT / "sw.js").write_text(sw, encoding="utf-8", newline="\n")
+    api_files = build_api()
+    print("built", len(entries), "entries,", len(philo), "philosophy,", len(URLS), "pages,", api_files, "API files")
+
+
+# ───── Content API: نفس المحتوى كـ JSON ثابت، عشان التطبيق والموقع يقروا من مصدر واحد ─────
+# GitHub Pages بيبعت الملفات دي بـ Access-Control-Allow-Origin: *، فأي تطبيق يقدر يقراها من غير سيرفر.
+# v1 معناها إن شكل الملفات ثابت: أي تغيير بيكسر حاجة يروح لـ v2 جديدة.
+API_FILES = ["entries", "philosophy", "puzzles", "paths", "dilemmas", "weekly", "thought", "problems", "trends"]
+
+
+def build_api():
+    out = OUT / "api" / "v1"
+    out.mkdir(parents=True, exist_ok=True)
+    files = {}
+    for name in API_FILES:
+        data = json.loads((ROOT / "content" / f"{name}.json").read_text(encoding="utf-8"))
+        body = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+        (out / f"{name}.json").write_text(body, encoding="utf-8", newline="\n")
+        files[name] = {"url": f"{name}.json", "count": len(data),
+                       "hash": hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]}
+    # الـ index من غير تاريخ: لو المحتوى متغيرش، الملف ميتغيرش (والتطبيق يعرف من الـ hash إن مفيش جديد)
+    version = hashlib.sha256("".join(f["hash"] for f in files.values()).encode()).hexdigest()[:12]
+    index = {"api": "v1", "version": version, "site": SITE,
+             "license": {"content": "CC BY-SA 4.0", "attribution": "Mizan by Mohammed Tahawi",
+                         "url": "https://github.com/Tahawi0/mizan/blob/main/LICENSE-CONTENT"},
+             "files": files}
+    (out / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
+    return len(files) + 1
 
 
 if __name__ == "__main__":

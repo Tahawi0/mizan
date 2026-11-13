@@ -1,0 +1,57 @@
+{
+ "api": "v1",
+ "version": "249129fc4f26",
+ "site": "https://tahawi0.github.io/mizan/",
+ "license": {
+  "content": "CC BY-SA 4.0",
+  "attribution": "Mizan by Mohammed Tahawi",
+  "url": "https://github.com/Tahawi0/mizan/blob/main/LICENSE-CONTENT"
+ },
+ "files": {
+  "entries": {
+   "url": "entries.json",
+   "count": 81,
+   "hash": "36cb0cc2d5fd"
+  },
+  "philosophy": {
+   "url": "philosophy.json",
+   "count": 43,
+   "hash": "e501c9f4771a"
+  },
+  "puzzles": {
+   "url": "puzzles.json",
+   "count": 150,
+   "hash": "d6fe314c4dc6"
+  },
+  "paths": {
+   "url": "paths.json",
+   "count": 10,
+   "hash": "40e30bff369f"
+  },
+  "dilemmas": {
+   "url": "dilemmas.json",
+   "count": 24,
+   "hash": "fcc1cc230b7f"
+  },
+  "weekly": {
+   "url": "weekly.json",
+   "count": 12,
+   "hash": "f99b629926e3"
+  },
+  "thought": {
+   "url": "thought.json",
+   "count": 14,
+   "hash": "65e8194419fe"
+  },
+  "problems": {
+   "url": "problems.json",
+   "count": 8,
+   "hash": "626d32570551"
+  },
+  "trends": {
+   "url": "trends.json",
+   "count": 4,
+   "hash": "1144b842cba9"
+  }
+ }
+}
