@@ -3,16 +3,29 @@
   var G = window.MIZAN_GAME || {}, box = document.getElementById("game");
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function bar(p, cls) { var b = el("div", "bar ops-bar" + (cls ? " " + cls : "")), i = el("i"); i.style.width = Math.max(0, Math.min(100, p)) + "%"; b.appendChild(i); return b; }
-  var days = 7;
+  var days = 7, KEY = "mizan-ops-key";
+  function getKey() { try { return localStorage.getItem(KEY) || ""; } catch (e) { return ""; } }
+  function setKey(v) { try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) {} }
+  // أرقام الحدود والحسابات محتاجة مفتاح التشغيل (OPS_KEY)، وبيتحفظ في المتصفح ده بس
+  function keyForm(wrong) {
+    var f = el("form", "ops-key"), i = el("input"), b = el("button", "btn", "افتح");
+    i.type = "password"; i.placeholder = "مفتاح التشغيل"; i.autocomplete = "off"; b.type = "submit";
+    f.appendChild(el("p", "note", wrong ? "المفتاح غلط، أو لسه مش متسجّل على السيرفر." : "أرقام الحدود والحسابات محتاجة مفتاح التشغيل."));
+    f.appendChild(i); f.appendChild(b);
+    f.onsubmit = function (e) { e.preventDefault(); setKey(i.value.trim()); load(); };
+    return f;
+  }
   function load() {
     box.innerHTML = ""; box.appendChild(el("p", "lead", "لحظة…"));
-    fetch(window.MIZAN_API + "/evt?days=" + days).then(function (r) { return r.json(); }).then(render, function () { box.innerHTML = ""; box.appendChild(el("p", "lead", "مش قادرين نوصل للسيرفر.")); });
+    var k = getKey();
+    fetch(window.MIZAN_API + "/evt?days=" + days, k ? { headers: { "X-Ops-Key": k } } : undefined).then(function (r) { return r.json(); }).then(render, function () { box.innerHTML = ""; box.appendChild(el("p", "lead", "مش قادرين نوصل للسيرفر.")); });
   }
   function render(d) {
     box.innerHTML = "";
     var tf = el("div", "tf");
     [[1, "النهارده"], [7, "7 أيام"], [30, "30 يوم"]].forEach(function (x) { var b = el("button", "btn ghost" + (x[0] === days ? " on" : ""), x[1]); b.type = "button"; b.onclick = function () { days = x[0]; load(); }; tf.appendChild(b); });
     box.appendChild(tf);
+    if (!d.ops) box.appendChild(keyForm(!!getKey()));
     var o = d.ops || {}, st = el("div", "stats");
     [[(o.analyze ? o.analyze.used + " / " + o.analyze.limit : "-"), "تحليلات النهارده"], [(o.debate ? o.debate.used + " / " + o.debate.limit : "-"), "ردود المناظرة الحرة النهارده"], [o.users || 0, "حسابات"], [o.league || 0, "في الدوري"]].forEach(function (x) { var c = el("div"); c.appendChild(el("b", null, String(x[0]))); c.appendChild(document.createTextNode(x[1])); st.appendChild(c); });
     box.appendChild(st);
