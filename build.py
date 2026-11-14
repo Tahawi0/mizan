@@ -610,10 +610,11 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     idx += [{"t": x["title"], "k": "سؤال الأسبوع", "d": x["question"], "u": f"weekly/{x['slug']}/", "x": x["scene"]} for x in weekly]
     idx += [{"t": x["title"], "k": "وزن التريند", "d": x["verdict"], "u": f"trends/{x['slug']}/", "x": x["claim"]} for x in trends]
     idx += [{"t": t, "k": "لعبة", "d": d, "u": h, "x": n} for n, _, gs in ARENA for h, t, d, _, _ in gs if h.startswith(("games/", "quiz/", "daily/"))]
-    (OUT / "search.json").write_text(json.dumps(idx, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    idx.append({"t": "مراجعة اليوم", "k": "لعبة", "d": "دقيقتين في اليوم على المغالطات اللي بتغلط فيها.", "u": "review/", "x": "تكرار متباعد نقط ضعفك"})
+    (OUT / "search.json").write_text(json.dumps(idx, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     body = f"""<h1>بحث</h1><p class="lead">دوّر في {len(idx)} صفحة: مغالطات وانحيازات وفلاسفة ومسارات ومعضلات.</p>
 <form class="search" role="search" onsubmit="return false"><input id="s-q" type="search" placeholder="مثلاً: تعميم، كانط، إعلانات" aria-label="كلمة البحث" autocomplete="off"></form>
-<div id="s-out" aria-live="polite"></div><script src="../assets/search.js?v={VER}"></script>"""
+<div id="s-out" aria-live="polite"></div><script src="../assets/search-core.js?v={VER}"></script><script src="../assets/search.js?v={VER}"></script>"""
     write("search/index.html", page("بحث — ميزان", body, "../", "search/", path="search/"))
 
     # send a fallacy
@@ -731,7 +732,7 @@ if(!past.children.length){{past.style.display="none";document.getElementById("w-
     (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>', encoding="utf-8", newline="\n")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8", newline="\n")
     # service worker
-    pre = ["./", "offline.html", "daily/", "review/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "motion.js", "srs-core.js", "daily.js", "quiz.js", "search.js", "review.js"]]
+    pre = ["./", "offline.html", "daily/", "review/", "atlas/", "philosophy/", "quiz/", "search/", "search.json", "manifest.webmanifest"] + [f"assets/{f}?v={VER}" for f in ["style.css", "app.js", "motion.js", "srs-core.js", "daily.js", "quiz.js", "search-core.js", "search.js", "review.js"]]
     sw = (ROOT / "tools/sw.template.js").read_text(encoding="utf-8").replace("__VER__", VER).replace("__PRE__", json.dumps(pre))
     (OUT / "sw.js").write_text(sw, encoding="utf-8", newline="\n")
     api_files = build_api()
